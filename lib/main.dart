@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'routing/app_router.dart';
 
 void main() {
-  runApp(
-    const ProviderScope(
-      child: LokaApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: LokaApp()));
 }
 
 class LokaApp extends StatelessWidget {
@@ -18,6 +15,7 @@ class LokaApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Loka - Virtual Tours',
       theme: ThemeData(
+        textTheme: GoogleFonts.poppinsTextTheme(),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
