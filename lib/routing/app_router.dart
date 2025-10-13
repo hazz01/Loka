@@ -63,30 +63,6 @@ class AppRouter {
                       ),
                     ],
                   ),
-                  GoRoute(
-                    path: 'trip-ai-planner',
-                    name: 'trip-ai-planner',
-                    builder: (context, state) => const TripAIPlannerPage(),
-                    routes: [
-                      GoRoute(
-                        path: 'provinsi',
-                        name: 'kategori-provinsi',
-                        builder: (context, state) =>
-                            const KategoriProvinsiPage(),
-                      ),
-                      GoRoute(
-                        path: 'greater-city',
-                        name: 'kategori-greater-city',
-                        builder: (context, state) =>
-                            const KategoriGreaterCityPage(),
-                      ),
-                      GoRoute(
-                        path: 'city',
-                        name: 'kategori-city',
-                        builder: (context, state) => const KategoriCityPage(),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ],
@@ -130,6 +106,29 @@ class AppRouter {
                 builder: (context, state) => const ProfilePage(),
               ),
             ],
+          ),
+        ],
+      ),
+      // Routes without navbar - outside StatefulShellRoute
+      GoRoute(
+        path: '/trip-ai-planner',
+        name: 'trip-ai-planner',
+        builder: (context, state) => const TripAIPlannerPage(),
+        routes: [
+          GoRoute(
+            path: 'provinsi',
+            name: 'kategori-provinsi',
+            builder: (context, state) => const KategoriProvinsiPage(),
+          ),
+          GoRoute(
+            path: 'greater-city',
+            name: 'kategori-greater-city',
+            builder: (context, state) => const KategoriGreaterCityPage(),
+          ),
+          GoRoute(
+            path: 'city',
+            name: 'kategori-city',
+            builder: (context, state) => const KategoriCityPage(),
           ),
         ],
       ),
