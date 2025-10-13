@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../shared/data/models.dart';
 import '../../../shared/data/mock_data_source.dart';
 
@@ -49,7 +50,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F8F8),
+      backgroundColor: const Color(0xFFF4F4F4),
       body: CustomScrollView(
         slivers: [
           // Header with Background Image
@@ -174,7 +175,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           SliverToBoxAdapter(
             child: Container(
               decoration: const BoxDecoration(
-                color: Colors.white,
+                color: Color(0xFFF4F4F4),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(24),
                   topRight: Radius.circular(24),
@@ -222,10 +223,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.grey[300]!, width: 1),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
                             child: Column(
@@ -234,56 +235,60 @@ class _HomePageState extends ConsumerState<HomePage> {
                                 const Text(
                                   'Trip Planner',
                                   style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFF539DF3),
                                   ),
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
                                   'Make the best plan for your tour trip',
                                   style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey[600],
-                                    height: 1.3,
+                                    fontSize: 10,
+                                    color: Color(0xFF797979),
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(width: 12),
-                          GestureDetector(
-                            onTap: () => context.go('/trip-ai-planner'),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 18,
-                                vertical: 9,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: Colors.blue[600]!,
-                                  width: 1.5,
+                          Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () => context.go('/trip-ai-planner'),
+                              borderRadius: BorderRadius.circular(10),
+                              splashColor: Colors.blue.withOpacity(0.3),
+                              highlightColor: Colors.blue.withOpacity(0.1),
+                              child: Ink(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 21,
+                                  vertical: 10,
                                 ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    'Create',
-                                    style: TextStyle(
-                                      color: Colors.blue[600],
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Color(0xFF539DF3)),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Create',
+                                      style: TextStyle(
+                                        color: Color(0xFF539DF3),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Icon(
-                                    Icons.arrow_forward,
-                                    size: 16,
-                                    color: Colors.blue[600],
-                                  ),
-                                ],
+                                    const SizedBox(width: 2),
+                                    Icon(
+                                      LucideIcons.chevronRight,
+                                      size: 24,
+                                      color: Color(0xFF539DF3),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
