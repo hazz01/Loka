@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loka/features/home/pages/timeline_trip_Page.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 // Feature imports
@@ -129,6 +130,11 @@ class AppRouter {
             path: 'city',
             name: 'kategori-city',
             builder: (context, state) => const KategoriCityPage(),
+          ),
+          GoRoute(
+            path: 'timeline',
+            name: 'timeline-trip',
+            builder: (context, state) => TimelineTripPage(),
           ),
         ],
       ),

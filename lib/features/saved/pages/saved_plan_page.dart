@@ -14,8 +14,9 @@ class SavedPlanPage extends ConsumerStatefulWidget {
 
 class _SavedPlanPageState extends ConsumerState<SavedPlanPage> {
   static const _pageSize = 10;
-  final PagingController<int, TripPlan> _pagingController =
-      PagingController(firstPageKey: 0);
+  final PagingController<int, TripPlan> _pagingController = PagingController(
+    firstPageKey: 0,
+  );
 
   @override
   void initState() {
@@ -47,9 +48,7 @@ class _SavedPlanPageState extends ConsumerState<SavedPlanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Saved Trip Plans'),
-      ),
+      appBar: AppBar(title: const Text('Saved Trip Plans')),
       body: Column(
         children: [
           // Header
@@ -61,10 +60,7 @@ class _SavedPlanPageState extends ConsumerState<SavedPlanPage> {
               children: [
                 Text(
                   'Your Saved Plans',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 8),
                 Text(
@@ -74,7 +70,7 @@ class _SavedPlanPageState extends ConsumerState<SavedPlanPage> {
               ],
             ),
           ),
-          
+
           // Trip Plans List
           Expanded(
             child: PagedListView<int, TripPlan>(
@@ -86,26 +82,16 @@ class _SavedPlanPageState extends ConsumerState<SavedPlanPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.bookmark_border,
-                        size: 80,
-                        color: Colors.grey,
-                      ),
+                      Icon(Icons.bookmark_border, size: 80, color: Colors.grey),
                       SizedBox(height: 16),
                       Text(
                         'No saved trip plans yet',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey,
-                        ),
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                       SizedBox(height: 8),
                       Text(
                         'Start planning your trip from the Home page',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
                     ],
                   ),
@@ -133,10 +119,7 @@ class _SavedPlanPageState extends ConsumerState<SavedPlanPage> {
 class TripPlanCard extends StatelessWidget {
   final TripPlan tripPlan;
 
-  const TripPlanCard({
-    super.key,
-    required this.tripPlan,
-  });
+  const TripPlanCard({super.key, required this.tripPlan});
 
   @override
   Widget build(BuildContext context) {
@@ -161,21 +144,13 @@ class TripPlanCard extends StatelessWidget {
             const SizedBox(height: 4),
             Row(
               children: [
-                Icon(
-                  Icons.location_on,
-                  size: 16,
-                  color: Colors.grey[600],
-                ),
+                Icon(Icons.location_on, size: 16, color: Colors.grey[600]),
                 Text(
                   ' ${tripPlan.province}',
                   style: TextStyle(color: Colors.grey[600]),
                 ),
                 const SizedBox(width: 16),
-                Icon(
-                  Icons.group,
-                  size: 16,
-                  color: Colors.grey[600],
-                ),
+                Icon(Icons.group, size: 16, color: Colors.grey[600]),
                 Text(
                   ' ${tripPlan.destinations.length} destinations',
                   style: TextStyle(color: Colors.grey[600]),
@@ -185,10 +160,7 @@ class TripPlanCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               'Created ${_formatDate(tripPlan.createdAt)}',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[500],
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey[500]),
             ),
           ],
         ),

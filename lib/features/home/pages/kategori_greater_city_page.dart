@@ -609,15 +609,7 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                 child: ElevatedButton(
                   onPressed: isFormValid
                       ? () {
-                          // Navigate to next page or process the form
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Form is valid! Processing...'),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
-                          // Add your navigation logic here
-                          // context.go('/next-page');
+                          context.go('/trip-ai-planner/timeline');
                         }
                       : null,
                   style: ElevatedButton.styleFrom(
