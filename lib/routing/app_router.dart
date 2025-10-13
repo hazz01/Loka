@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 // Feature imports
 import '../features/home/pages/home_page.dart';
@@ -37,7 +38,8 @@ class AppRouter {
                     path: 'detail/:destinationId',
                     name: 'detail',
                     builder: (context, state) {
-                      final destinationId = state.pathParameters['destinationId']!;
+                      final destinationId =
+                          state.pathParameters['destinationId']!;
                       return DetailComponentPage(destinationId: destinationId);
                     },
                     routes: [
@@ -45,7 +47,8 @@ class AppRouter {
                         path: 'virtual-tour',
                         name: 'virtual-tour',
                         builder: (context, state) {
-                          final destinationId = state.pathParameters['destinationId']!;
+                          final destinationId =
+                              state.pathParameters['destinationId']!;
                           return VirtualTourPage(destinationId: destinationId);
                         },
                       ),
@@ -53,7 +56,8 @@ class AppRouter {
                         path: 'booking',
                         name: 'booking',
                         builder: (context, state) {
-                          final destinationId = state.pathParameters['destinationId']!;
+                          final destinationId =
+                              state.pathParameters['destinationId']!;
                           return BookingTiketPage(destinationId: destinationId);
                         },
                       ),
@@ -67,12 +71,14 @@ class AppRouter {
                       GoRoute(
                         path: 'provinsi',
                         name: 'kategori-provinsi',
-                        builder: (context, state) => const KategoriProvinsiPage(),
+                        builder: (context, state) =>
+                            const KategoriProvinsiPage(),
                       ),
                       GoRoute(
                         path: 'greater-city',
                         name: 'kategori-greater-city',
-                        builder: (context, state) => const KategoriGreaterCityPage(),
+                        builder: (context, state) =>
+                            const KategoriGreaterCityPage(),
                       ),
                       GoRoute(
                         path: 'city',
@@ -133,40 +139,95 @@ class AppRouter {
 
 // Bottom Navigation Bar Widget
 class ScaffoldWithNavBar extends StatelessWidget {
-  const ScaffoldWithNavBar({
-    required this.navigationShell,
-    super.key,
-  });
+  const ScaffoldWithNavBar({required this.navigationShell, super.key});
 
   final StatefulNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600;
+    final isLargeScreen = screenWidth > 900;
+
+    // Responsive sizing
+    final navBarHeight = isTablet ? 110.0 : (isLargeScreen ? 120.0 : 100.0);
+    final iconPadding = isTablet ? 16.0 : (isLargeScreen ? 20.0 : 12.0);
+    final iconSize = isTablet ? 32.0 : (isLargeScreen ? 36.0 : 28.0);
+    final fontSize = isTablet ? 14.0 : (isLargeScreen ? 16.0 : 12.0);
+
     return Scaffold(
       body: navigationShell,
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: navigationShell.currentIndex,
-        onTap: (index) => navigationShell.goBranch(index),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+      bottomNavigationBar: Container(
+        height: navBarHeight,
+        decoration: const BoxDecoration(color: Color(0xFFF4F4F4)),
+        child: SafeArea(
+          child: BottomNavigationBar(
+            backgroundColor: const Color(0xFFF4F4F4),
+            type: BottomNavigationBarType.fixed,
+            elevation: 0,
+            currentIndex: navigationShell.currentIndex,
+            onTap: (index) => navigationShell.goBranch(index),
+            selectedItemColor: const Color(0xFF539DF3),
+            unselectedItemColor: const Color(0xFF484C52),
+            iconSize: iconSize,
+            selectedLabelStyle: TextStyle(
+              fontSize: fontSize,
+              fontWeight: FontWeight.w500,
+            ),
+            unselectedLabelStyle: TextStyle(fontSize: fontSize),
+            items: [
+              _buildNavBarItem(
+                icon: LucideIcons.house,
+                isActive: navigationShell.currentIndex == 0,
+                padding: iconPadding,
+                label: isLargeScreen ? 'Home' : '',
+              ),
+              _buildNavBarItem(
+                icon: LucideIcons.search,
+                isActive: navigationShell.currentIndex == 1,
+                padding: iconPadding,
+                label: isLargeScreen ? 'Search' : '',
+              ),
+              _buildNavBarItem(
+                icon: LucideIcons.bookmark,
+                isActive: navigationShell.currentIndex == 2,
+                padding: iconPadding,
+                label: isLargeScreen ? 'Saved' : '',
+              ),
+              _buildNavBarItem(
+                icon: LucideIcons.user,
+                isActive: navigationShell.currentIndex == 3,
+                padding: iconPadding,
+                label: isLargeScreen ? 'Profile' : '',
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark),
-            label: 'Saved',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+        ),
       ),
+    );
+  }
+
+  BottomNavigationBarItem _buildNavBarItem({
+    required IconData icon,
+    required bool isActive,
+    required double padding,
+    required String label,
+  }) {
+    final iconWidget = Container(
+      padding: EdgeInsets.all(padding),
+      decoration: isActive
+          ? const BoxDecoration(
+              color: Color(0xFFBED7F4),
+              shape: BoxShape.circle,
+            )
+          : null,
+      child: Icon(icon),
+    );
+
+    return BottomNavigationBarItem(
+      icon: iconWidget,
+      activeIcon: iconWidget,
+      label: label,
     );
   }
 }
