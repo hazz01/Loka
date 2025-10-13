@@ -14,8 +14,9 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   static const _pageSize = 10;
-  final PagingController<int, Destination> _pagingController =
-      PagingController(firstPageKey: 0);
+  final PagingController<int, Destination> _pagingController = PagingController(
+    firstPageKey: 0,
+  );
   String selectedCategory = 'Tourist Attraction';
 
   @override
@@ -79,7 +80,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                   ),
                 ),
-                
+
                 // Content over image
                 SafeArea(
                   child: Padding(
@@ -87,7 +88,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     child: Column(
                       children: [
                         const SizedBox(height: 8),
-                        
+
                         // Change Location Button
                         Row(
                           children: [
@@ -122,9 +123,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                             ),
                           ],
                         ),
-                        
+
                         const SizedBox(height: 50),
-                        
+
                         // Location Title
                         Column(
                           children: [
@@ -159,7 +160,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                             ),
                           ],
                         ),
-                        
+
                         const SizedBox(height: 24),
                       ],
                     ),
@@ -198,11 +199,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ),
                       child: Row(
                         children: [
-                          Icon(
-                            Icons.search,
-                            color: Colors.grey[400],
-                            size: 22,
-                          ),
+                          Icon(Icons.search, color: Colors.grey[400], size: 22),
                           const SizedBox(width: 12),
                           Text(
                             'Search destination here',
@@ -226,10 +223,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: Colors.grey[300]!,
-                          width: 1,
-                        ),
+                        border: Border.all(color: Colors.grey[300]!, width: 1),
                       ),
                       child: Row(
                         children: [
@@ -311,7 +305,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                           'Tourist Attraction',
                           Icons.attractions,
                           selectedCategory == 'Tourist Attraction',
-                          () => setState(() => selectedCategory = 'Tourist Attraction'),
+                          () => setState(
+                            () => selectedCategory = 'Tourist Attraction',
+                          ),
                         ),
                         const SizedBox(width: 10),
                         _buildCategoryChip(
@@ -424,7 +420,10 @@ class _HomePageState extends ConsumerState<HomePage> {
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<Destination>(
               itemBuilder: (context, destination, index) => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 6,
+                ),
                 child: _buildLocationCard(
                   destination.imageUrl,
                   destination.name,
@@ -437,41 +436,18 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
 
           // Bottom Padding
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 100),
-          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 100)),
         ],
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -3),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildNavItem(Icons.home, true),
-                _buildNavItem(Icons.search, false),
-                _buildNavItem(Icons.bookmark_border, false),
-                _buildNavItem(Icons.person_outline, false),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
 
-  Widget _buildCategoryChip(String label, IconData icon, bool isSelected, VoidCallback onTap) {
+  Widget _buildCategoryChip(
+    String label,
+    IconData icon,
+    bool isSelected,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -506,7 +482,12 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Widget _buildRecommendedCard(String imageUrl, String title, double rating, Color bgColor) {
+  Widget _buildRecommendedCard(
+    String imageUrl,
+    String title,
+    double rating,
+    Color bgColor,
+  ) {
     return Container(
       width: 180,
       decoration: BoxDecoration(
@@ -556,7 +537,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
             ],
           ),
-          
+
           // Info Section
           Padding(
             padding: const EdgeInsets.all(12),
@@ -576,11 +557,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 const SizedBox(height: 6),
                 Row(
                   children: [
-                    const Icon(
-                      Icons.star,
-                      color: Colors.amber,
-                      size: 16,
-                    ),
+                    const Icon(Icons.star, color: Colors.amber, size: 16),
                     const SizedBox(width: 4),
                     Text(
                       rating.toString(),
@@ -601,7 +578,12 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   Widget _buildLocationCard(
-      String imageUrl, String title, String distance, double rating, String id) {
+    String imageUrl,
+    String title,
+    String distance,
+    double rating,
+    String id,
+  ) {
     return GestureDetector(
       onTap: () => context.go('/detail/$id'),
       child: Container(
@@ -609,10 +591,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.grey[200]!,
-            width: 1,
-          ),
+          border: Border.all(color: Colors.grey[200]!, width: 1),
         ),
         child: Row(
           children: [
@@ -640,10 +619,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       const SizedBox(width: 5),
                       Text(
                         distance,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                       ),
                     ],
                   ),
@@ -669,21 +645,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                       const SizedBox(width: 4),
                       Text(
                         rating.toStringAsFixed(1),
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                       ),
                     ],
                   ),
                 ],
               ),
             ),
-            Icon(
-              Icons.chevron_right,
-              color: Colors.grey[400],
-              size: 28,
-            ),
+            Icon(Icons.chevron_right, color: Colors.grey[400], size: 28),
           ],
         ),
       ),
