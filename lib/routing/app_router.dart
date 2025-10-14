@@ -36,37 +36,6 @@ class AppRouter {
                 path: '/',
                 name: 'home',
                 builder: (context, state) => const HomePage(),
-                routes: [
-                  GoRoute(
-                    path: 'detail/:destinationId',
-                    name: 'detail',
-                    builder: (context, state) {
-                      final destinationId =
-                          state.pathParameters['destinationId']!;
-                      return DetailComponentPage(destinationId: destinationId);
-                    },
-                    routes: [
-                      GoRoute(
-                        path: 'virtual-tour',
-                        name: 'virtual-tour',
-                        builder: (context, state) {
-                          final destinationId =
-                              state.pathParameters['destinationId']!;
-                          return VirtualTourPage(destinationId: destinationId);
-                        },
-                      ),
-                      GoRoute(
-                        path: 'booking',
-                        name: 'booking',
-                        builder: (context, state) {
-                          final destinationId =
-                              state.pathParameters['destinationId']!;
-                          return BookingTiketPage(destinationId: destinationId);
-                        },
-                      ),
-                    ],
-                  ),
-                ],
               ),
             ],
           ),
@@ -120,6 +89,32 @@ class AppRouter {
           final category = state.pathParameters['category']!;
           return ExplorePage(category: category);
         },
+      ),
+      GoRoute(
+        path: '/detail/:destinationId',
+        name: 'detail',
+        builder: (context, state) {
+          final destinationId = state.pathParameters['destinationId']!;
+          return DetailComponentPage(destinationId: destinationId);
+        },
+        routes: [
+          GoRoute(
+            path: 'virtual-tour',
+            name: 'virtual-tour',
+            builder: (context, state) {
+              final destinationId = state.pathParameters['destinationId']!;
+              return VirtualTourPage(destinationId: destinationId);
+            },
+          ),
+          GoRoute(
+            path: 'booking',
+            name: 'booking',
+            builder: (context, state) {
+              final destinationId = state.pathParameters['destinationId']!;
+              return BookingTiketPage(destinationId: destinationId);
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: '/trip-ai-planner',
