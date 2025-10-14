@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loka/features/home/pages/loading_screen.dart';
 import 'package:loka/features/home/pages/timeline_trip_Page.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -132,6 +133,11 @@ class AppRouter {
             builder: (context, state) => const KategoriCityPage(),
           ),
           GoRoute(
+            path: 'loading',
+            name: 'kategori-loading',
+            builder: (context, state) => const LoadingScreen(),
+          ),
+          GoRoute(
             path: 'timeline',
             name: 'timeline-trip',
             builder: (context, state) => TimelineTripPage(),
@@ -155,7 +161,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
     final isLargeScreen = screenWidth > 900;
 
     // Responsive sizing
-    final navBarHeight = isTablet ? 110.0 : (isLargeScreen ? 120.0 : 100.0);
+    final navBarHeight = isTablet ? 110.0 : (isLargeScreen ? 120.0 : 105.0);
     final iconPadding = isTablet ? 16.0 : (isLargeScreen ? 20.0 : 12.0);
     final iconSize = isTablet ? 32.0 : (isLargeScreen ? 36.0 : 28.0);
     final fontSize = isTablet ? 14.0 : (isLargeScreen ? 16.0 : 12.0);

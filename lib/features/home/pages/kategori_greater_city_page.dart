@@ -609,7 +609,7 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                 child: ElevatedButton(
                   onPressed: isFormValid
                       ? () {
-                          context.go('/trip-ai-planner/timeline');
+                          context.go('/trip-ai-planner/loading');
                         }
                       : null,
                   style: ElevatedButton.styleFrom(

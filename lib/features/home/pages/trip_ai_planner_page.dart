@@ -191,7 +191,10 @@ class _TripAIPlannerPageState extends State<TripAIPlannerPage>
                         ? Colors.white
                         : const Color(0xFF6B7280),
                   ),
-                  child: const Text("Next Process"),
+                  child: const Text(
+                    "Next Process",
+                    style: TextStyle(fontSize: 20),
+                  ),
                 ),
               ),
             );
