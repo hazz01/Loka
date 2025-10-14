@@ -212,9 +212,9 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                         borderRadius: BorderRadius.circular(12),
                         child: Container(
                           width: double.infinity,
-                          height: screenHeight * 0.35, // 35% of screen height
+                          height: screenHeight * 0.40,
                           child: Image.network(
-                            'https://images.unsplash.com/photo-1580837119756-563d608dd119?w=800',
+                            'https://abkistimewa.id/sekolah/assets/gallery/berita/42-20231102095419-13961295776543B81BC6EA9.jpeg',
                             fit: BoxFit.cover,
                           ),
                         ),
