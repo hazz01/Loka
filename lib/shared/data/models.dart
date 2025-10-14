@@ -9,6 +9,8 @@ class Destination {
   final String province;
   final double rating;
   final bool hasVirtualTour;
+  final String category; // Tourist Attraction, Culinary, Souvenir, Tour & Trip
+  final double distance; // in km
 
   const Destination({
     required this.id,
@@ -19,6 +21,8 @@ class Destination {
     required this.province,
     required this.rating,
     required this.hasVirtualTour,
+    required this.category,
+    this.distance = 0.0,
   });
 }
 

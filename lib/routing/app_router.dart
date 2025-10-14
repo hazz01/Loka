@@ -13,6 +13,7 @@ import '../features/home/pages/trip_ai_planner_page.dart';
 import '../features/home/pages/kategori_provinsi_page.dart';
 import '../features/home/pages/kategori_greater_city_page.dart';
 import '../features/home/pages/kategori_city_page.dart';
+import '../features/home/pages/explore_page.dart';
 import '../features/search/pages/search_page.dart';
 import '../features/saved/pages/saved_plan_page.dart';
 import '../features/saved/pages/trip_plan_page.dart';
@@ -112,6 +113,14 @@ class AppRouter {
         ],
       ),
       // Routes without navbar - outside StatefulShellRoute
+      GoRoute(
+        path: '/explore/:category',
+        name: 'explore',
+        builder: (context, state) {
+          final category = state.pathParameters['category']!;
+          return ExplorePage(category: category);
+        },
+      ),
       GoRoute(
         path: '/trip-ai-planner',
         name: 'trip-ai-planner',
