@@ -179,12 +179,13 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
     final dateFormat = DateFormat('EEE, d MMM yyyy');
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    final scale = screenWidth / 375;
+    final isSmallScreen = screenWidth < 600;
+    final scale = isSmallScreen ? 0.85 : (screenWidth / 375).clamp(0.85, 1.1);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F4F4),
       appBar: AppBar(
-        toolbarHeight: 70,
+        toolbarHeight: isSmallScreen ? 56 : 70,
         backgroundColor: const Color(0xFFF4F4F4),
         title: Text(
           'Book Tickets',
@@ -206,7 +207,10 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
         ),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+        padding: EdgeInsets.symmetric(
+          horizontal: isSmallScreen ? 16 : 30,
+          vertical: isSmallScreen ? 16 : 20,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -215,9 +219,13 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                 // Background Image with Curve
                 ClipPath(
                   child: Container(
-                    height: screenHeight * 0.22,
+                    height: isSmallScreen
+                        ? screenHeight * 0.18
+                        : screenHeight * 0.22,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(
+                        isSmallScreen ? 8 : 12,
+                      ),
                       image: DecorationImage(
                         image: NetworkImage(
                           'https://abkistimewa.id/sekolah/assets/gallery/berita/42-20231102095419-13961295776543B81BC6EA9.jpeg',
@@ -227,7 +235,9 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                     ),
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(
+                          isSmallScreen ? 8 : 12,
+                        ),
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -244,8 +254,10 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                 // Content over image
                 // Content over image
                 Container(
-                  height: screenHeight * 0.22,
-                  padding: EdgeInsets.all(20),
+                  height: isSmallScreen
+                      ? screenHeight * 0.18
+                      : screenHeight * 0.22,
+                  padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
                   child: Align(
                     alignment: Alignment.bottomLeft,
                     child: Text(
@@ -260,7 +272,7 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                 ),
               ],
             ),
-            SizedBox(height: 25),
+            SizedBox(height: isSmallScreen ? 16 : 25),
             Text(
               "Destination",
               style: TextStyle(
@@ -269,7 +281,7 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                 color: Colors.black,
               ),
             ),
-            SizedBox(height: 25),
+            SizedBox(height: isSmallScreen ? 16 : 25),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -379,24 +391,28 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
             ),
 
             // Passenger List
-            SizedBox(height: 30),
+            SizedBox(height: isSmallScreen ? 20 : 30),
             ...List.generate(passengers.length, (index) {
-              return _buildPassengerForm(index);
+              return _buildPassengerForm(index, isSmallScreen);
             }),
 
             // Add Passenger Button
             if (passengers.isEmpty || passengers.length < 10)
               Padding(
-                padding: const EdgeInsets.only(top: 20),
+                padding: EdgeInsets.only(top: isSmallScreen ? 12 : 20),
                 child: ElevatedButton(
                   onPressed: addPassenger,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(
+                        isSmallScreen ? 8 : 12,
+                      ),
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 14),
+                    padding: EdgeInsets.symmetric(
+                      vertical: isSmallScreen ? 12 : 14,
+                    ),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -423,12 +439,12 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
             // Validation Warning Message
             if (!isFormValid)
               Padding(
-                padding: const EdgeInsets.only(top: 20),
+                padding: EdgeInsets.only(top: isSmallScreen ? 12 : 20),
                 child: Container(
-                  padding: EdgeInsets.all(16),
+                  padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
                   decoration: BoxDecoration(
                     color: Color(0xFFFFF3E0),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(isSmallScreen ? 8 : 12),
                     border: Border.all(color: Color(0xFFFF9800), width: 1),
                   ),
                   child: Row(
@@ -439,7 +455,7 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                         color: Color(0xFFFF9800),
                         size: (20 * scale).clamp(18.0, 24.0),
                       ),
-                      SizedBox(width: 12),
+                      SizedBox(width: isSmallScreen ? 8 : 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -474,11 +490,12 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
       bottomNavigationBar: LayoutBuilder(
         builder: (context, constraints) {
           final bottomScale = constraints.maxWidth / 375;
+          final isSmallBottom = constraints.maxWidth < 600;
           return Container(
             decoration: BoxDecoration(color: Colors.white),
             child: Container(
-              height: 50,
-              margin: const EdgeInsets.all(30),
+              height: isSmallBottom ? 44 : 50,
+              margin: EdgeInsets.all(isSmallBottom ? 16 : 30),
               decoration: BoxDecoration(color: Colors.transparent),
               child: SizedBox(
                 height: double.infinity,
@@ -491,12 +508,14 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF539DF3),
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isSmallBottom ? 10 : 16,
+                      vertical: isSmallBottom ? 8 : 12,
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(
+                        isSmallBottom ? 8 : 12,
+                      ),
                     ),
                     elevation: 0,
                     disabledBackgroundColor: const Color(0xFFF3F4F6),
@@ -506,7 +525,10 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                     child: Text(
                       "Booking Ticket",
                       style: TextStyle(
-                        fontSize: (16 * bottomScale).clamp(14.0, 18.0),
+                        fontSize: (16 * bottomScale).clamp(
+                          isSmallBottom ? 12.0 : 14.0,
+                          18.0,
+                        ),
                         fontWeight: FontWeight.w600,
                         color: isFormValid ? Colors.white : Color(0xFF6B7280),
                       ),
@@ -524,14 +546,15 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
   void _showBookingSummary() {
     final dateFormat = DateFormat('EEE, d MMM yyyy');
     final screenWidth = MediaQuery.of(context).size.width;
-    final scale = screenWidth / 375;
+    final isSmallScreen = screenWidth < 600;
+    final scale = isSmallScreen ? 0.85 : (screenWidth / 375).clamp(0.85, 1.1);
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
           ),
           backgroundColor: Colors.white,
           contentPadding: EdgeInsets.zero,
@@ -546,12 +569,12 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
               children: [
                 // Header
                 Container(
-                  padding: EdgeInsets.all(20),
+                  padding: EdgeInsets.all(isSmallScreen ? 14 : 20),
                   decoration: BoxDecoration(
                     color: Color(0xFF539DF3),
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),
+                      topLeft: Radius.circular(isSmallScreen ? 12 : 16),
+                      topRight: Radius.circular(isSmallScreen ? 12 : 16),
                     ),
                   ),
                   child: Row(
@@ -561,7 +584,7 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                         color: Colors.white,
                         size: (24 * scale).clamp(20.0, 28.0),
                       ),
-                      SizedBox(width: 12),
+                      SizedBox(width: isSmallScreen ? 8 : 12),
                       Text(
                         'Booking Summary',
                         style: TextStyle(
@@ -577,7 +600,7 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                 // Content
                 Flexible(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.all(20),
+                    padding: EdgeInsets.all(isSmallScreen ? 14 : 20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -590,7 +613,7 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                           ),
                         ]),
 
-                        Divider(height: 30, thickness: 1),
+                        Divider(height: isSmallScreen ? 20 : 30, thickness: 1),
 
                         // Passengers List
                         Text(
@@ -601,16 +624,20 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                             color: Colors.black87,
                           ),
                         ),
-                        SizedBox(height: 12),
+                        SizedBox(height: isSmallScreen ? 8 : 12),
 
                         ...List.generate(passengers.length, (index) {
                           final passenger = passengers[index];
                           return Container(
-                            margin: EdgeInsets.only(bottom: 12),
-                            padding: EdgeInsets.all(12),
+                            margin: EdgeInsets.only(
+                              bottom: isSmallScreen ? 8 : 12,
+                            ),
+                            padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
                             decoration: BoxDecoration(
                               color: Color(0xFFF8F8F8),
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(
+                                isSmallScreen ? 6 : 8,
+                              ),
                               border: Border.all(
                                 color: Color(0xFFE5E5E5),
                                 width: 1,
@@ -623,8 +650,8 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                                   children: [
                                     Container(
                                       padding: EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
+                                        horizontal: isSmallScreen ? 6 : 8,
+                                        vertical: isSmallScreen ? 3 : 4,
                                       ),
                                       decoration: BoxDecoration(
                                         color: Color(0xFF539DF3),
@@ -642,7 +669,7 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: 8),
+                                    SizedBox(width: isSmallScreen ? 6 : 8),
                                     Container(
                                       padding: EdgeInsets.symmetric(
                                         horizontal: 6,
@@ -670,7 +697,7 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 8),
+                                SizedBox(height: isSmallScreen ? 6 : 8),
                                 Text(
                                   (passenger['name'] as TextEditingController)
                                       .text,
@@ -680,7 +707,7 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                                     color: Colors.black87,
                                   ),
                                 ),
-                                SizedBox(height: 4),
+                                SizedBox(height: isSmallScreen ? 3 : 4),
                                 Row(
                                   children: [
                                     Icon(
@@ -688,7 +715,7 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                                       size: (12 * scale).clamp(11.0, 14.0),
                                       color: Colors.grey[600],
                                     ),
-                                    SizedBox(width: 4),
+                                    SizedBox(width: isSmallScreen ? 3 : 4),
                                     Text(
                                       (passenger['phone']
                                               as TextEditingController)
@@ -703,7 +730,7 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 2),
+                                SizedBox(height: isSmallScreen ? 1 : 2),
                                 Row(
                                   children: [
                                     Icon(
@@ -740,7 +767,7 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
 
                 // Actions
                 Container(
-                  padding: EdgeInsets.all(20),
+                  padding: EdgeInsets.all(isSmallScreen ? 14 : 20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border(
@@ -760,9 +787,13 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                               width: 1.5,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(
+                                isSmallScreen ? 8 : 12,
+                              ),
                             ),
-                            padding: EdgeInsets.symmetric(vertical: 12),
+                            padding: EdgeInsets.symmetric(
+                              vertical: isSmallScreen ? 10 : 12,
+                            ),
                           ),
                           child: Text(
                             'Cancel',
@@ -774,7 +805,7 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 12),
+                      SizedBox(width: isSmallScreen ? 8 : 12),
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
@@ -788,9 +819,13 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF539DF3),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(
+                                isSmallScreen ? 8 : 12,
+                              ),
                             ),
-                            padding: EdgeInsets.symmetric(vertical: 12),
+                            padding: EdgeInsets.symmetric(
+                              vertical: isSmallScreen ? 10 : 12,
+                            ),
                             elevation: 0,
                           ),
                           child: Text(
@@ -877,17 +912,17 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
     );
   }
 
-  Widget _buildPassengerForm(int index) {
+  Widget _buildPassengerForm(int index, bool isSmallScreen) {
     final passenger = passengers[index];
     final screenWidth = MediaQuery.of(context).size.width;
-    final scale = screenWidth / 375;
+    final scale = isSmallScreen ? 0.85 : (screenWidth / 375).clamp(0.85, 1.1);
 
     return Container(
-      margin: EdgeInsets.only(bottom: 25),
-      padding: EdgeInsets.all(20),
+      margin: EdgeInsets.only(bottom: isSmallScreen ? 16 : 25),
+      padding: EdgeInsets.all(isSmallScreen ? 14 : 20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(isSmallScreen ? 8 : 12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -960,7 +995,7 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
             keyboardType: TextInputType.name,
           ),
 
-          SizedBox(height: 20),
+          SizedBox(height: isSmallScreen ? 12 : 20),
 
           // Gender Selection
           Row(
@@ -973,12 +1008,16 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                     });
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 12),
+                    padding: EdgeInsets.symmetric(
+                      vertical: isSmallScreen ? 10 : 12,
+                    ),
                     decoration: BoxDecoration(
                       color: passenger['gender'] == 'Mr.'
                           ? Color(0xFF539DF3)
                           : Colors.white,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(
+                        isSmallScreen ? 8 : 12,
+                      ),
                       border: Border.all(
                         color: passenger['gender'] == 'Mr.'
                             ? Color(0xFF539DF3)
@@ -1042,12 +1081,16 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                     });
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 12),
+                    padding: EdgeInsets.symmetric(
+                      vertical: isSmallScreen ? 10 : 12,
+                    ),
                     decoration: BoxDecoration(
                       color: passenger['gender'] == 'Mrs.'
                           ? Color(0xFF539DF3)
                           : Colors.white,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(
+                        isSmallScreen ? 8 : 12,
+                      ),
                       border: Border.all(
                         color: passenger['gender'] == 'Mrs.'
                             ? Color(0xFF539DF3)
@@ -1111,12 +1154,16 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                     });
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 12),
+                    padding: EdgeInsets.symmetric(
+                      vertical: isSmallScreen ? 10 : 12,
+                    ),
                     decoration: BoxDecoration(
                       color: passenger['gender'] == 'Ms.'
                           ? Color(0xFF539DF3)
                           : Colors.white,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(
+                        isSmallScreen ? 8 : 12,
+                      ),
                       border: Border.all(
                         color: passenger['gender'] == 'Ms.'
                             ? Color(0xFF539DF3)
@@ -1174,7 +1221,7 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
             ],
           ),
 
-          SizedBox(height: 20),
+          SizedBox(height: isSmallScreen ? 12 : 20),
 
           // Phone Number
           Text(
@@ -1185,15 +1232,18 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
               color: Color(0xFF4d4d4d),
             ),
           ),
-          const SizedBox(height: 9),
+          SizedBox(height: isSmallScreen ? 6 : 9),
           Row(
             children: [
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                padding: EdgeInsets.symmetric(
+                  horizontal: isSmallScreen ? 10 : 12,
+                  vertical: isSmallScreen ? 12 : 16,
+                ),
                 decoration: BoxDecoration(
                   border: Border.all(color: Color(0xFFB5B5B5), width: 0.5),
                   color: Colors.black.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(isSmallScreen ? 8 : 12),
                 ),
                 child: Row(
                   children: [
@@ -1224,25 +1274,31 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                       fontWeight: FontWeight.w400,
                     ),
                     contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 16,
+                      horizontal: isSmallScreen ? 12 : 16,
+                      vertical: isSmallScreen ? 12 : 16,
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(
+                        isSmallScreen ? 8 : 12,
+                      ),
                       borderSide: BorderSide(
                         color: Color(0xFFB5B5B5),
                         width: 0.5,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(
+                        isSmallScreen ? 8 : 12,
+                      ),
                       borderSide: BorderSide(
                         color: Color(0xFFB5B5B5),
                         width: 0.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(
+                        isSmallScreen ? 8 : 12,
+                      ),
                       borderSide: BorderSide(
                         color: Color(0xFFB5B5B5),
                         width: 0.5,
@@ -1255,7 +1311,7 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
             ],
           ),
 
-          SizedBox(height: 20),
+          SizedBox(height: isSmallScreen ? 12 : 20),
 
           // Email
           Text(
@@ -1266,7 +1322,7 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
               color: Color(0xFF4d4d4d),
             ),
           ),
-          const SizedBox(height: 9),
+          SizedBox(height: isSmallScreen ? 6 : 9),
           TextFormField(
             controller: passenger['email'],
             onChanged: (_) => setState(() {}),
@@ -1278,19 +1334,19 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
                 fontWeight: FontWeight.w400,
               ),
               contentPadding: EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 16,
+                horizontal: isSmallScreen ? 12 : 16,
+                vertical: isSmallScreen ? 12 : 16,
               ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(isSmallScreen ? 8 : 12),
                 borderSide: BorderSide(color: Color(0xFFB5B5B5), width: 0.5),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(isSmallScreen ? 8 : 12),
                 borderSide: BorderSide(color: Color(0xFFB5B5B5), width: 0.5),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(isSmallScreen ? 8 : 12),
                 borderSide: BorderSide(color: Color(0xFFB5B5B5), width: 0.5),
               ),
             ),

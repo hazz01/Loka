@@ -42,11 +42,15 @@ class _ExplorePageState extends State<ExplorePage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 360;
+    final isSmallScreen = screenWidth < 600;
 
     // Responsive sizing
     final appBarIconSize = isSmallScreen ? 22.0 : 25.0;
     final appBarTitleSize = isSmallScreen ? 14.0 : 16.0;
+    final emptyIconSize = isSmallScreen ? 56.0 : 64.0;
+    final emptyTextSize = isSmallScreen ? 14.0 : 16.0;
+    final listPadding = isSmallScreen ? 20.0 : 30.0;
+    final listVerticalPadding = isSmallScreen ? 16.0 : 20.0;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F4F4),
@@ -83,14 +87,14 @@ class _ExplorePageState extends State<ExplorePage> {
                 children: [
                   Icon(
                     LucideIcons.searchX,
-                    size: isSmallScreen ? 56.0 : 64.0,
+                    size: emptyIconSize,
                     color: Colors.grey[400],
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: isSmallScreen ? 12 : 16),
                   Text(
                     'Tidak ada destinasi ditemukan',
                     style: TextStyle(
-                      fontSize: isSmallScreen ? 14.0 : 16.0,
+                      fontSize: emptyTextSize,
                       color: Colors.grey[600],
                       fontWeight: FontWeight.w500,
                     ),
@@ -99,12 +103,15 @@ class _ExplorePageState extends State<ExplorePage> {
               ),
             )
           : ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+              padding: EdgeInsets.symmetric(
+                horizontal: listPadding,
+                vertical: listVerticalPadding,
+              ),
               itemCount: destinations.length,
               itemBuilder: (context, index) {
                 final destination = destinations[index];
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 15),
+                  padding: EdgeInsets.only(bottom: isSmallScreen ? 12 : 15),
                   child: _buildDestinationCard(destination),
                 );
               },
@@ -114,21 +121,23 @@ class _ExplorePageState extends State<ExplorePage> {
 
   Widget _buildDestinationCard(Destination destination) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 360;
+    final isSmallScreen = screenWidth < 600;
 
     // Responsive sizing
-    final imageSize = isSmallScreen ? 85.0 : 100.0;
-    final imagePlaceholderIconSize = isSmallScreen ? 35.0 : 40.0;
-    final titleFontSize = isSmallScreen ? 14.0 : 16.0;
-    final subtitleFontSize = isSmallScreen ? 12.0 : 13.0;
+    final imageSize = isSmallScreen ? 80.0 : 100.0;
+    final imagePlaceholderIconSize = isSmallScreen ? 32.0 : 40.0;
+    final titleFontSize = isSmallScreen ? 13.0 : 16.0;
+    final subtitleFontSize = isSmallScreen ? 11.0 : 13.0;
     final iconSize = isSmallScreen ? 12.0 : 14.0;
     final chevronSize = isSmallScreen ? 20.0 : 24.0;
-    final spacingWidth = isSmallScreen ? 12.0 : 16.0;
+    final spacingWidth = isSmallScreen ? 10.0 : 16.0;
+    final cardPadding = isSmallScreen ? 10.0 : 12.0;
+    final imageRadius = isSmallScreen ? 10.0 : 12.0;
 
     return GestureDetector(
       onTap: () => context.go('/detail/${destination.id}'),
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(cardPadding),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -143,7 +152,7 @@ class _ExplorePageState extends State<ExplorePage> {
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(imageRadius),
               child: Image.network(
                 destination.imageUrl,
                 width: imageSize,
@@ -164,7 +173,6 @@ class _ExplorePageState extends State<ExplorePage> {
               ),
             ),
             SizedBox(width: spacingWidth),
-            SizedBox(width: spacingWidth),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,7 +187,7 @@ class _ExplorePageState extends State<ExplorePage> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: isSmallScreen ? 6 : 8),
                   Row(
                     children: [
                       Icon(
@@ -187,7 +195,7 @@ class _ExplorePageState extends State<ExplorePage> {
                         size: iconSize,
                         color: const Color(0xFF7D848D),
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: isSmallScreen ? 3 : 4),
                       Expanded(
                         child: Text(
                           destination.location,
@@ -202,7 +210,7 @@ class _ExplorePageState extends State<ExplorePage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: isSmallScreen ? 6 : 8),
                   Row(
                     children: [
                       Icon(
@@ -210,7 +218,7 @@ class _ExplorePageState extends State<ExplorePage> {
                         size: iconSize,
                         color: const Color(0xFFF8D548),
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: isSmallScreen ? 3 : 4),
                       Text(
                         destination.rating.toStringAsFixed(1),
                         style: TextStyle(
@@ -219,13 +227,13 @@ class _ExplorePageState extends State<ExplorePage> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: isSmallScreen ? 8 : 12),
                       Icon(
                         LucideIcons.navigation,
                         size: iconSize,
                         color: const Color(0xFF7D848D),
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: isSmallScreen ? 3 : 4),
                       Text(
                         '${destination.distance.toStringAsFixed(1)} km',
                         style: TextStyle(

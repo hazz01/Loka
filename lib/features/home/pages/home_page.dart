@@ -35,9 +35,12 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 360;
+    final isSmallScreen = screenWidth < 600;
 
-    // Responsive sizing
+    // Responsive sizing - Header
+    final headerHeight = isSmallScreen ? 250.0 : 280.0;
+    final headerPadding = isSmallScreen ? 20.0 : 30.0;
+    final headerTopPadding = isSmallScreen ? 30.0 : 40.0;
     final headerIconSize = isSmallScreen ? 14.0 : 16.0;
     final headerTextSmall = isSmallScreen ? 10.0 : 12.0;
     final headerTextMedium = isSmallScreen ? 12.0 : 14.0;
@@ -45,7 +48,11 @@ class _HomePageState extends ConsumerState<HomePage> {
     final headerMapPinSize = isSmallScreen ? 12.0 : 14.0;
     final searchIconSize = isSmallScreen ? 18.0 : 20.0;
     final searchTextSize = isSmallScreen ? 12.0 : 14.0;
+    final searchPadding = isSmallScreen ? 14.0 : 16.0;
 
+    // Responsive sizing - Content
+    final contentPadding = isSmallScreen ? 20.0 : 30.0;
+    final tripPlannerPadding = isSmallScreen ? 14.0 : 16.0;
     final tripPlannerTitleSize = isSmallScreen ? 12.0 : 14.0;
     final tripPlannerSubtitleSize = isSmallScreen ? 9.0 : 10.0;
     final tripPlannerButtonSize = isSmallScreen ? 12.0 : 14.0;
@@ -65,7 +72,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ClipPath(
                   clipper: CurvedBottomClipper(),
                   child: Container(
-                    height: 280,
+                    height: headerHeight,
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         image: NetworkImage(
@@ -91,7 +98,12 @@ class _HomePageState extends ConsumerState<HomePage> {
 
                 // Content over image
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(30, 40, 30, 0),
+                  padding: EdgeInsets.fromLTRB(
+                    headerPadding,
+                    headerTopPadding,
+                    headerPadding,
+                    0,
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -99,9 +111,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isSmallScreen ? 10 : 12,
+                              vertical: isSmallScreen ? 6 : 8,
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -129,7 +141,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 45),
+                      SizedBox(height: isSmallScreen ? 35 : 45),
                       Column(
                         children: [
                           Text(
@@ -140,7 +152,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                               color: const Color(0xFFF8F7F7),
                             ),
                           ),
-                          const SizedBox(height: 5),
+                          SizedBox(height: isSmallScreen ? 4 : 5),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -163,13 +175,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 60),
+                      SizedBox(height: isSmallScreen ? 65 : 75),
                       GestureDetector(
                         onTap: () => context.go('/search'),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: searchPadding,
+                            vertical: searchPadding,
                           ),
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -205,13 +217,13 @@ class _HomePageState extends ConsumerState<HomePage> {
           // White Container Content
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
+              padding: EdgeInsets.symmetric(horizontal: contentPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 15),
+                  SizedBox(height: isSmallScreen ? 15 : 20),
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(tripPlannerPadding),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
@@ -251,9 +263,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                             splashColor: Colors.blue.withOpacity(0.3),
                             highlightColor: Colors.blue.withOpacity(0.1),
                             child: Ink(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 21,
-                                vertical: 10,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: isSmallScreen ? 16 : 21,
+                                vertical: isSmallScreen ? 8 : 10,
                               ),
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -272,7 +284,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                  const SizedBox(width: 2),
+                                  SizedBox(width: isSmallScreen ? 1 : 2),
                                   Icon(
                                     LucideIcons.chevronRight,
                                     size: tripPlannerChevronSize,
@@ -287,11 +299,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                   ),
 
-                  const SizedBox(height: 50),
+                  SizedBox(height: isSmallScreen ? 35 : 50),
 
                   // Category Tabs - Horizontal Scrollable
                   SizedBox(
-                    height: 45,
+                    height: isSmallScreen ? 40 : 45,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
@@ -309,7 +321,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                             });
                           },
                         ),
-                        const SizedBox(width: 15),
+                        SizedBox(width: isSmallScreen ? 10 : 15),
                         _buildCategoryChip(
                           'Culinary',
                           LucideIcons.utensilsCrossed,
@@ -324,7 +336,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                             });
                           },
                         ),
-                        const SizedBox(width: 15),
+                        SizedBox(width: isSmallScreen ? 10 : 15),
                         _buildCategoryChip(
                           'Souvenir',
                           LucideIcons.gift,
@@ -339,7 +351,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                             });
                           },
                         ),
-                        const SizedBox(width: 15),
+                        SizedBox(width: isSmallScreen ? 10 : 15),
                         _buildCategoryChip(
                           'Tour & Trip',
                           LucideIcons.map,
@@ -358,7 +370,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                   ),
 
-                  const SizedBox(height: 20),
+                  SizedBox(height: isSmallScreen ? 16 : 20),
 
                   // Recommended Section Header
                   Column(
@@ -391,11 +403,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ],
                   ),
 
-                  const SizedBox(height: 14),
+                  SizedBox(height: isSmallScreen ? 12 : 14),
 
                   // Recommended Cards - Horizontal Scroll
                   SizedBox(
-                    height: 282,
+                    height: isSmallScreen ? 252 : 282,
                     child: recommendedDestinations.isEmpty
                         ? Center(
                             child: Text(
@@ -424,7 +436,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           ),
                   ),
 
-                  const SizedBox(height: 30),
+                  SizedBox(height: isSmallScreen ? 20 : 30),
 
                   // Based on location Section Header
                   Row(
@@ -449,7 +461,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ],
                   ),
 
-                  const SizedBox(height: 8),
+                  SizedBox(height: isSmallScreen ? 6 : 8),
                 ],
               ),
             ),
@@ -460,9 +472,9 @@ class _HomePageState extends ConsumerState<HomePage> {
             delegate: SliverChildBuilderDelegate((context, index) {
               final destination = nearestDestinations[index];
               return Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 6,
+                padding: EdgeInsets.symmetric(
+                  horizontal: isSmallScreen ? 16 : 20,
+                  vertical: isSmallScreen ? 5 : 6,
                 ),
                 child: _buildLocationCard(
                   destination.imageUrl,
@@ -476,7 +488,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
 
           // Bottom Padding
-          const SliverToBoxAdapter(child: SizedBox(height: 20)),
+          SliverToBoxAdapter(child: SizedBox(height: isSmallScreen ? 16 : 20)),
         ],
       ),
     );
@@ -489,14 +501,18 @@ class _HomePageState extends ConsumerState<HomePage> {
     VoidCallback onTap,
   ) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 360;
-    final iconSize = isSmallScreen ? 20.0 : 24.0;
+    final isSmallScreen = screenWidth < 600;
+    final iconSize = isSmallScreen ? 18.0 : 24.0;
     final textSize = isSmallScreen ? 12.0 : 14.0;
+    final chipPadding = isSmallScreen ? 8.0 : 10.0;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        padding: EdgeInsets.symmetric(
+          horizontal: chipPadding,
+          vertical: chipPadding,
+        ),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFF539DF3) : Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -508,7 +524,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               size: iconSize,
               color: isSelected ? Colors.white : const Color(0xFF797979),
             ),
-            const SizedBox(width: 5),
+            SizedBox(width: isSmallScreen ? 4 : 5),
             Text(
               label,
               style: TextStyle(
@@ -530,19 +546,22 @@ class _HomePageState extends ConsumerState<HomePage> {
     String id,
   ) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 360;
-    final cardWidth = isSmallScreen ? 180.0 : 200.0;
-    final imageHeight = isSmallScreen ? 180.0 : 200.0;
-    final placeholderIconSize = isSmallScreen ? 50.0 : 60.0;
+    final isSmallScreen = screenWidth < 600;
+    final cardWidth = isSmallScreen ? 170.0 : 200.0;
+    final imageHeight = isSmallScreen ? 170.0 : 200.0;
+    final placeholderIconSize = isSmallScreen ? 45.0 : 60.0;
     final heartIconSize = isSmallScreen ? 18.0 : 20.0;
     final titleSize = isSmallScreen ? 11.0 : 12.0;
     final starSize = isSmallScreen ? 14.0 : 16.0;
+    final cardPadding = isSmallScreen ? 12.0 : 15.0;
+    final heartPadding = isSmallScreen ? 6.0 : 8.0;
+    final heartPosition = isSmallScreen ? 8.0 : 10.0;
 
     return GestureDetector(
       onTap: () => context.go('/detail/$id'),
       child: Container(
         width: cardWidth,
-        margin: const EdgeInsets.only(right: 15),
+        margin: EdgeInsets.only(right: isSmallScreen ? 12 : 15),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -559,14 +578,17 @@ class _HomePageState extends ConsumerState<HomePage> {
           children: [
             // Image Section
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
+              padding: EdgeInsets.symmetric(
+                horizontal: cardPadding,
+                vertical: isSmallScreen ? 12 : 14,
+              ),
               child: Column(
                 children: [
                   Stack(
                     children: [
                       ClipRRect(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(8),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(isSmallScreen ? 6 : 8),
                         ),
                         child: Image.network(
                           imageUrl,
@@ -587,11 +609,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                         ),
                       ),
                       Positioned(
-                        top: 10,
-                        right: 10,
+                        top: heartPosition,
+                        right: heartPosition,
                         child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: const BoxDecoration(
+                          padding: EdgeInsets.all(heartPadding),
+                          decoration: BoxDecoration(
                             color: Color.fromRGBO(255, 255, 255, 0.8),
                             shape: BoxShape.circle,
                           ),
@@ -604,7 +626,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 7),
+                  SizedBox(height: isSmallScreen ? 6 : 7),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -618,7 +640,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 7),
+                      SizedBox(height: isSmallScreen ? 5 : 7),
                       Row(
                         children: [
                           Icon(
@@ -626,7 +648,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                             color: const Color(0xFFF8D548),
                             size: starSize,
                           ),
-                          const SizedBox(width: 2),
+                          SizedBox(width: isSmallScreen ? 1 : 2),
                           Text(
                             rating.toString(),
                             style: TextStyle(
@@ -656,18 +678,21 @@ class _HomePageState extends ConsumerState<HomePage> {
     String id,
   ) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 360;
-    final imageSize = isSmallScreen ? 70.0 : 80.0;
-    final iconSize = isSmallScreen ? 13.0 : 15.0;
-    final textSize = isSmallScreen ? 12.0 : 13.0;
-    final titleSize = isSmallScreen ? 13.0 : 14.0;
-    final starSize = isSmallScreen ? 14.0 : 16.0;
+    final isSmallScreen = screenWidth < 600;
+    final imageSize = isSmallScreen ? 65.0 : 80.0;
+    final iconSize = isSmallScreen ? 12.0 : 15.0;
+    final textSize = isSmallScreen ? 11.0 : 13.0;
+    final titleSize = isSmallScreen ? 12.0 : 14.0;
+    final starSize = isSmallScreen ? 13.0 : 16.0;
     final chevronSize = isSmallScreen ? 20.0 : 24.0;
+    final cardPadding = isSmallScreen ? 10.0 : 12.0;
+    final imageRadius = isSmallScreen ? 10.0 : 12.0;
+    final spaceBetween = isSmallScreen ? 14.0 : 18.0;
 
     return GestureDetector(
       onTap: () => context.go('/detail/$id'),
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(cardPadding),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -682,7 +707,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(imageRadius),
               child: Image.network(
                 imageUrl,
                 width: imageSize,
@@ -690,7 +715,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 fit: BoxFit.cover,
               ),
             ),
-            const SizedBox(width: 18),
+            SizedBox(width: spaceBetween),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -702,7 +727,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                         size: iconSize,
                         color: const Color(0xFF7D848D),
                       ),
-                      const SizedBox(width: 5),
+                      SizedBox(width: isSmallScreen ? 4 : 5),
                       Text(
                         distance,
                         style: TextStyle(
@@ -713,7 +738,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: isSmallScreen ? 8 : 10),
                   Text(
                     title,
                     style: TextStyle(
@@ -724,7 +749,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: isSmallScreen ? 8 : 10),
                   Row(
                     children: [
                       Icon(
@@ -732,7 +757,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                         size: starSize,
                         color: const Color(0xFF7D848D),
                       ),
-                      const SizedBox(width: 5),
+                      SizedBox(width: isSmallScreen ? 4 : 5),
                       Text(
                         rating.toStringAsFixed(1),
                         style: TextStyle(

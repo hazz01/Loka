@@ -153,19 +153,24 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+    final isSmallScreen = screenWidth < 600;
 
     // Responsive scaling factors
-    final scale = screenWidth / 375; // Base width 375 (iPhone size)
+    final scale = isSmallScreen ? 0.85 : (screenWidth / 375).clamp(0.85, 1.1);
     final textScale = MediaQuery.of(context).textScaleFactor.clamp(0.8, 1.2);
 
     return Scaffold(
       backgroundColor: Color(0xFFF4F4F4),
       appBar: AppBar(
-        toolbarHeight: 70,
+        toolbarHeight: isSmallScreen ? 56 : 70,
         backgroundColor: const Color(0xFFF4F4F4),
         elevation: 0,
         leading: IconButton(
-          icon: Icon(LucideIcons.chevronLeft, color: Colors.black, size: 25),
+          icon: Icon(
+            LucideIcons.chevronLeft,
+            color: Colors.black,
+            size: isSmallScreen ? 22 : 25,
+          ),
           onPressed: () => context.go('/'),
         ),
         centerTitle: true,
@@ -173,7 +178,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
           "Details  ",
           style: TextStyle(
             color: Colors.black,
-            fontSize: 16,
+            fontSize: isSmallScreen ? 14 : 16,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -182,7 +187,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
             icon: Icon(
               isFavorite ? Icons.favorite : Icons.favorite_border,
               color: Colors.red,
-              size: 25,
+              size: isSmallScreen ? 22 : 25,
             ),
             onPressed: () {
               setState(() {
@@ -199,9 +204,9 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
             slivers: [
               // Content Section with horizontal margin
               SliverPadding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 30,
-                  vertical: 10,
+                padding: EdgeInsets.symmetric(
+                  horizontal: isSmallScreen ? 16 : 30,
+                  vertical: isSmallScreen ? 6 : 10,
                 ),
                 sliver: SliverToBoxAdapter(
                   child: Column(
@@ -209,10 +214,14 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                     children: [
                       // Image - Square/Rectangle shape
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(
+                          isSmallScreen ? 8 : 12,
+                        ),
                         child: Container(
                           width: double.infinity,
-                          height: screenHeight * 0.40,
+                          height: isSmallScreen
+                              ? screenHeight * 0.28
+                              : screenHeight * 0.40,
                           child: Image.network(
                             'https://abkistimewa.id/sekolah/assets/gallery/berita/42-20231102095419-13961295776543B81BC6EA9.jpeg',
                             fit: BoxFit.cover,
@@ -220,7 +229,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 18),
+                      SizedBox(height: isSmallScreen ? 12 : 18),
 
                       // Tabs (overview | maps | reviews)
                       Row(
@@ -245,7 +254,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                         ],
                       ),
 
-                      const SizedBox(height: 25),
+                      SizedBox(height: isSmallScreen ? 16 : 25),
 
                       // Title and Rating
                       Row(
@@ -282,7 +291,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 5),
+                      SizedBox(height: isSmallScreen ? 3 : 5),
                       // Location
                       Row(
                         children: [
@@ -303,7 +312,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                         ],
                       ),
 
-                      const SizedBox(height: 4),
+                      SizedBox(height: isSmallScreen ? 2 : 4),
 
                       // Time
                       Row(
@@ -325,7 +334,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                         ],
                       ),
 
-                      const SizedBox(height: 18),
+                      SizedBox(height: isSmallScreen ? 10 : 18),
 
                       // 360 View Button
                       GestureDetector(
@@ -333,13 +342,15 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                           '/detail/${widget.destinationId}/virtual-tour',
                         ),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 10,
+                          padding: EdgeInsets.symmetric(
+                            vertical: isSmallScreen ? 10 : 12,
+                            horizontal: isSmallScreen ? 8 : 10,
                           ),
                           decoration: BoxDecoration(
                             color: Color(0xFF539DF3),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(
+                              isSmallScreen ? 8 : 12,
+                            ),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -347,14 +358,20 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                             children: [
                               Image.asset(
                                 'assets/image/360_icon.png',
-                                width: (30 * scale).clamp(24.0, 36.0),
-                                height: (30 * scale).clamp(24.0, 36.0),
+                                width: (30 * scale).clamp(
+                                  isSmallScreen ? 20.0 : 24.0,
+                                  36.0,
+                                ),
+                                height: (30 * scale).clamp(
+                                  isSmallScreen ? 20.0 : 24.0,
+                                  36.0,
+                                ),
                                 color: Colors.white,
                               ),
                               Expanded(
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: isSmallScreen ? 6 : 8,
                                   ),
                                   child: Column(
                                     crossAxisAlignment:
@@ -388,13 +405,15 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                                 ),
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 10,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: isSmallScreen ? 6 : 8,
+                                  vertical: isSmallScreen ? 7 : 10,
                                 ),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(
+                                    isSmallScreen ? 6 : 8,
+                                  ),
                                 ),
                                 child: Text(
                                   'Try 360 View',
@@ -410,7 +429,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 28),
+                      SizedBox(height: isSmallScreen ? 18 : 28),
 
                       // About destination
                       Text(
@@ -421,7 +440,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                           color: Colors.black,
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: isSmallScreen ? 12 : 20),
                       Text(
                         'Kampoeng Heritage Kajoetangan is a historical neighborhood in Malang, renowned for its well-preserved colonial-era architecture. This area offers a glimpse into the past with its vintage houses, old-fashioned shops, and traditional markets, providing visitors with a unique showcase of Indonesia\'s colonial history and local culture.\n\nIn addition to its historical charm, Kampoeng Heritage Kajoetangan is a vibrant cultural hub. It hosts various cultural festivals, art exhibitions, and traditional performances, showcasing local artistry. The neighborhood\'s quaint cafes and eateries add to its nostalgic ambiance, making it a beloved destination for history enthusiasts and culture lovers alike.',
                         style: TextStyle(
@@ -432,7 +451,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 35),
+                      SizedBox(height: isSmallScreen ? 20 : 35),
 
                       // Ticket Price Section
                       Row(
@@ -470,10 +489,12 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                       // Ticket Options - Dynamic based on selected type
                       if (selectedTicketType == 'Weekday')
                         Container(
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(
+                              isSmallScreen ? 8 : 12,
+                            ),
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -530,10 +551,12 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                         )
                       else
                         Container(
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
                           decoration: BoxDecoration(
                             color: Colors.grey[100],
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(
+                              isSmallScreen ? 8 : 12,
+                            ),
                             border: Border.all(
                               color: Colors.orange.withOpacity(0.3),
                               width: 1,
@@ -544,9 +567,9 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                               Icon(
                                 Icons.info_outline,
                                 color: Colors.orange,
-                                size: 24,
+                                size: isSmallScreen ? 18 : 24,
                               ),
-                              const SizedBox(width: 12),
+                              SizedBox(width: isSmallScreen ? 8 : 12),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -574,7 +597,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                             ],
                           ),
                         ),
-                      const SizedBox(height: 35),
+                      SizedBox(height: isSmallScreen ? 20 : 35),
                       // Available Tour
                       Text(
                         'Available Tour',
@@ -598,10 +621,12 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                           });
                         },
                         child: Container(
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(
+                              isSmallScreen ? 8 : 12,
+                            ),
                             border: selectedTour == 'Highlight Tour'
                                 ? Border.all(color: Color(0xFF539DF3), width: 2)
                                 : null,
@@ -613,8 +638,8 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                               Row(
                                 children: [
                                   Container(
-                                    width: 24,
-                                    height: 24,
+                                    width: isSmallScreen ? 18 : 24,
+                                    height: isSmallScreen ? 18 : 24,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       border: Border.all(
@@ -627,8 +652,8 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                                     child: selectedTour == 'Highlight Tour'
                                         ? Center(
                                             child: Container(
-                                              width: 12,
-                                              height: 12,
+                                              width: isSmallScreen ? 8 : 12,
+                                              height: isSmallScreen ? 8 : 12,
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
                                                 color: Color(0xFF539DF3),
@@ -637,7 +662,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                                           )
                                         : null,
                                   ),
-                                  const SizedBox(width: 12),
+                                  SizedBox(width: isSmallScreen ? 8 : 12),
                                   Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -651,7 +676,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                                           color: Color(0xFFB4B4B4),
                                         ),
                                       ),
-                                      const SizedBox(height: 5),
+                                      SizedBox(height: isSmallScreen ? 3 : 5),
                                       const Text(
                                         '5 Destination',
                                         style: TextStyle(
@@ -692,7 +717,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 15),
+                      SizedBox(height: isSmallScreen ? 10 : 15),
 
                       // Tour Option 2
                       GestureDetector(
@@ -707,10 +732,12 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                           });
                         },
                         child: Container(
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(
+                              isSmallScreen ? 8 : 12,
+                            ),
                             border: selectedTour == 'Family Fun Tour'
                                 ? Border.all(color: Color(0xFF539DF3), width: 2)
                                 : null,
@@ -722,8 +749,8 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                               Row(
                                 children: [
                                   Container(
-                                    width: 24,
-                                    height: 24,
+                                    width: isSmallScreen ? 18 : 24,
+                                    height: isSmallScreen ? 18 : 24,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       border: Border.all(
@@ -736,8 +763,8 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                                     child: selectedTour == 'Family Fun Tour'
                                         ? Center(
                                             child: Container(
-                                              width: 12,
-                                              height: 12,
+                                              width: isSmallScreen ? 8 : 12,
+                                              height: isSmallScreen ? 8 : 12,
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
                                                 color: Color(0xFF539DF3),
@@ -746,7 +773,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                                           )
                                         : null,
                                   ),
-                                  const SizedBox(width: 12),
+                                  SizedBox(width: isSmallScreen ? 8 : 12),
                                   Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -759,7 +786,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                                           color: Color(0xFFB4B4B4),
                                         ),
                                       ),
-                                      const SizedBox(height: 5),
+                                      SizedBox(height: isSmallScreen ? 3 : 5),
                                       const Text(
                                         '5 Destination',
                                         style: TextStyle(
@@ -800,7 +827,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 35),
+                      SizedBox(height: isSmallScreen ? 20 : 35),
 
                       // Map Section
                       Text(
@@ -811,7 +838,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                           color: Color(0xFF131313),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: isSmallScreen ? 12 : 20),
                       GestureDetector(
                         onTap: () {
                           setState(() {
@@ -825,8 +852,10 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                             children: [
                               // Mapbox Preview Map
                               Container(
-                                height:
-                                    screenHeight * 0.25, // 25% of screen height
+                                height: isSmallScreen
+                                    ? screenHeight * 0.18
+                                    : screenHeight *
+                                          0.25, // 25% of screen height
                                 width: double.infinity,
                                 child: MapWidget(
                                   cameraOptions: CameraOptions(
@@ -850,16 +879,18 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                               ),
                               // Overlay to indicate it's tappable
                               Positioned(
-                                bottom: 12,
-                                right: 12,
+                                bottom: isSmallScreen ? 8 : 12,
+                                right: isSmallScreen ? 8 : 12,
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: isSmallScreen ? 8 : 12,
+                                    vertical: isSmallScreen ? 4 : 6,
                                   ),
                                   decoration: BoxDecoration(
                                     color: Colors.black.withOpacity(0.7),
-                                    borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(
+                                      isSmallScreen ? 14 : 20,
+                                    ),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -867,14 +898,14 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                                       Icon(
                                         Icons.map,
                                         color: Colors.white,
-                                        size: 16,
+                                        size: isSmallScreen ? 13 : 16,
                                       ),
-                                      const SizedBox(width: 6),
+                                      SizedBox(width: isSmallScreen ? 4 : 6),
                                       Text(
                                         'View on Map',
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 12,
+                                          fontSize: isSmallScreen ? 10 : 12,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -887,7 +918,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 35),
+                      SizedBox(height: isSmallScreen ? 20 : 35),
 
                       // Activities and Attractions
                       Text(
@@ -898,7 +929,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                           color: Color(0xFF131313),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: isSmallScreen ? 12 : 20),
                       _buildBulletPoint(
                         'Explore the rich history of Malang',
                         scale,
@@ -927,11 +958,12 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
       bottomNavigationBar: LayoutBuilder(
         builder: (context, constraints) {
           final bottomScale = constraints.maxWidth / 375;
+          final isSmallBottom = constraints.maxWidth < 600;
           return Container(
             decoration: BoxDecoration(color: Colors.white),
             child: Container(
-              height: 50,
-              margin: const EdgeInsets.all(30),
+              height: isSmallBottom ? 44 : 50,
+              margin: EdgeInsets.all(isSmallBottom ? 16 : 30),
               decoration: BoxDecoration(color: Colors.transparent),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -950,7 +982,10 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                                 ? "IDR ${totalPrice.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}"
                                 : "IDR 0",
                             style: TextStyle(
-                              fontSize: (16 * bottomScale).clamp(14.0, 18.0),
+                              fontSize: (16 * bottomScale).clamp(
+                                isSmallBottom ? 12.0 : 14.0,
+                                18.0,
+                              ),
                               fontWeight: FontWeight.w500,
                               color: Colors.black,
                             ),
@@ -959,7 +994,10 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                         Text(
                           selectedTour != null ? "Ticket + Tour" : "Per person",
                           style: TextStyle(
-                            fontSize: (12 * bottomScale).clamp(10.0, 14.0),
+                            fontSize: (12 * bottomScale).clamp(
+                              isSmallBottom ? 9.0 : 10.0,
+                              14.0,
+                            ),
                             fontWeight: FontWeight.normal,
                             color: Color(0xFF797979),
                           ),
@@ -983,12 +1021,14 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF539DF3),
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isSmallBottom ? 10 : 16,
+                            vertical: isSmallBottom ? 8 : 12,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(
+                              isSmallBottom ? 8 : 12,
+                            ),
                           ),
                           elevation: 0,
                           disabledBackgroundColor: const Color(0xFFE5E7EB),
@@ -998,7 +1038,10 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                           child: Text(
                             "Booking Ticket",
                             style: TextStyle(
-                              fontSize: (16 * bottomScale).clamp(14.0, 18.0),
+                              fontSize: (16 * bottomScale).clamp(
+                                isSmallBottom ? 12.0 : 14.0,
+                                18.0,
+                              ),
                               fontWeight: FontWeight.w600,
                               color:
                                   (selectedTicketType == 'Weekday' &&
