@@ -92,46 +92,58 @@ class _TripAIPlannerPageState extends State<TripAIPlannerPage>
     final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 768;
     final isLargeScreen = screenWidth > 1024;
-    final isSmallScreen = screenWidth < 375;
+    final isSmallScreen = screenWidth < 600;
+
+    // Responsive sizing
+    final horizontalPadding = isSmallScreen ? 16.0 : 30.0;
+    final verticalPadding = isSmallScreen ? 16.0 : 20.0;
+    final titleFontSize = isTablet ? 24.0 : (isSmallScreen ? 18.0 : 20.0);
+    final appBarTitleSize = isSmallScreen ? 15.0 : 16.0;
+    final iconSize = isSmallScreen ? 22.0 : 25.0;
+    final buttonTextSize = isSmallScreen ? 16.0 : 20.0;
+    final bottomMargin = isSmallScreen ? 20.0 : 30.0;
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         toolbarHeight: 70,
         backgroundColor: Colors.white,
-        title: const Text(
+        title: Text(
           'Trip AI Planner',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: appBarTitleSize,
             color: Colors.black,
             fontWeight: FontWeight.w500,
           ),
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             LucideIcons.chevronLeft,
             color: Colors.black,
-            size: 25,
+            size: iconSize,
           ),
           onPressed: () => context.go('/'),
         ),
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+          padding: EdgeInsets.symmetric(
+            horizontal: horizontalPadding,
+            vertical: verticalPadding,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 "Choose your trip category",
                 style: TextStyle(
-                  fontSize: isTablet ? 24 : 20,
+                  fontSize: titleFontSize,
                   fontWeight: FontWeight.w500,
                   color: Colors.black,
                 ),
               ),
-              const SizedBox(height: 25),
+              SizedBox(height: isSmallScreen ? 20 : 25),
               Expanded(
                 child: Column(
                   children: [
@@ -148,9 +160,10 @@ class _TripAIPlannerPageState extends State<TripAIPlannerPage>
                               category: category,
                               isSelected: isSelected,
                               isTablet: isTablet,
+                              isSmallScreen: isSmallScreen,
                             ),
                             if (index < categories.length - 1)
-                              const SizedBox(height: 15),
+                              SizedBox(height: isSmallScreen ? 12 : 15),
                           ];
                         })
                         .expand((widgets) => widgets),
@@ -162,7 +175,7 @@ class _TripAIPlannerPageState extends State<TripAIPlannerPage>
         ),
       ),
       bottomNavigationBar: Container(
-        margin: const EdgeInsets.all(30),
+        margin: EdgeInsets.all(bottomMargin),
         child: AnimatedBuilder(
           animation: _buttonController,
           builder: (context, child) {
@@ -175,7 +188,9 @@ class _TripAIPlannerPageState extends State<TripAIPlannerPage>
                 style: ElevatedButton.styleFrom(
                   backgroundColor: _buttonColorAnimation.value,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(
+                    vertical: isSmallScreen ? 14 : 16,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -191,9 +206,9 @@ class _TripAIPlannerPageState extends State<TripAIPlannerPage>
                         ? Colors.white
                         : const Color(0xFF6B7280),
                   ),
-                  child: const Text(
+                  child: Text(
                     "Next Process",
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: buttonTextSize),
                   ),
                 ),
               ),
@@ -208,8 +223,12 @@ class _TripAIPlannerPageState extends State<TripAIPlannerPage>
     required CategoryData category,
     required bool isSelected,
     required bool isTablet,
+    required bool isSmallScreen,
   }) {
     final flex = isSelected ? 5 : 3;
+    final cardPadding = isSmallScreen
+        ? (isSelected ? 18.0 : 12.0)
+        : (isSelected ? 24.0 : 16.0);
 
     return Expanded(
       flex: flex,
@@ -243,19 +262,26 @@ class _TripAIPlannerPageState extends State<TripAIPlannerPage>
                   ? Border.all(color: Colors.white.withOpacity(0.3), width: 2)
                   : null,
             ),
-            padding: EdgeInsets.all(isSelected ? 24 : 16),
+            padding: EdgeInsets.all(cardPadding),
             child: Column(
               mainAxisAlignment: isSelected
                   ? MainAxisAlignment.spaceBetween
                   : MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (isSelected) const SizedBox(height: 20) else const Spacer(),
+                if (isSelected)
+                  SizedBox(height: isSmallScreen ? 12 : 20)
+                else
+                  const Spacer(),
                 AnimatedDefaultTextStyle(
                   duration: const Duration(milliseconds: 400),
                   curve: Curves.easeInOutCubic,
                   style: TextStyle(
-                    fontSize: _getTitleFontSize(isSelected, isTablet),
+                    fontSize: _getTitleFontSize(
+                      isSelected,
+                      isTablet,
+                      isSmallScreen,
+                    ),
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                     letterSpacing: isSelected ? 0.5 : 0,
@@ -263,12 +289,22 @@ class _TripAIPlannerPageState extends State<TripAIPlannerPage>
                   child: Text(category.title, textAlign: TextAlign.center),
                 ),
                 if (isSelected) ...[
-                  const SizedBox(height: 12),
-                  _buildTagsRow(category.tags, isTablet, isSelected),
-                  const SizedBox(height: 12),
+                  SizedBox(height: isSmallScreen ? 8 : 12),
+                  _buildTagsRow(
+                    category.tags,
+                    isTablet,
+                    isSelected,
+                    isSmallScreen,
+                  ),
+                  SizedBox(height: isSmallScreen ? 8 : 12),
                 ] else ...[
-                  const SizedBox(height: 12),
-                  _buildTagsRow(category.tags, isTablet, isSelected),
+                  SizedBox(height: isSmallScreen ? 8 : 12),
+                  _buildTagsRow(
+                    category.tags,
+                    isTablet,
+                    isSelected,
+                    isSmallScreen,
+                  ),
                   const Spacer(),
                 ],
               ],
@@ -279,11 +315,13 @@ class _TripAIPlannerPageState extends State<TripAIPlannerPage>
     );
   }
 
-  double _getTitleFontSize(bool isSelected, bool isTablet) {
+  double _getTitleFontSize(bool isSelected, bool isTablet, bool isSmallScreen) {
     if (isSelected) {
-      return isTablet ? 15 : 35;
+      if (isTablet) return 15;
+      return isSmallScreen ? 28 : 35;
     } else {
-      return isTablet ? 15 : 25;
+      if (isTablet) return 15;
+      return isSmallScreen ? 20 : 25;
     }
   }
 
@@ -291,6 +329,7 @@ class _TripAIPlannerPageState extends State<TripAIPlannerPage>
     List<String> tags,
     bool isTablet, [
     bool isSelected = false,
+    bool isSmallScreen = false,
   ]) {
     final displayTags = tags;
 
@@ -307,8 +346,8 @@ class _TripAIPlannerPageState extends State<TripAIPlannerPage>
             scale: scale,
             child: Wrap(
               alignment: WrapAlignment.center,
-              spacing: 10,
-              runSpacing: 8,
+              spacing: isSmallScreen ? 6 : 10,
+              runSpacing: isSmallScreen ? 6 : 8,
               children: displayTags.asMap().entries.map((entry) {
                 final index = entry.key;
                 final tag = entry.value;
@@ -322,9 +361,9 @@ class _TripAIPlannerPageState extends State<TripAIPlannerPage>
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeInOut,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 4,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isSmallScreen ? 5 : 6,
+                          vertical: isSmallScreen ? 3 : 4,
                         ),
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -333,7 +372,7 @@ class _TripAIPlannerPageState extends State<TripAIPlannerPage>
                         child: Text(
                           tag,
                           style: TextStyle(
-                            fontSize: 10,
+                            fontSize: isSmallScreen ? 9 : 10,
                             color: const Color(0xFF3B82F6),
                             fontWeight: FontWeight.bold,
                           ),
