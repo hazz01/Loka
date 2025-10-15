@@ -723,7 +723,7 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                       const SizedBox(height: 9),
                       TextFormField(
                         decoration: InputDecoration(
-                          hintText: "1",
+                          hintText: "People + 1",
                           hintStyle: TextStyle(
                             fontSize: inputFontSize,
                             color: Colors.black54,
