@@ -18,7 +18,7 @@ class TripTimelineCard extends StatelessWidget {
 
     // Responsive sizes
     final timelineDotSize = screenWidth < 360 ? 12.0 : 15.0;
-    final timelineLineHeight = screenWidth < 360 ? 180.0 : 200.0;
+    final timelineLineHeight = screenWidth < 360 ? 180.0 : 280.0;
     final timeFontSize = screenWidth < 360 ? 11.0 : 12.0;
     final nameFontSize = screenWidth < 360 ? 16.0 : 18.0;
     final durationFontSize = screenWidth < 360 ? 11.0 : 12.0;
@@ -147,8 +147,6 @@ class TripTimelineCard extends StatelessWidget {
                     SizedBox(height: 8),
                     Text(
                       destination.description,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: descriptionFontSize,
                         fontWeight: FontWeight.w400,
@@ -183,7 +181,7 @@ class TripTimelineCard extends StatelessWidget {
                         padding: EdgeInsets.all(6),
                         decoration: BoxDecoration(
                           color: const Color(0xFFEBF5FF),
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,

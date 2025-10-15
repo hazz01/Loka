@@ -10,7 +10,7 @@ import '../widgets/trip_timeline_card.dart';
 
 class TimelineTripPage extends StatefulWidget {
   final TripResponse? tripResponse;
-  
+
   const TimelineTripPage({super.key, this.tripResponse});
 
   @override
@@ -62,7 +62,7 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
   @override
   void initState() {
     super.initState();
-    
+
     // Check if we have API response data
     if (widget.tripResponse != null) {
       // Use API data
@@ -75,14 +75,18 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
 
   void _loadApiData() {
     final response = widget.tripResponse!;
-    
+
     // Convert API response to DayTrip model
     tripDays = response.days.map((daySchedule) {
       // Calculate date for this day
-      DateTime dayDate = DateTime.now().add(Duration(days: daySchedule.dayNumber - 1));
-      
+      DateTime dayDate = DateTime.now().add(
+        Duration(days: daySchedule.dayNumber - 1),
+      );
+
       // Convert activities to Activity model with dummy UI data
-      List<Activity> activities = daySchedule.activities.map((activitySchedule) {
+      List<Activity> activities = daySchedule.activities.map((
+        activitySchedule,
+      ) {
         return Activity(
           activityType: activitySchedule.activityType,
           destinationId: activitySchedule.destinationId,
@@ -93,24 +97,37 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
           // Dummy UI data
           imagePath: 'assets/image/kayutangan.png',
           price: 'Free',
-          address: activitySchedule.destinationName != null 
-              ? '${activitySchedule.destinationName} Area' 
+          address: activitySchedule.destinationName != null
+              ? '${activitySchedule.destinationName} Area'
               : null,
         );
       }).toList();
-      
+
       return DayTrip(
         dayNumber: daySchedule.dayNumber,
         activities: activities,
         date: dayDate,
       );
     }).toList();
-    
-    // Extract city name from response (you might need to adjust this)
-    cityName = widget.tripResponse!.originalRequest['targetCities']?[0] ?? 'Unknown City';
+
+    // Extract city name from originalRequest
+    // Check trip type to determine which field to use
+    final tripType = response.originalRequest['tripType'];
+    if (tripType != null && tripType is Map) {
+      // For greater_city and city types, use the name from tripType
+      cityName = tripType['name'] ?? 'Unknown City';
+    } else if (response.originalRequest['targetCities'] != null &&
+        response.originalRequest['targetCities'] is List &&
+        (response.originalRequest['targetCities'] as List).isNotEmpty) {
+      // Fallback: use first city from targetCities array
+      cityName = response.originalRequest['targetCities'][0] ?? 'Unknown City';
+    } else {
+      cityName = 'Unknown City';
+    }
+
     tripSummary = response.summary;
     totalCost = response.totalEstimatedCost;
-    
+
     // Initialize with first day
     if (tripDays.isNotEmpty) {
       selectedDate = tripDays[0].date!;
@@ -123,7 +140,7 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
     cityName = "Malang";
     tripSummary = "A wonderful trip to Malang";
     totalCost = 500000;
-    
+
     // Initialize with first day
     selectedDate = tripDays[0].date!;
     selectedDay = 1;
@@ -159,15 +176,22 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
   Widget build(BuildContext context) {
     final currentTrip = currentDayTrip;
     final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
 
-    // Responsive font sizes
-    final titleFontSize = screenWidth < 360 ? 14.0 : 16.0;
-    final cityFontSize = screenWidth < 360 ? 22.0 : 26.0;
-    final subtitleFontSize = screenWidth < 360 ? 12.0 : 14.0;
-    final dayTitleFontSize = screenWidth < 360 ? 16.0 : 18.0;
-    final buttonFontSize = screenWidth < 360 ? 14.0 : 16.0;
-    final iconSize = screenWidth < 360 ? 22.0 : 25.0;
-    final popButtonSize = screenWidth < 360 ? 10.0 : 12.0;
+    // Responsive sizing
+    final horizontalPadding = isSmallScreen ? 16.0 : 30.0;
+    final verticalPadding = isSmallScreen ? 20.0 : 30.0;
+    final titleFontSize = isSmallScreen ? 15.0 : 16.0;
+    final cityFontSize = isSmallScreen ? 22.0 : 26.0;
+    final subtitleFontSize = isSmallScreen ? 12.0 : 14.0;
+    final dayTitleFontSize = isSmallScreen ? 16.0 : 18.0;
+    final buttonFontSize = isSmallScreen ? 14.0 : 16.0;
+    final iconSize = isSmallScreen ? 22.0 : 25.0;
+    final popButtonSize = isSmallScreen ? 11.0 : 14.0;
+    final summaryFontSize = isSmallScreen ? 11.0 : 12.0;
+    final summaryTitleFontSize = isSmallScreen ? 13.0 : 14.0;
+    final summaryIconSize = isSmallScreen ? 14.0 : 16.0;
+    final summaryPadding = isSmallScreen ? 10.0 : 12.0;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -210,7 +234,7 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
 
             // Trip Info
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -223,7 +247,7 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
                         .toList(),
                     onDateSelected: _onDateSelected,
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: isSmallScreen ? 16 : 20),
                   Text(
                     cityName,
                     style: TextStyle(
@@ -232,7 +256,7 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
                       color: Colors.black,
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  SizedBox(height: isSmallScreen ? 4 : 5),
                   Text(
                     "${tripDays.length} Day Trip",
                     style: TextStyle(
@@ -241,61 +265,79 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
                       fontSize: subtitleFontSize,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  
+                  SizedBox(height: isSmallScreen ? 8 : 10),
+
                   // Trip Summary (from API)
                   if (widget.tripResponse != null) ...[
                     Container(
-                      padding: EdgeInsets.all(12),
+                      padding: EdgeInsets.all(summaryPadding),
                       decoration: BoxDecoration(
-                        color: Color(0xFFF5F5F5),
-                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFFB4BCC9).withOpacity(0.2),
+                            blurRadius: 20,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Icon(
-                                LucideIcons.info,
-                                size: 16,
-                                color: Color(0xFF539DF3),
-                              ),
-                              SizedBox(width: 8),
-                              Text(
-                                "Trip Summary",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 13,
-                                  color: Colors.black,
+                          Container(
+                            padding: EdgeInsets.all(isSmallScreen ? 5 : 6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEBF5FF),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  LucideIcons.info,
+                                  size: summaryIconSize,
+                                  color: Color(0xFF539DF3),
                                 ),
-                              ),
-                            ],
+                                SizedBox(width: isSmallScreen ? 6 : 8),
+                                Text(
+                                  "Trip Summary",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: summaryTitleFontSize,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          SizedBox(height: 8),
+                          SizedBox(height: isSmallScreen ? 10 : 12),
                           Text(
                             tripSummary,
                             style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black87,
+                              fontSize: summaryFontSize,
+                              color: Colors.black54,
                               height: 1.5,
                             ),
                           ),
-                          SizedBox(height: 8),
+                          SizedBox(height: isSmallScreen ? 10 : 12),
                           Row(
                             children: [
                               Icon(
                                 LucideIcons.wallet,
-                                size: 14,
+                                size: summaryIconSize - 2,
                                 color: Color(0xFF539DF3),
                               ),
-                              SizedBox(width: 6),
-                              Text(
-                                "Estimated Budget: IDR ${totalCost.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF539DF3),
+                              SizedBox(width: isSmallScreen ? 5 : 6),
+                              Flexible(
+                                child: Text(
+                                  "Estimated Budget: IDR ${totalCost.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}",
+                                  style: TextStyle(
+                                    fontSize: summaryFontSize,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF539DF3),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
                                 ),
                               ),
                             ],
@@ -303,10 +345,10 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 15),
+                    SizedBox(height: isSmallScreen ? 12 : 15),
                   ],
-                  
-                  const SizedBox(height: 22),
+
+                  SizedBox(height: isSmallScreen ? 18 : 22),
 
                   // Day Title
                   Text(
@@ -317,7 +359,7 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
                       color: Colors.black,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: isSmallScreen ? 18 : 24),
 
                   // Timeline Cards
                   ...currentTrip.destinations.asMap().entries.map((entry) {
@@ -333,12 +375,15 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: isSmallScreen ? 16 : 20),
           ],
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+        padding: EdgeInsets.symmetric(
+          horizontal: horizontalPadding,
+          vertical: verticalPadding,
+        ),
         child: Row(
           children: [
             Expanded(
@@ -430,8 +475,8 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF539DF3),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isSmallScreen ? 12 : 16,
                     vertical: 12,
                   ),
                   shape: RoundedRectangleBorder(
@@ -449,7 +494,7 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
                 ),
               ),
             ),
-            const SizedBox(width: 15),
+            SizedBox(width: isSmallScreen ? 10 : 15),
             Expanded(
               child: OutlinedButton(
                 onPressed: () {
@@ -542,8 +587,8 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
                   );
                 },
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isSmallScreen ? 12 : 16,
                     vertical: 12,
                   ),
                   shape: RoundedRectangleBorder(
