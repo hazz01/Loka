@@ -40,8 +40,7 @@ dependencies:
   
   # Pagination
   infinite_scroll_pagination: ^4.0.0
-  
-  # State Management
+    # State Management
   flutter_riverpod: ^2.5.1
   lucide_icons_flutter: ^3.1.4
   intl: ^0.20.2
@@ -49,6 +48,7 @@ dependencies:
   toastification: ^3.0.3
   mapbox_maps_flutter: ^2.11.0
   url_launcher: ^6.3.1
+  http: ^1.2.2
 
 dev_dependencies:
   flutter_test:

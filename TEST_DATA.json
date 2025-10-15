@@ -1,0 +1,109 @@
+// Test data untuk manual testing API Integration
+// Copy paste body ini ke tools seperti Postman atau Thunder Client
+
+// Example 1: 1-day trip to Batu (from requirement)
+{
+  "userId": "user123",
+  "tripType": {
+    "type": "greater_city",
+    "name": "Batu"
+  },
+  "targetCities": [
+    "Batu"
+  ],
+  "budget": 500000,
+  "peopleCount": 3,
+  "tripDuration": 1,
+  "tripStart": {
+    "date": "2025-10-20",
+    "daypart": "morning"
+  },
+  "tripEnd": {
+    "date": "2025-10-21",
+    "daypart": "evening"
+  },
+  "categories": [
+    "family",
+    "nature"
+  ],
+  "preferences": {
+    "transportMode": "car",
+    "restPreference": "moderate",
+    "mealPreference": "local food",
+    "pace": "balanced"
+  }
+}
+
+// Example 2: 3-day trip to Jakarta
+{
+  "userId": "user123",
+  "tripType": {
+    "type": "greater_city",
+    "name": "Jakarta"
+  },
+  "targetCities": [
+    "Jakarta"
+  ],
+  "budget": 2000000,
+  "peopleCount": 2,
+  "tripDuration": 3,
+  "tripStart": {
+    "date": "2025-11-01",
+    "daypart": "morning"
+  },
+  "tripEnd": {
+    "date": "2025-11-03",
+    "daypart": "evening"
+  },
+  "categories": [
+    "culinary",
+    "history",
+    "art_&_culture"
+  ],
+  "preferences": {
+    "transportMode": "car",
+    "restPreference": "moderate",
+    "mealPreference": "local food",
+    "pace": "balanced"
+  }
+}
+
+// Example 3: Weekend trip to Bogor
+{
+  "userId": "user123",
+  "tripType": {
+    "type": "greater_city",
+    "name": "Bogor"
+  },
+  "targetCities": [
+    "Bogor"
+  ],
+  "budget": 1000000,
+  "peopleCount": 4,
+  "tripDuration": 2,
+  "tripStart": {
+    "date": "2025-10-25",
+    "daypart": "morning"
+  },
+  "tripEnd": {
+    "date": "2025-10-26",
+    "daypart": "evening"
+  },
+  "categories": [
+    "nature",
+    "family"
+  ],
+  "preferences": {
+    "transportMode": "car",
+    "restPreference": "moderate",
+    "mealPreference": "local food",
+    "pace": "balanced"
+  }
+}
+
+// Notes:
+// - Endpoint: POST http://automation.brohaz.dev/webhook/NewTrip
+// - Content-Type: application/json
+// - Body harus dalam array format: [{ ...request data... }]
+// - Daypart options: "morning", "noon", "evening", "night"
+// - tripDuration dihitung dari selisih date start dan end

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:intl/intl.dart';
+import '../services/trip_service.dart';
+import '../models/trip_request_model.dart';
 
 class KategoriGreaterCityPage extends StatefulWidget {
   const KategoriGreaterCityPage({super.key});
@@ -19,6 +21,7 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
     'Depok',
     'Tangerang',
     'Bekasi',
+    'Malang'
   ];
   final List<String> timesOfDay = ['Morning', 'Noon', 'Evening', 'Night'];
   final Map<String, bool> categories = {
@@ -48,6 +51,7 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
   String? endTime;
   double? cost;
   int people = 1;
+  bool isLoading = false;
 
   // --- Form validation ---
   bool get isFormValid {
@@ -61,7 +65,6 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
         people > 0 &&
         categories.values.any((selected) => selected);
   }
-
   // --- Date picker helper ---
   Future<void> pickDate({required bool isStart}) async {
     final selected = await showDatePicker(
@@ -69,14 +72,163 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
       initialDate: DateTime.now(),
       firstDate: DateTime(2023),
       lastDate: DateTime(2030),
-    );
-    if (selected != null) {
+    );    if (selected != null) {
       setState(() {
-        if (isStart)
+        if (isStart) {
           startDate = selected;
-        else
+        } else {
           endDate = selected;
+        }
       });
+    }
+  }
+
+  // --- Map time of day to API format ---
+  String mapTimeOfDay(String timeOfDay) {
+    switch (timeOfDay.toLowerCase()) {
+      case 'morning':
+        return 'morning';
+      case 'noon':
+        return 'noon';
+      case 'evening':
+        return 'evening';
+      case 'night':
+        return 'night';
+      default:
+        return 'morning';
+    }
+  }
+
+  // --- Get selected categories ---
+  List<String> getSelectedCategories() {
+    List<String> selected = [];
+    categories.forEach((key, value) {
+      if (value) {
+        // Map frontend category to API format (lowercase)
+        String apiCategory = key.toLowerCase().replaceAll(' & ', '_').replaceAll(' ', '_');
+        if (apiCategory == 'all') {
+          apiCategory = 'general';
+        } else if (apiCategory == 'natural') {
+          apiCategory = 'nature';
+        }
+        selected.add(apiCategory);
+      }
+    });
+    return selected;
+  }
+
+  // --- Submit trip plan ---
+  Future<void> submitTripPlan() async {
+    if (!isFormValid) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      // Calculate trip duration
+      final duration = endDate!.difference(startDate!).inDays + 1;
+
+      // Create trip request
+      final request = TripRequest(
+        userId: "user123", // TODO: Replace with actual user ID from auth
+        tripType: TripType(
+          type: "greater_city",
+          name: selectedCity!,
+        ),
+        targetCities: [selectedCity!],
+        budget: cost!.toInt(),
+        peopleCount: people,
+        tripDuration: duration,
+        tripStart: TripDateTime(
+          date: DateFormat('yyyy-MM-dd').format(startDate!),
+          daypart: mapTimeOfDay(startTime!),
+        ),
+        tripEnd: TripDateTime(
+          date: DateFormat('yyyy-MM-dd').format(endDate!),
+          daypart: mapTimeOfDay(endTime!),
+        ),
+        categories: getSelectedCategories(),
+        preferences: TripPreferences(
+          transportMode: "car", // Dummy data - TODO: Add to form
+          restPreference: "moderate", // Dummy data - TODO: Add to form
+          mealPreference: "local food", // Dummy data - TODO: Add to form
+          pace: "balanced", // Dummy data - TODO: Add to form
+        ),
+      );      // Debug print (remove in production)
+      debugPrint('Sending request to API...');
+      debugPrint('City: $selectedCity');
+      debugPrint('Budget: $cost');
+      debugPrint('Duration: $duration days');
+
+      // Call API
+      final response = await TripService.createTrip(request);
+
+      // Debug print (remove in production)
+      debugPrint('Response received: ${response.tripPlanId}');
+
+      // Navigate to timeline with response data
+      if (mounted) {
+        context.go('/trip-ai-planner/timeline', extra: response);
+      }    } catch (e) {
+      // Debug print (remove in production)
+      debugPrint('Error creating trip: $e');
+
+      // Show error dialog with better message
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            title: Row(
+              children: [
+                Icon(Icons.error_outline, color: Colors.red),
+                SizedBox(width: 10),
+                Text('Error'),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Failed to create trip plan.'),
+                SizedBox(height: 10),
+                Text(
+                  'Details: ${e.toString()}',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Please check your internet connection and try again.',
+                  style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  // Navigate to timeline with dummy data as fallback
+                  context.go('/trip-ai-planner/timeline');
+                },
+                child: const Text('View Sample'),
+              ),
+            ],
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -590,9 +742,8 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                       fontWeight: FontWeight.w500,
                       color: Colors.black,
                     ),
-                  ),
-                  Text(
-                    "${selectedCity ?? 'Choose City'}",
+                  ),                  Text(
+                    selectedCity ?? 'Choose City',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.normal,
@@ -603,17 +754,14 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
               ),
             ),
             Expanded(
-              flex: 3,
-              child: SizedBox(
+              flex: 3,              child: SizedBox(
                 height: double.infinity,
                 child: ElevatedButton(
-                  onPressed: isFormValid
-                      ? () {
-                          context.go('/trip-ai-planner/loading');
-                        }
+                  onPressed: (isFormValid && !isLoading)
+                      ? submitTripPlan
                       : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isFormValid
+                    backgroundColor: (isFormValid && !isLoading)
                         ? const Color(0xFF539DF3)
                         : const Color(0xFFE5E7EB),
                     foregroundColor: Colors.white,
@@ -627,16 +775,25 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                     elevation: 0,
                     disabledBackgroundColor: const Color(0xFFE5E7EB),
                   ),
-                  child: Text(
-                    "Next Process",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: isFormValid
-                          ? Colors.white
-                          : const Color(0xFF6B7280),
-                    ),
-                  ),
+                  child: isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : Text(
+                          "Next Process",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: (isFormValid && !isLoading)
+                                ? Colors.white
+                                : const Color(0xFF6B7280),
+                          ),
+                        ),
                 ),
               ),
             ),

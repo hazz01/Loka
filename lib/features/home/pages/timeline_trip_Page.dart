@@ -1,16 +1,17 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
 import '../models/trip_destination_model.dart';
+import '../models/trip_response_model.dart';
 import '../widgets/day_tab_selector.dart';
 import '../widgets/calendar_widget.dart';
 import '../widgets/trip_timeline_card.dart';
 
 class TimelineTripPage extends StatefulWidget {
-  const TimelineTripPage({super.key});
+  final TripResponse? tripResponse;
+  
+  const TimelineTripPage({super.key, this.tripResponse});
 
   @override
   State<TimelineTripPage> createState() => _TimelineTripPageState();
@@ -51,13 +52,78 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
   }
 
   // Load dummy data
-  final List<DayTrip> tripDays = TripDummyData.getMalangTrip();
+  late List<DayTrip> tripDays;
   late DateTime selectedDate;
   late int selectedDay;
+  late String cityName;
+  late String tripSummary;
+  late int totalCost;
 
   @override
   void initState() {
     super.initState();
+    
+    // Check if we have API response data
+    if (widget.tripResponse != null) {
+      // Use API data
+      _loadApiData();
+    } else {
+      // Use dummy data as fallback
+      _loadDummyData();
+    }
+  }
+
+  void _loadApiData() {
+    final response = widget.tripResponse!;
+    
+    // Convert API response to DayTrip model
+    tripDays = response.days.map((daySchedule) {
+      // Calculate date for this day
+      DateTime dayDate = DateTime.now().add(Duration(days: daySchedule.dayNumber - 1));
+      
+      // Convert activities to Activity model with dummy UI data
+      List<Activity> activities = daySchedule.activities.map((activitySchedule) {
+        return Activity(
+          activityType: activitySchedule.activityType,
+          destinationId: activitySchedule.destinationId,
+          destinationName: activitySchedule.destinationName,
+          startTime: activitySchedule.startTime,
+          endTime: activitySchedule.endTime,
+          notes: activitySchedule.notes,
+          // Dummy UI data
+          imagePath: 'assets/image/kayutangan.png',
+          price: 'Free',
+          address: activitySchedule.destinationName != null 
+              ? '${activitySchedule.destinationName} Area' 
+              : null,
+        );
+      }).toList();
+      
+      return DayTrip(
+        dayNumber: daySchedule.dayNumber,
+        activities: activities,
+        date: dayDate,
+      );
+    }).toList();
+    
+    // Extract city name from response (you might need to adjust this)
+    cityName = widget.tripResponse!.originalRequest['targetCities']?[0] ?? 'Unknown City';
+    tripSummary = response.summary;
+    totalCost = response.totalEstimatedCost;
+    
+    // Initialize with first day
+    if (tripDays.isNotEmpty) {
+      selectedDate = tripDays[0].date!;
+      selectedDay = 1;
+    }
+  }
+
+  void _loadDummyData() {
+    tripDays = TripDummyData.getMalangTrip();
+    cityName = "Malang";
+    tripSummary = "A wonderful trip to Malang";
+    totalCost = 500000;
+    
     // Initialize with first day
     selectedDate = tripDays[0].date!;
     selectedDay = 1;
@@ -159,7 +225,7 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    "Malang",
+                    cityName,
                     style: TextStyle(
                       fontSize: cityFontSize,
                       fontWeight: FontWeight.w600,
@@ -175,6 +241,71 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
                       fontSize: subtitleFontSize,
                     ),
                   ),
+                  const SizedBox(height: 10),
+                  
+                  // Trip Summary (from API)
+                  if (widget.tripResponse != null) ...[
+                    Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFF5F5F5),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                LucideIcons.info,
+                                size: 16,
+                                color: Color(0xFF539DF3),
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                "Trip Summary",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            tripSummary,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black87,
+                              height: 1.5,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Icon(
+                                LucideIcons.wallet,
+                                size: 14,
+                                color: Color(0xFF539DF3),
+                              ),
+                              SizedBox(width: 6),
+                              Text(
+                                "Estimated Budget: IDR ${totalCost.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF539DF3),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                  ],
+                  
                   const SizedBox(height: 22),
 
                   // Day Title
