@@ -141,7 +141,8 @@ class AppRouter {
             path: 'loading',
             name: 'kategori-loading',
             builder: (context, state) => const LoadingScreen(),
-          ),          GoRoute(
+          ),
+          GoRoute(
             path: 'timeline',
             name: 'timeline-trip',
             builder: (context, state) {
@@ -164,14 +165,14 @@ class ScaffoldWithNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isTablet = screenWidth > 600;
-    final isLargeScreen = screenWidth > 900;
+    final isSmallScreen = screenWidth < 600;
+    final scale = isSmallScreen ? 0.85 : (screenWidth / 375).clamp(0.85, 1.1);
 
     // Responsive sizing
-    final navBarHeight = isTablet ? 110.0 : (isLargeScreen ? 120.0 : 105.0);
-    final iconPadding = isTablet ? 16.0 : (isLargeScreen ? 20.0 : 12.0);
-    final iconSize = isTablet ? 32.0 : (isLargeScreen ? 36.0 : 28.0);
-    final fontSize = isTablet ? 14.0 : (isLargeScreen ? 16.0 : 12.0);
+    final navBarHeight = isSmallScreen ? 80.0 : 90.0;
+    final iconPadding = isSmallScreen ? 10.0 : 14.0;
+    final iconSize = (24 * scale).clamp(22.0, 30.0);
+    final fontSize = (12 * scale).clamp(11.0, 14.0);
 
     return Scaffold(
       body: navigationShell,
@@ -198,25 +199,25 @@ class ScaffoldWithNavBar extends StatelessWidget {
                 icon: LucideIcons.house,
                 isActive: navigationShell.currentIndex == 0,
                 padding: iconPadding,
-                label: isLargeScreen ? 'Home' : '',
+                label: '',
               ),
               _buildNavBarItem(
                 icon: LucideIcons.search,
                 isActive: navigationShell.currentIndex == 1,
                 padding: iconPadding,
-                label: isLargeScreen ? 'Search' : '',
+                label: '',
               ),
               _buildNavBarItem(
                 icon: LucideIcons.bookmark,
                 isActive: navigationShell.currentIndex == 2,
                 padding: iconPadding,
-                label: isLargeScreen ? 'Saved' : '',
+                label: '',
               ),
               _buildNavBarItem(
                 icon: LucideIcons.user,
                 isActive: navigationShell.currentIndex == 3,
                 padding: iconPadding,
-                label: isLargeScreen ? 'Profile' : '',
+                label: '',
               ),
             ],
           ),
