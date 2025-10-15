@@ -21,7 +21,7 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
     'Depok',
     'Tangerang',
     'Bekasi',
-    'Malang'
+    'Malang',
   ];
   final List<String> timesOfDay = ['Morning', 'Noon', 'Evening', 'Night'];
   final Map<String, bool> categories = {
@@ -53,6 +53,31 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
   int people = 1;
   bool isLoading = false;
 
+  // Controller untuk cost input
+  final TextEditingController _costController = TextEditingController();
+
+  @override
+  void dispose() {
+    _costController.dispose();
+    super.dispose();
+  }
+
+  // Format number dengan pemisah ribuan (titik)
+  String formatCurrency(String value) {
+    if (value.isEmpty) return '';
+
+    // Hapus semua karakter non-digit
+    final number = value.replaceAll(RegExp(r'[^0-9]'), '');
+    if (number.isEmpty) return '';
+
+    // Parse ke integer
+    final intValue = int.parse(number);
+
+    // Format dengan pemisah ribuan
+    final formatter = NumberFormat('#,###', 'id_ID');
+    return formatter.format(intValue).replaceAll(',', '.');
+  }
+
   // --- Form validation ---
   bool get isFormValid {
     return selectedCity != null &&
@@ -65,6 +90,7 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
         people > 0 &&
         categories.values.any((selected) => selected);
   }
+
   // --- Date picker helper ---
   Future<void> pickDate({required bool isStart}) async {
     final selected = await showDatePicker(
@@ -72,7 +98,8 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
       initialDate: DateTime.now(),
       firstDate: DateTime(2023),
       lastDate: DateTime(2030),
-    );    if (selected != null) {
+    );
+    if (selected != null) {
       setState(() {
         if (isStart) {
           startDate = selected;
@@ -103,18 +130,62 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
   List<String> getSelectedCategories() {
     List<String> selected = [];
     categories.forEach((key, value) {
-      if (value) {
+      if (value && key != 'All') {
         // Map frontend category to API format (lowercase)
-        String apiCategory = key.toLowerCase().replaceAll(' & ', '_').replaceAll(' ', '_');
-        if (apiCategory == 'all') {
-          apiCategory = 'general';
-        } else if (apiCategory == 'natural') {
+        String apiCategory = key
+            .toLowerCase()
+            .replaceAll(' & ', '_')
+            .replaceAll(' ', '_');
+        if (apiCategory == 'natural') {
           apiCategory = 'nature';
         }
         selected.add(apiCategory);
       }
     });
     return selected;
+  }
+
+  // --- Handle "All" checkbox ---
+  void handleAllCheckbox(bool? value) {
+    setState(() {
+      if (value == true) {
+        // Check all categories
+        categories.forEach((key, _) {
+          categories[key] = true;
+        });
+      } else {
+        // Uncheck all categories
+        categories.forEach((key, _) {
+          categories[key] = false;
+        });
+      }
+    });
+  }
+
+  // --- Handle individual category checkbox ---
+  void handleCategoryCheckbox(String key, bool? value) {
+    setState(() {
+      if (key == 'All') {
+        handleAllCheckbox(value);
+      } else {
+        categories[key] = value!;
+        // If any category is unchecked, uncheck "All"
+        if (!value) {
+          categories['All'] = false;
+        } else {
+          // Check if all other categories are checked
+          bool allOthersChecked = true;
+          categories.forEach((k, v) {
+            if (k != 'All' && !v) {
+              allOthersChecked = false;
+            }
+          });
+          if (allOthersChecked) {
+            categories['All'] = true;
+          }
+        }
+      }
+    });
   }
 
   // --- Submit trip plan ---
@@ -132,10 +203,7 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
       // Create trip request
       final request = TripRequest(
         userId: "user123", // TODO: Replace with actual user ID from auth
-        tripType: TripType(
-          type: "greater_city",
-          name: selectedCity!,
-        ),
+        tripType: TripType(type: "greater_city", name: selectedCity!),
         targetCities: [selectedCity!],
         budget: cost!.toInt(),
         peopleCount: people,
@@ -155,7 +223,7 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
           mealPreference: "local food", // Dummy data - TODO: Add to form
           pace: "balanced", // Dummy data - TODO: Add to form
         ),
-      );      // Debug print (remove in production)
+      ); // Debug print (remove in production)
       debugPrint('Sending request to API...');
       debugPrint('City: $selectedCity');
       debugPrint('Budget: $cost');
@@ -170,7 +238,8 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
       // Navigate to timeline with response data
       if (mounted) {
         context.go('/trip-ai-planner/timeline', extra: response);
-      }    } catch (e) {
+      }
+    } catch (e) {
       // Debug print (remove in production)
       debugPrint('Error creating trip: $e');
 
@@ -235,16 +304,22 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('EEE, d MMM yyyy');
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    final horizontalPadding = isSmallScreen ? 16.0 : 30.0;
+    final titleFontSize = isSmallScreen ? 18.0 : 20.0;
+    final labelFontSize = isSmallScreen ? 13.0 : 14.0;
+    final inputFontSize = isSmallScreen ? 14.0 : 15.0;
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         toolbarHeight: 70,
         backgroundColor: Colors.white,
-        title: const Text(
+        title: Text(
           'Trip Planner AI Greater City',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: isSmallScreen ? 15.0 : 16.0,
             color: Colors.black,
             fontWeight: FontWeight.w600,
           ),
@@ -260,25 +335,28 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+        padding: EdgeInsets.symmetric(
+          horizontal: horizontalPadding,
+          vertical: 20,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               "Make your plan",
               style: TextStyle(
-                fontSize: 20,
+                fontSize: titleFontSize,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
             ),
-            const SizedBox(height: 25),
+            SizedBox(height: isSmallScreen ? 20 : 25),
 
             // === Greater City Destination ===
-            const Text(
+            Text(
               "Greater City Destinations",
               style: TextStyle(
-                fontSize: 14,
+                fontSize: labelFontSize,
                 fontWeight: FontWeight.w400,
                 color: Color(0xFF4d4d4d),
               ),
@@ -286,10 +364,10 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
             const SizedBox(height: 9),
             DropdownButtonFormField<String>(
               value: selectedCity,
-              hint: const Text(
+              hint: Text(
                 "Choose province",
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: inputFontSize,
                   color: Colors.black54,
                   fontWeight: FontWeight.w400,
                 ),
@@ -320,7 +398,7 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                   .toList(),
               onChanged: (val) => setState(() => selectedCity = val),
             ),
-            const SizedBox(height: 25),
+            SizedBox(height: isSmallScreen ? 20 : 25),
 
             // === Travel Dates ===
             Row(
@@ -329,10 +407,10 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         "Travel Dates",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: labelFontSize,
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF4d4d4d),
                         ),
@@ -347,7 +425,10 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                             horizontal: 12,
                           ),
                           decoration: BoxDecoration(
-                            border: Border.all(color: Color(0xFFB5B5B5)),
+                            border: Border.all(
+                              color: Color(0xFFB5B5B5),
+                              width: 0.5,
+                            ),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -358,8 +439,7 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                               color: startDate != null
                                   ? Colors.black
                                   : Colors.black54,
-
-                              fontSize: 15,
+                              fontSize: inputFontSize,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -373,10 +453,10 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         "Until",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: labelFontSize,
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF4d4d4d),
                         ),
@@ -402,7 +482,7 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                               color: endDate != null
                                   ? Colors.black
                                   : Colors.black54,
-                              fontSize: 15,
+                              fontSize: inputFontSize,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -413,7 +493,7 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 25),
+            SizedBox(height: isSmallScreen ? 20 : 25),
 
             // === Time Picker ===
             Row(
@@ -422,10 +502,10 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         "Start Time of Day",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: labelFontSize,
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF4d4d4d),
                         ),
@@ -433,10 +513,10 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                       const SizedBox(height: 9),
                       DropdownButtonFormField<String>(
                         value: startTime,
-                        hint: const Text(
+                        hint: Text(
                           "Choose time",
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: inputFontSize,
                             color: Colors.black54,
                             fontWeight: FontWeight.w400,
                           ),
@@ -484,10 +564,10 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         "End Time of Day",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: labelFontSize,
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF4d4d4d),
                         ),
@@ -495,10 +575,10 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                       const SizedBox(height: 9),
                       DropdownButtonFormField<String>(
                         value: endTime,
-                        hint: const Text(
+                        hint: Text(
                           "Choose time",
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: inputFontSize,
                             color: Colors.black54,
                             fontWeight: FontWeight.w400,
                           ),
@@ -553,24 +633,23 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         "Your Costs",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: labelFontSize,
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF4d4d4d),
                         ),
                       ),
                       const SizedBox(height: 9),
                       TextFormField(
+                        controller: _costController,
                         decoration: InputDecoration(
-                          hint: const Text(
-                            "IDR",
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.black54,
-                              fontWeight: FontWeight.w400,
-                            ),
+                          hintText: "IDR",
+                          hintStyle: TextStyle(
+                            fontSize: inputFontSize,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w400,
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -596,13 +675,33 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                         ),
                         keyboardType: TextInputType.number,
                         onChanged: (val) {
-                          setState(() {
-                            cost =
-                                double.tryParse(
-                                  val.replaceAll(RegExp(r'[^0-9]'), ''),
-                                ) ??
-                                0;
-                          });
+                          // Hapus semua karakter non-digit untuk mendapatkan nilai asli
+                          final cleanValue = val.replaceAll(
+                            RegExp(r'[^0-9]'),
+                            '',
+                          );
+
+                          if (cleanValue.isNotEmpty) {
+                            // Update nilai cost (untuk backend)
+                            setState(() {
+                              cost = double.tryParse(cleanValue) ?? 0;
+                            });
+
+                            // Format untuk tampilan
+                            final formattedValue = formatCurrency(cleanValue);
+
+                            // Update text field dengan format
+                            _costController.value = TextEditingValue(
+                              text: formattedValue,
+                              selection: TextSelection.collapsed(
+                                offset: formattedValue.length,
+                              ),
+                            );
+                          } else {
+                            setState(() {
+                              cost = 0;
+                            });
+                          }
                         },
                       ),
                     ],
@@ -613,10 +712,10 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         "Number of People",
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: isSmallScreen ? 11.0 : 12.0,
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF4d4d4d),
                         ),
@@ -624,13 +723,11 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                       const SizedBox(height: 9),
                       TextFormField(
                         decoration: InputDecoration(
-                          hint: const Text(
-                            "People +1",
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.black54,
-                              fontWeight: FontWeight.w400,
-                            ),
+                          hintText: "1",
+                          hintStyle: TextStyle(
+                            fontSize: inputFontSize,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w400,
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -666,18 +763,18 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 40),
+            SizedBox(height: isSmallScreen ? 30 : 40),
 
             // === Category Selection ===
-            const Text(
+            Text(
               "Choose your category",
               style: TextStyle(
-                fontSize: 20,
+                fontSize: titleFontSize,
                 fontWeight: FontWeight.w500,
                 color: Colors.black,
               ),
             ),
-            const SizedBox(height: 25),
+            SizedBox(height: isSmallScreen ? 20 : 25),
 
             ...categories.keys.map((key) {
               final selected = categories[key]!;
@@ -704,7 +801,7 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                       Text(
                         key,
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: labelFontSize,
                           fontWeight: selected
                               ? FontWeight.w500
                               : FontWeight.w400,
@@ -713,7 +810,7 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                       ),
                     ],
                   ),
-                  onChanged: (val) => setState(() => categories[key] = val!),
+                  onChanged: (val) => handleCategoryCheckbox(key, val),
                   activeColor: Colors.blue,
                   controlAffinity: ListTileControlAffinity.trailing,
                 ),
@@ -723,8 +820,8 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
         ),
       ),
       bottomNavigationBar: Container(
-        height: 50, // Set explicit height
-        margin: const EdgeInsets.all(30),
+        height: 50,
+        margin: EdgeInsets.all(isSmallScreen ? 16 : 30),
         decoration: BoxDecoration(color: Colors.white),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -738,23 +835,27 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                   Text(
                     "Tourist Destination",
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: isSmallScreen ? 11 : 12,
                       fontWeight: FontWeight.w500,
                       color: Colors.black,
                     ),
-                  ),                  Text(
+                  ),
+                  Text(
                     selectedCity ?? 'Choose City',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: isSmallScreen ? 11 : 12,
                       fontWeight: FontWeight.normal,
                       color: Color(0xFF797979),
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
+            SizedBox(width: isSmallScreen ? 8 : 12),
             Expanded(
-              flex: 3,              child: SizedBox(
+              flex: 3,
+              child: SizedBox(
                 height: double.infinity,
                 child: ElevatedButton(
                   onPressed: (isFormValid && !isLoading)
@@ -765,8 +866,8 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                         ? const Color(0xFF539DF3)
                         : const Color(0xFFE5E7EB),
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isSmallScreen ? 12 : 16,
                       vertical: 12,
                     ),
                     shape: RoundedRectangleBorder(
@@ -781,13 +882,15 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                           ),
                         )
                       : Text(
                           "Next Process",
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: isSmallScreen ? 14 : 16,
                             fontWeight: FontWeight.w600,
                             color: (isFormValid && !isLoading)
                                 ? Colors.white
