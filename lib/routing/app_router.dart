@@ -19,6 +19,7 @@ import '../features/search/pages/search_page.dart';
 import '../features/saved/pages/saved_plan_page.dart';
 import '../features/saved/pages/trip_plan_page.dart';
 import '../features/profile/pages/profile_page.dart';
+import '../features/profile/pages/transaction_history_page.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -83,6 +84,11 @@ class AppRouter {
         ],
       ),
       // Routes without navbar - outside StatefulShellRoute
+      GoRoute(
+        path: '/transaction-history',
+        name: 'transaction-history',
+        builder: (context, state) => const TransactionHistoryPage(),
+      ),
       GoRoute(
         path: '/explore/:category',
         name: 'explore',
