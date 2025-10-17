@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../shared/data/models.dart';
-import '../../../shared/data/mock_data_source.dart';
+import '../../../shared/data/destination_repository.dart';
 
 class ExplorePage extends StatefulWidget {
   final String category;
@@ -14,8 +14,9 @@ class ExplorePage extends StatefulWidget {
 }
 
 class _ExplorePageState extends State<ExplorePage> {
-  late List<Destination> destinations;
+  List<Destination> destinations = [];
   bool isLoading = true;
+  final DestinationRepository _repository = DestinationRepository();
 
   @override
   void initState() {
@@ -23,20 +24,25 @@ class _ExplorePageState extends State<ExplorePage> {
     _loadDestinations();
   }
 
-  void _loadDestinations() {
+  Future<void> _loadDestinations() async {
     setState(() {
       isLoading = true;
     });
 
-    // Simulate loading
-    Future.delayed(const Duration(milliseconds: 300), () {
+    try {
+      final loadedDestinations = await _repository.getDestinationsByCategory(
+        widget.category,
+      );
       setState(() {
-        destinations = MockDataSource.getDestinationsByCategory(
-          widget.category,
-        );
+        destinations = loadedDestinations;
         isLoading = false;
       });
-    });
+    } catch (e) {
+      print('Error loading destinations: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override

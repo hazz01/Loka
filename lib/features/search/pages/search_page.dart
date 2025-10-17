@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../../shared/data/models.dart';
-import '../../../shared/data/mock_data_source.dart';
+import '../../../shared/data/destination_repository.dart';
 
 class SearchPage extends ConsumerStatefulWidget {
   const SearchPage({super.key});
@@ -18,6 +18,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
       PagingController(firstPageKey: 0);
   final TextEditingController _searchController = TextEditingController();
   String _currentQuery = '';
+  final DestinationRepository _repository = DestinationRepository();
 
   @override
   void initState() {
@@ -29,7 +30,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newItems = await MockDataSource.getDestinations(
+      final newItems = await _repository.getDestinations(
         page: pageKey,
         pageSize: _pageSize,
         searchQuery: _currentQuery.isEmpty ? null : _currentQuery,

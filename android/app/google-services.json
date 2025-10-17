@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "822886301625",
+    "project_id": "loka-atheron",
+    "storage_bucket": "loka-atheron.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:822886301625:android:16a4e128a931fb62c68068",
+        "android_client_info": {
+          "package_name": "com.example.loka"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "822886301625-28neugf9upgei1uk7aiv2tj19nu8l4gq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuGzisGaPIG_3ARPN_hcA-psqz4Kk8VMM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "822886301625-28neugf9upgei1uk7aiv2tj19nu8l4gq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

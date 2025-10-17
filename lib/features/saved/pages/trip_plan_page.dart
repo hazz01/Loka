@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../shared/data/mock_data_source.dart';
+import '../../../shared/data/destination_repository.dart';
 
-class TripPlanPage extends StatelessWidget {
+class TripPlanPage extends StatefulWidget {
   final String tripId;
 
   const TripPlanPage({
@@ -11,10 +12,57 @@ class TripPlanPage extends StatelessWidget {
   });
 
   @override
+  State<TripPlanPage> createState() => _TripPlanPageState();
+}
+
+class _TripPlanPageState extends State<TripPlanPage> {
+  final DestinationRepository _repository = DestinationRepository();
+  List<dynamic> destinationDetails = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDestinations();
+  }
+
+  Future<void> _loadDestinations() async {
+    // Find the trip plan by ID
+    final tripPlan = MockDataSource.tripPlans
+        .where((plan) => plan.id == widget.tripId)
+        .firstOrNull;
+
+    if (tripPlan != null) {
+      try {
+        // Load all destinations from Firestore
+        final allDestinations = await _repository.getAllDestinations();
+        // Filter destinations that are in this trip
+        final filteredDestinations = allDestinations
+            .where((dest) => tripPlan.destinations.contains(dest.id))
+            .toList();
+        
+        setState(() {
+          destinationDetails = filteredDestinations;
+          isLoading = false;
+        });
+      } catch (e) {
+        print('Error loading destinations: $e');
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Find the trip plan by ID
     final tripPlan = MockDataSource.tripPlans
-        .where((plan) => plan.id == tripId)
+        .where((plan) => plan.id == widget.tripId)
         .firstOrNull;
 
     if (tripPlan == null) {
@@ -31,11 +79,6 @@ class TripPlanPage extends StatelessWidget {
         ),
       );
     }
-
-    // Get destination details for this trip
-    final destinationDetails = MockDataSource.destinations
-        .where((dest) => tripPlan.destinations.contains(dest.id))
-        .toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -63,7 +106,9 @@ class TripPlanPage extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

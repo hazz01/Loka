@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../shared/data/models.dart';
-import '../../../shared/data/mock_data_source.dart';
+import '../../../shared/data/destination_repository.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -14,22 +14,53 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   String selectedCategory = 'Tourist Attraction';
-  late List<Destination> recommendedDestinations;
-  late List<Destination> nearestDestinations;
+  List<Destination> _allDestinations = [];
+  bool isLoading = true;
+  String? errorMessage;
+  final DestinationRepository _repository = DestinationRepository();
 
   @override
   void initState() {
     super.initState();
-    _loadDestinations();
+    _loadData();
   }
 
-  void _loadDestinations() {
-    setState(() {
-      recommendedDestinations = MockDataSource.getDestinationsByCategory(
-        selectedCategory,
-      );
-      nearestDestinations = MockDataSource.getNearestDestinations(limit: 10);
-    });
+  Future<void> _loadData() async {
+    try {
+      setState(() {
+        isLoading = true;
+        errorMessage = null;
+      });
+
+      final destinations = await _repository.getAllDestinations();
+
+      if (mounted) {
+        setState(() {
+          _allDestinations = destinations;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('❌ Error: $e');
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          errorMessage = e.toString();
+        });
+      }
+    }
+  }
+
+  List<Destination> get recommendedDestinations {
+    return _allDestinations
+        .where((dest) => dest.category == selectedCategory)
+        .toList();
+  }
+
+  List<Destination> get nearestDestinations {
+    final sorted = List<Destination>.from(_allDestinations);
+    sorted.sort((a, b) => a.distance.compareTo(b.distance));
+    return sorted.take(10).toList();
   }
 
   @override
@@ -74,12 +105,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   child: Container(
                     height: headerHeight,
                     decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage(
-                          'https://ik.imagekit.io/tvlk/image/imageResource/2025/10/09/1760028548328-f4fcfe5f76665952afaf0d14d6d7fea5.png?tr=q-75',
-                        ),
-                        fit: BoxFit.cover,
-                      ),
+                      color: Colors.blue[700], // Placeholder background
                     ),
                     child: Container(
                       decoration: BoxDecoration(
@@ -311,60 +337,28 @@ class _HomePageState extends ConsumerState<HomePage> {
                           'Tourist Attraction',
                           LucideIcons.treePine,
                           selectedCategory == 'Tourist Attraction',
-                          () {
-                            setState(() {
-                              selectedCategory = 'Tourist Attraction';
-                              recommendedDestinations =
-                                  MockDataSource.getDestinationsByCategory(
-                                    selectedCategory,
-                                  );
-                            });
-                          },
+                          () => setState(() => selectedCategory = 'Tourist Attraction'),
                         ),
                         SizedBox(width: isSmallScreen ? 10 : 15),
                         _buildCategoryChip(
                           'Culinary',
                           LucideIcons.utensilsCrossed,
                           selectedCategory == 'Culinary',
-                          () {
-                            setState(() {
-                              selectedCategory = 'Culinary';
-                              recommendedDestinations =
-                                  MockDataSource.getDestinationsByCategory(
-                                    selectedCategory,
-                                  );
-                            });
-                          },
+                          () => setState(() => selectedCategory = 'Culinary'),
                         ),
                         SizedBox(width: isSmallScreen ? 10 : 15),
                         _buildCategoryChip(
                           'Souvenir',
                           LucideIcons.gift,
                           selectedCategory == 'Souvenir',
-                          () {
-                            setState(() {
-                              selectedCategory = 'Souvenir';
-                              recommendedDestinations =
-                                  MockDataSource.getDestinationsByCategory(
-                                    selectedCategory,
-                                  );
-                            });
-                          },
+                          () => setState(() => selectedCategory = 'Souvenir'),
                         ),
                         SizedBox(width: isSmallScreen ? 10 : 15),
                         _buildCategoryChip(
                           'Tour & Trip',
                           LucideIcons.map,
                           selectedCategory == 'Tour & Trip',
-                          () {
-                            setState(() {
-                              selectedCategory = 'Tour & Trip';
-                              recommendedDestinations =
-                                  MockDataSource.getDestinationsByCategory(
-                                    selectedCategory,
-                                  );
-                            });
-                          },
+                          () => setState(() => selectedCategory = 'Tour & Trip'),
                         ),
                       ],
                     ),
@@ -408,7 +402,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                   // Recommended Cards - Horizontal Scroll
                   SizedBox(
                     height: isSmallScreen ? 252 : 282,
-                    child: recommendedDestinations.isEmpty
+                    child: isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : recommendedDestinations.isEmpty
                         ? Center(
                             child: Text(
                               'Tidak ada destinasi ditemukan',
@@ -590,22 +586,15 @@ class _HomePageState extends ConsumerState<HomePage> {
                         borderRadius: BorderRadius.all(
                           Radius.circular(isSmallScreen ? 6 : 8),
                         ),
-                        child: Image.network(
-                          imageUrl,
+                        child: Container(
                           height: imageHeight,
                           width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              height: imageHeight,
-                              color: Colors.grey[300],
-                              child: Icon(
-                                LucideIcons.image,
-                                color: Colors.grey,
-                                size: placeholderIconSize,
-                              ),
-                            );
-                          },
+                          color: Colors.grey[300],
+                          child: Icon(
+                            LucideIcons.image,
+                            color: Colors.grey[600],
+                            size: placeholderIconSize,
+                          ),
                         ),
                       ),
                       Positioned(
@@ -708,11 +697,15 @@ class _HomePageState extends ConsumerState<HomePage> {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(imageRadius),
-              child: Image.network(
-                imageUrl,
+              child: Container(
                 width: imageSize,
                 height: imageSize,
-                fit: BoxFit.cover,
+                color: Colors.grey[300],
+                child: Icon(
+                  LucideIcons.image,
+                  color: Colors.grey[600],
+                  size: imageSize * 0.4,
+                ),
               ),
             ),
             SizedBox(width: spaceBetween),
