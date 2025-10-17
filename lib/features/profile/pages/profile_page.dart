@@ -1,161 +1,346 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    final scale = isSmallScreen ? 0.85 : (screenWidth / 375).clamp(0.85, 1.1);
+
     return Scaffold(
+      backgroundColor: Color(0xFFF4F4F4),
       appBar: AppBar(
-        title: const Text('Profile'),
+        toolbarHeight: isSmallScreen ? 56 : 70,
+        backgroundColor: const Color(0xFFF4F4F4),
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          "Profile",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: (16 * scale).clamp(14.0, 18.0),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Settings coming soon!')),
-              );
-            },
+            icon: Icon(
+              LucideIcons.pen,
+              color: Color(0xFF539DF3),
+              size: (24 * scale).clamp(22.0, 26.0),
+            ),
+            padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
+            onPressed: () {},
           ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.fromLTRB(
+          isSmallScreen ? 20 : 30,
+          isSmallScreen ? 16 : 20,
+          isSmallScreen ? 20 : 30,
+          isSmallScreen ? 40 : 60,
+        ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Profile Header
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Colors.blue,
-                      child: const Text(
-                        'JD',
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: (96 * scale).clamp(80.0, 110.0),
+                  height: (96 * scale).clamp(80.0, 110.0),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.grey[300],
+                  ),
+                  child: ClipOval(
+                    child: Image.asset(
+                      "assets/image/profile.png",
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey[300],
+                          child: Icon(
+                            LucideIcons.user,
+                            size: (48 * scale).clamp(40.0, 55.0),
+                            color: Colors.grey[600],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: (8 * scale).clamp(6.0, 10.0)),
+            Column(
+              children: [
+                Text(
+                  "Leonardo",
+                  style: TextStyle(
+                    color: Color(0xFF1B1E28),
+                    fontSize: (24 * scale).clamp(20.0, 28.0),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: (4 * scale).clamp(3.0, 5.0)),
+                Text(
+                  "Leonardo@gmail.com",
+                  style: TextStyle(
+                    fontSize: (14 * scale).clamp(12.0, 16.0),
+                    fontWeight: FontWeight.normal,
+                    color: Color(0xFF7D848D),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: (30 * scale).clamp(24.0, 36.0)),
+            Container(
+              width: double.infinity,
+              height: (80 * scale).clamp(70.0, 90.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(isSmallScreen ? 10 : 12),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "View Coin",
+                          style: TextStyle(
+                            color: Color(0xFF1B1E28),
+                            fontSize: (14 * scale).clamp(12.0, 16.0),
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                        SizedBox(height: (10 * scale).clamp(8.0, 12.0)),
+                        Text(
+                          "10",
+                          style: TextStyle(
+                            color: Color(0xFF539DF3),
+                            fontSize: (16 * scale).clamp(14.0, 18.0),
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: double.infinity,
+                    width: isSmallScreen ? 1 : 1.5,
+                    decoration: BoxDecoration(color: Color(0xFFF7F7F9)),
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Travel Trips",
+                          style: TextStyle(
+                            color: Color(0xFF1B1E28),
+                            fontSize: (14 * scale).clamp(12.0, 16.0),
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                        SizedBox(height: (10 * scale).clamp(8.0, 12.0)),
+                        Text(
+                          "22",
+                          style: TextStyle(
+                            color: Color(0xFF539DF3),
+                            fontSize: (16 * scale).clamp(14.0, 18.0),
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: double.infinity,
+                    width: isSmallScreen ? 1 : 1.5,
+                    decoration: BoxDecoration(color: Color(0xFFF7F7F9)),
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Favorite",
+                          style: TextStyle(
+                            color: Color(0xFF1B1E28),
+                            fontSize: (14 * scale).clamp(12.0, 16.0),
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                        SizedBox(height: (10 * scale).clamp(8.0, 12.0)),
+                        Text(
+                          "8",
+                          style: TextStyle(
+                            color: Color(0xFF539DF3),
+                            fontSize: (16 * scale).clamp(14.0, 18.0),
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: (30 * scale).clamp(24.0, 36.0)),
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: (18 * scale).clamp(14.0, 22.0),
+                vertical: (16 * scale).clamp(12.0, 20.0),
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(isSmallScreen ? 10 : 12),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      'ViewCoin use for 360 view',
+                      style: TextStyle(
+                        fontSize: (15 * scale).clamp(13.0, 17.0),
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF1B1E28),
+                      ),
+                    ),
+                  ),
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () {},
+                      borderRadius: BorderRadius.circular(
+                        isSmallScreen ? 8 : 10,
+                      ),
+                      splashColor: Colors.blue.withOpacity(0.3),
+                      highlightColor: Colors.blue.withOpacity(0.1),
+                      child: Ink(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: (10 * scale).clamp(8.0, 12.0),
+                          vertical: (7 * scale).clamp(6.0, 9.0),
+                        ),
+                        decoration: BoxDecoration(
                           color: Colors.white,
+                          borderRadius: BorderRadius.circular(
+                            isSmallScreen ? 8 : 10,
+                          ),
+                          border: Border.all(color: Color(0xFF539DF3)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Buy coin',
+                              style: TextStyle(
+                                color: const Color(0xFF539DF3),
+                                fontSize: (14 * scale).clamp(12.0, 16.0),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            SizedBox(width: (4 * scale).clamp(2.0, 6.0)),
+                            Icon(
+                              LucideIcons.chevronRight,
+                              size: (19 * scale).clamp(17.0, 22.0),
+                              color: const Color(0xFF539DF3),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'John Doe',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'john.doe@example.com',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Edit profile coming soon!')),
-                        );
-                      },
-                      child: const Text('Edit Profile'),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            
-            const SizedBox(height: 24),
-            
-            // Statistics
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Travel Statistics',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildStatItem('Trips Planned', '12', Icons.map),
-                        _buildStatItem('Places Visited', '8', Icons.location_on),
-                        _buildStatItem('Reviews', '24', Icons.star),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            
-            const SizedBox(height: 24),
-            
-            // Menu Items
-            _buildMenuItem(
-              context,
-              'My Bookings',
-              Icons.confirmation_number,
-              () => _showComingSoon(context, 'My Bookings'),
-            ),
-            _buildMenuItem(
-              context,
-              'Favorites',
-              Icons.favorite,
-              () => _showComingSoon(context, 'Favorites'),
-            ),
-            _buildMenuItem(
-              context,
-              'Travel History',
-              Icons.history,
-              () => _showComingSoon(context, 'Travel History'),
-            ),
-            _buildMenuItem(
-              context,
-              'Notifications',
-              Icons.notifications,
-              () => _showComingSoon(context, 'Notifications'),
-            ),
-            _buildMenuItem(
-              context,
-              'Help & Support',
-              Icons.help,
-              () => _showComingSoon(context, 'Help & Support'),
-            ),
-            _buildMenuItem(
-              context,
-              'About',
-              Icons.info,
-              () => _showAboutDialog(context),
-            ),
-            
-            const SizedBox(height: 24),
-            
-            // Logout Button
-            SizedBox(
+            SizedBox(height: (10 * scale).clamp(8.0, 12.0)),
+            Container(
               width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () => _showLogoutDialog(context),
-                icon: const Icon(Icons.logout, color: Colors.red),
-                label: const Text(
-                  'Logout',
-                  style: TextStyle(color: Colors.red),
-                ),
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Colors.red),
-                ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
+              ),
+              child: Column(
+                children: [
+                  _buildProfileMenuItem(
+                    icon: LucideIcons.user,
+                    title: "Profile",
+                    onTap: () {
+                      // Handle profile tap
+                      print("Profile tapped");
+                    },
+                    isSmallScreen: isSmallScreen,
+                    scale: scale,
+                  ),
+                  _buildProfileMenuItem(
+                    icon: LucideIcons.bookmark,
+                    title: "Favorite",
+                    onTap: () {
+                      // Handle profile tap
+                      print("Favorite tapped");
+                    },
+                    isSmallScreen: isSmallScreen,
+                    scale: scale,
+                  ),
+                  _buildProfileMenuItem(
+                    icon: LucideIcons.planeTakeoff,
+                    title: "Previous Trips",
+                    onTap: () {
+                      // Handle profile tap
+                      print("Previous Trips tapped");
+                    },
+                    isSmallScreen: isSmallScreen,
+                    scale: scale,
+                  ),
+                  _buildProfileMenuItem(
+                    icon: LucideIcons.creditCard,
+                    title: "Transaction History",
+                    onTap: () {
+                      context.go('/transaction-history');
+                    },
+                    isSmallScreen: isSmallScreen,
+                    scale: scale,
+                  ),
+                  _buildProfileMenuItem(
+                    icon: LucideIcons.settings,
+                    title: "Settings",
+                    onTap: () {
+                      // Handle profile tap
+                      print("Settings tapped");
+                    },
+                    isSmallScreen: isSmallScreen,
+                    scale: scale,
+                  ),
+                  _buildProfileMenuItem(
+                    icon: LucideIcons.logOut,
+                    title: "Log Out",
+                    onTap: () {
+                      // Handle profile tap
+                      print("Log Out tapped");
+                    },
+                    isSmallScreen: isSmallScreen,
+                    scale: scale,
+                    isLast: true,
+                  ),
+                ],
               ),
             ),
           ],
@@ -164,91 +349,63 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildStatItem(String label, String value, IconData icon) {
-    return Column(
-      children: [
-        Icon(icon, size: 32, color: Colors.blue),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+  Widget _buildProfileMenuItem({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    required bool isSmallScreen,
+    required double scale,
+    bool isLast = false,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: (19 * scale).clamp(16.0, 22.0),
+          vertical: (18 * scale).clamp(14.0, 22.0),
         ),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
+        decoration: BoxDecoration(
+          border: isLast
+              ? null
+              : Border(
+                  bottom: BorderSide(
+                    color: Color(0xFFF7F7F9),
+                    width: isSmallScreen ? 1 : 1.5,
+                  ),
+                ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildMenuItem(
-    BuildContext context,
-    String title,
-    IconData icon,
-    VoidCallback onTap,
-  ) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: Icon(icon),
-        title: Text(title),
-        trailing: const Icon(Icons.arrow_forward_ios),
-        onTap: onTap,
-      ),
-    );
-  }
-
-  void _showComingSoon(BuildContext context, String feature) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$feature coming soon!')),
-    );
-  }
-
-  void _showAboutDialog(BuildContext context) {
-    showAboutDialog(
-      context: context,
-      applicationName: 'Loka',
-      applicationVersion: '1.0.0',
-      applicationIcon: const Icon(Icons.location_on, size: 32),
-      children: [
-        const Text(
-          'Loka is a virtual tour application that lets you explore '
-          'amazing destinations in Indonesia through immersive virtual reality experiences.',
-        ),
-      ],
-    );
-  }
-
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Logout'),
-          content: const Text('Are you sure you want to logout?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  size: (24 * scale).clamp(22.0, 26.0),
+                  color: Color(0xFF539DF3),
+                ),
+                SizedBox(width: (16 * scale).clamp(12.0, 18.0)),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: (16 * scale).clamp(14.0, 18.0),
+                    color: Color(0xFF1B1E28),
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ],
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Logout functionality coming soon!')),
-                );
-              },
-              child: const Text('Logout'),
+            Icon(
+              LucideIcons.chevronRight,
+              color: Color(0xFF539DF3),
+              size: (24 * scale).clamp(22.0, 26.0),
             ),
           ],
-        );
-      },
+        ),
+      ),
     );
   }
 }
