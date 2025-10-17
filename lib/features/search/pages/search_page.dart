@@ -1,187 +1,808 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import '../../../shared/data/models.dart';
-import '../../../shared/data/mock_data_source.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-class SearchPage extends ConsumerStatefulWidget {
+// Destination Model
+class Destination {
+  final String id;
+  final String name;
+  final String distance;
+  final double rating;
+  final String image;
+  final String category;
+  final String location;
+
+  Destination({
+    required this.id,
+    required this.name,
+    required this.distance,
+    required this.rating,
+    required this.image,
+    required this.category,
+    required this.location,
+  });
+}
+
+class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
 
   @override
-  ConsumerState<SearchPage> createState() => _SearchPageState();
+  State<SearchPage> createState() => _SearchPageState();
 }
 
-class _SearchPageState extends ConsumerState<SearchPage> {
-  static const _pageSize = 10;
-  final PagingController<int, Destination> _pagingController =
-      PagingController(firstPageKey: 0);
-  final TextEditingController _searchController = TextEditingController();
-  String _currentQuery = '';
+class _SearchPageState extends State<SearchPage> {
+  final TextEditingController searchController = TextEditingController();
+  List<String> searchHistory = ["Jatim Park 1", "Budug Asu"];
+  List<Destination> filteredDestinations = [];
+  String selectedCategory = "All";
+  String selectedPriceRange = "All";
+  double selectedRating = 0.0;
+
+  // Dummy data destinations
+  final List<Destination> allDestinations = [
+    Destination(
+      id: "1",
+      name: "Monas - National Monument",
+      distance: "5 Km from you",
+      rating: 4.4,
+      image: "https://images.unsplash.com/photo-1555899242-2e3b0faaf4ef?w=400",
+      category: "Monument",
+      location: "Jakarta",
+    ),
+    Destination(
+      id: "2",
+      name: "Jatim Park 1",
+      distance: "12 Km from you",
+      rating: 4.7,
+      image:
+          "https://images.unsplash.com/photo-1594138247273-15b480a8e536?w=400",
+      category: "Theme Park",
+      location: "Malang",
+    ),
+    Destination(
+      id: "3",
+      name: "Budug Asu Waterfall",
+      distance: "8 Km from you",
+      rating: 4.5,
+      image:
+          "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=400",
+      category: "Nature",
+      location: "Malang",
+    ),
+    Destination(
+      id: "4",
+      name: "Borobudur Temple",
+      distance: "150 Km from you",
+      rating: 4.9,
+      image: "https://images.unsplash.com/photo-1556575849-d5ceb0d1d8c5?w=400",
+      category: "Temple",
+      location: "Yogyakarta",
+    ),
+    Destination(
+      id: "5",
+      name: "Prambanan Temple",
+      distance: "145 Km from you",
+      rating: 4.8,
+      image:
+          "https://images.unsplash.com/photo-1591766353639-747bb0a0f5e2?w=400",
+      category: "Temple",
+      location: "Yogyakarta",
+    ),
+    Destination(
+      id: "6",
+      name: "Taman Safari Indonesia",
+      distance: "60 Km from you",
+      rating: 4.6,
+      image:
+          "https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=400",
+      category: "Safari Park",
+      location: "Bogor",
+    ),
+  ];
 
   @override
   void initState() {
-    _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
-    });
     super.initState();
-  }
-
-  Future<void> _fetchPage(int pageKey) async {
-    try {
-      final newItems = await MockDataSource.getDestinations(
-        page: pageKey,
-        pageSize: _pageSize,
-        searchQuery: _currentQuery.isEmpty ? null : _currentQuery,
-      );
-
-      final isLastPage = newItems.length < _pageSize;
-      if (isLastPage) {
-        _pagingController.appendLastPage(newItems);
-      } else {
-        final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newItems, nextPageKey);
-      }
-    } catch (error) {
-      _pagingController.error = error;
-    }
-  }
-
-  void _onSearchChanged(String query) {
-    _currentQuery = query;
-    _pagingController.refresh();
+    // Don't initialize filteredDestinations - keep it empty until user searches
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search Destinations'),
-      ),
-      body: Column(
-        children: [
-          // Search Bar
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: 'Search destinations...',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  void _performSearch(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        filteredDestinations = [];
+      } else {
+        filteredDestinations = allDestinations.where((destination) {
+          return destination.name.toLowerCase().contains(query.toLowerCase()) ||
+              destination.location.toLowerCase().contains(
+                query.toLowerCase(),
+              ) ||
+              destination.category.toLowerCase().contains(query.toLowerCase());
+        }).toList();
+      }
+
+      // Apply filters
+      _applyFilters();
+    });
+  }
+
+  void _addToSearchHistory(String query) {
+    if (query.isNotEmpty && !searchHistory.contains(query)) {
+      setState(() {
+        searchHistory.insert(0, query);
+        if (searchHistory.length > 5) {
+          searchHistory = searchHistory.sublist(0, 5);
+        }
+      });
+    }
+  }
+
+  void _applyFilters() {
+    setState(() {
+      var filtered = searchController.text.isEmpty
+          ? allDestinations
+          : allDestinations.where((destination) {
+              return destination.name.toLowerCase().contains(
+                    searchController.text.toLowerCase(),
+                  ) ||
+                  destination.location.toLowerCase().contains(
+                    searchController.text.toLowerCase(),
+                  ) ||
+                  destination.category.toLowerCase().contains(
+                    searchController.text.toLowerCase(),
+                  );
+            }).toList();
+
+      // Filter by category
+      if (selectedCategory != "All") {
+        filtered = filtered
+            .where((destination) => destination.category == selectedCategory)
+            .toList();
+      }
+
+      // Filter by rating
+      if (selectedRating > 0) {
+        filtered = filtered
+            .where((destination) => destination.rating >= selectedRating)
+            .toList();
+      }
+
+      filteredDestinations = filtered;
+    });
+  }
+
+  void _removeFromHistory(String item) {
+    setState(() {
+      searchHistory.remove(item);
+    });
+  }
+
+  void _selectFromHistory(String item) {
+    setState(() {
+      searchController.text = item;
+      _performSearch(item);
+    });
+  }
+
+  void _showFilterBottomSheet() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    final scale = isSmallScreen ? 0.85 : (screenWidth / 375).clamp(0.85, 1.1);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFF4F4F4),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(isSmallScreen ? 20 : 24),
+                  topRight: Radius.circular(isSmallScreen ? 20 : 24),
+                ),
               ),
-              onChanged: _onSearchChanged,
-            ),
-          ),
-          
-          // Search Results
-          Expanded(
-            child: _currentQuery.isEmpty
-                ? const Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Drag handle
+                  Container(
+                    margin: EdgeInsets.only(
+                      top: (12 * scale).clamp(10.0, 14.0),
+                      bottom: (8 * scale).clamp(6.0, 10.0),
+                    ),
+                    width: (40 * scale).clamp(35.0, 45.0),
+                    height: (4 * scale).clamp(3.0, 5.0),
+                    decoration: BoxDecoration(
+                      color: Colors.black26,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  // Filter content
+                  Padding(
+                    padding: EdgeInsets.all((24 * scale).clamp(20.0, 28.0)),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
-                          Icons.search,
-                          size: 80,
-                          color: Colors.grey,
-                        ),
-                        SizedBox(height: 16),
                         Text(
-                          'Start typing to search destinations',
+                          "Filters",
                           style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
+                            fontSize: (20 * scale).clamp(18.0, 22.0),
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF1B1E28),
                           ),
                         ),
-                      ],
-                    ),
-                  )
-                : PagedListView<int, Destination>(
-                    pagingController: _pagingController,
-                    builderDelegate: PagedChildBuilderDelegate<Destination>(
-                      itemBuilder: (context, destination, index) =>
-                          SearchResultCard(destination: destination),
-                      noItemsFoundIndicatorBuilder: (context) => const Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        SizedBox(height: (24 * scale).clamp(20.0, 28.0)),
+                        // Category Filter
+                        Text(
+                          "Category",
+                          style: TextStyle(
+                            fontSize: (16 * scale).clamp(14.0, 18.0),
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF1B1E28),
+                          ),
+                        ),
+                        SizedBox(height: (12 * scale).clamp(10.0, 14.0)),
+                        Wrap(
+                          spacing: (8 * scale).clamp(6.0, 10.0),
+                          runSpacing: (8 * scale).clamp(6.0, 10.0),
+                          children:
+                              [
+                                "All",
+                                "Monument",
+                                "Theme Park",
+                                "Nature",
+                                "Temple",
+                                "Safari Park",
+                              ].map((category) {
+                                final isSelected = selectedCategory == category;
+                                return GestureDetector(
+                                  onTap: () {
+                                    setModalState(() {
+                                      selectedCategory = category;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: (16 * scale).clamp(
+                                        14.0,
+                                        18.0,
+                                      ),
+                                      vertical: (10 * scale).clamp(8.0, 12.0),
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? Color(0xFF539DF3)
+                                          : Colors.white,
+                                      borderRadius: BorderRadius.circular(
+                                        isSmallScreen ? 18 : 20,
+                                      ),
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? Color(0xFF539DF3)
+                                            : Colors.black12,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      category,
+                                      style: TextStyle(
+                                        fontSize: (14 * scale).clamp(
+                                          12.0,
+                                          16.0,
+                                        ),
+                                        fontWeight: FontWeight.w500,
+                                        color: isSelected
+                                            ? Colors.white
+                                            : Color(0xFF6B7280),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                        ),
+                        SizedBox(height: (24 * scale).clamp(20.0, 28.0)),
+                        // Rating Filter
+                        Text(
+                          "Minimum Rating",
+                          style: TextStyle(
+                            fontSize: (16 * scale).clamp(14.0, 18.0),
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF1B1E28),
+                          ),
+                        ),
+                        SizedBox(height: (12 * scale).clamp(10.0, 14.0)),
+                        Row(
                           children: [
-                            Icon(
-                              Icons.search_off,
-                              size: 80,
-                              color: Colors.grey,
+                            Expanded(
+                              child: Slider(
+                                value: selectedRating,
+                                min: 0,
+                                max: 5,
+                                divisions: 10,
+                                activeColor: Color(0xFF539DF3),
+                                label: selectedRating == 0
+                                    ? "All"
+                                    : selectedRating.toStringAsFixed(1),
+                                onChanged: (value) {
+                                  setModalState(() {
+                                    selectedRating = value;
+                                  });
+                                },
+                              ),
                             ),
-                            SizedBox(height: 16),
-                            Text(
-                              'No destinations found',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
+                            SizedBox(width: (12 * scale).clamp(10.0, 14.0)),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: (12 * scale).clamp(10.0, 14.0),
+                                vertical: (6 * scale).clamp(5.0, 7.0),
+                              ),
+                              decoration: BoxDecoration(
+                                color: Color(0xFF539DF3),
+                                borderRadius: BorderRadius.circular(
+                                  isSmallScreen ? 6 : 8,
+                                ),
+                              ),
+                              child: Text(
+                                selectedRating == 0
+                                    ? "All"
+                                    : selectedRating.toStringAsFixed(1),
+                                style: TextStyle(
+                                  fontSize: (14 * scale).clamp(12.0, 16.0),
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                      ),
+                        SizedBox(height: (24 * scale).clamp(20.0, 28.0)),
+                        // Apply button
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _applyFilters();
+                              });
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF539DF3),
+                              padding: EdgeInsets.symmetric(
+                                vertical: (16 * scale).clamp(14.0, 18.0),
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  isSmallScreen ? 10 : 12,
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              "Apply Filters",
+                              style: TextStyle(
+                                fontSize: (16 * scale).clamp(14.0, 18.0),
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: (12 * scale).clamp(10.0, 14.0)),
+                        // Reset button
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton(
+                            onPressed: () {
+                              setModalState(() {
+                                selectedCategory = "All";
+                                selectedRating = 0.0;
+                              });
+                              setState(() {
+                                selectedCategory = "All";
+                                selectedRating = 0.0;
+                                _applyFilters();
+                              });
+                              Navigator.pop(context);
+                            },
+                            style: OutlinedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                vertical: (16 * scale).clamp(14.0, 18.0),
+                              ),
+                              side: BorderSide(color: Color(0xFF539DF3)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  isSmallScreen ? 10 : 12,
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              "Reset Filters",
+                              style: TextStyle(
+                                fontSize: (16 * scale).clamp(14.0, 18.0),
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF539DF3),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-          ),
-        ],
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildDestinationCard(
+    Destination destination,
+    bool isSmallScreen,
+    double scale,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        // Navigation to detail page
+        // context.go('/detail/${destination.id}');
+      },
+      child: Container(
+        padding: EdgeInsets.all((16 * scale).clamp(14.0, 18.0)),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(isSmallScreen ? 10 : 12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(isSmallScreen ? 10 : 12),
+              child: Image.network(
+                destination.image,
+                width: (80 * scale).clamp(70.0, 90.0),
+                height: (80 * scale).clamp(70.0, 90.0),
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: (80 * scale).clamp(70.0, 90.0),
+                    height: (80 * scale).clamp(70.0, 90.0),
+                    color: Colors.grey[300],
+                    child: Icon(
+                      LucideIcons.image,
+                      color: Colors.grey[400],
+                      size: (32 * scale).clamp(28.0, 36.0),
+                    ),
+                  );
+                },
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                    width: (80 * scale).clamp(70.0, 90.0),
+                    height: (80 * scale).clamp(70.0, 90.0),
+                    color: Colors.grey[200],
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Color(0xFF539DF3),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            SizedBox(width: (16 * scale).clamp(12.0, 20.0)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        LucideIcons.mapPin,
+                        size: (16 * scale).clamp(14.0, 18.0),
+                        color: const Color(0xFF7D848D),
+                      ),
+                      SizedBox(width: (5 * scale).clamp(4.0, 6.0)),
+                      Text(
+                        destination.distance,
+                        style: TextStyle(
+                          fontSize: (13 * scale).clamp(12.0, 14.0),
+                          color: const Color(0xFF7D848D),
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: (8 * scale).clamp(6.0, 10.0)),
+                  Text(
+                    destination.name,
+                    style: TextStyle(
+                      fontSize: (14 * scale).clamp(13.0, 15.0),
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF1B1E28),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: (8 * scale).clamp(6.0, 10.0)),
+                  Row(
+                    children: [
+                      Icon(
+                        LucideIcons.star,
+                        size: (16 * scale).clamp(14.0, 18.0),
+                        color: const Color(0xFF7D848D),
+                      ),
+                      SizedBox(width: (5 * scale).clamp(4.0, 6.0)),
+                      Text(
+                        destination.rating.toString(),
+                        style: TextStyle(
+                          fontSize: (13 * scale).clamp(12.0, 14.0),
+                          color: const Color(0xFF7D848D),
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              LucideIcons.chevronRight,
+              color: const Color(0xFF539DF3),
+              size: (24 * scale).clamp(22.0, 26.0),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   @override
-  void dispose() {
-    _pagingController.dispose();
-    _searchController.dispose();
-    super.dispose();
-  }
-}
-
-class SearchResultCard extends StatelessWidget {
-  final Destination destination;
-
-  const SearchResultCard({
-    super.key,
-    required this.destination,
-  });
-
-  @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundImage: NetworkImage(destination.imageUrl),
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    final scale = isSmallScreen ? 0.85 : (screenWidth / 375).clamp(0.85, 1.1);
+
+    return Scaffold(
+      backgroundColor: Color(0xFFF4F4F4),
+      appBar: AppBar(
+        toolbarHeight: isSmallScreen ? 56 : 70,
+        backgroundColor: const Color(0xFFF4F4F4),
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          "Search destination",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: (16 * scale).clamp(14.0, 18.0),
+            fontWeight: FontWeight.w500,
+          ),
         ),
-        title: Text(destination.name),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(
+          horizontal: isSmallScreen ? 20 : 30,
+          vertical: isSmallScreen ? 16 : 20,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${destination.location}, ${destination.province}'),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.star,
-                  size: 16,
-                  color: Colors.amber,
-                ),
-                Text(' ${destination.rating.toStringAsFixed(1)}'),
-                if (destination.hasVirtualTour) ...[
-                  const SizedBox(width: 8),
-                  const Icon(
-                    Icons.threed_rotation,
-                    size: 16,
-                    color: Colors.blue,
+                Expanded(
+                  child: TextField(
+                    controller: searchController,
+                    onChanged: _performSearch,
+                    onSubmitted: (value) {
+                      _addToSearchHistory(value);
+                      _performSearch(value);
+                    },
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintText: 'Search destination here',
+                      hintStyle: TextStyle(
+                        color: Colors.black.withOpacity(0.3),
+                        fontSize: (14 * scale).clamp(12.0, 16.0),
+                        fontWeight: FontWeight.w500,
+                      ),
+                      prefixIcon: Icon(
+                        LucideIcons.search,
+                        color: Colors.black.withOpacity(0.3),
+                        size: (17 * scale).clamp(15.0, 19.0),
+                      ),
+                      suffixIcon: searchController.text.isNotEmpty
+                          ? IconButton(
+                              icon: Icon(
+                                LucideIcons.x,
+                                color: Colors.black.withOpacity(0.3),
+                                size: (17 * scale).clamp(15.0, 19.0),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  searchController.clear();
+                                  _performSearch('');
+                                });
+                              },
+                            )
+                          : null,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          isSmallScreen ? 10 : 12,
+                        ),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: (20 * scale).clamp(16.0, 24.0),
+                        vertical: (12 * scale).clamp(10.0, 14.0),
+                      ),
+                    ),
                   ),
-                  const Text(' VR Available'),
-                ],
+                ),
+                SizedBox(width: (10 * scale).clamp(8.0, 12.0)),
+                GestureDetector(
+                  onTap: _showFilterBottomSheet,
+                  child: Container(
+                    padding: EdgeInsets.all((12 * scale).clamp(10.0, 14.0)),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(
+                        isSmallScreen ? 10 : 12,
+                      ),
+                    ),
+                    child: Icon(
+                      LucideIcons.settings2,
+                      color: Color(0xFF212121),
+                      size: (24 * scale).clamp(22.0, 26.0),
+                    ),
+                  ),
+                ),
               ],
             ),
+            SizedBox(height: (20 * scale).clamp(16.0, 24.0)),
+            // Search History - only show when search is empty and no active filters
+            if (searchHistory.isNotEmpty &&
+                searchController.text.isEmpty &&
+                selectedCategory == "All" &&
+                selectedRating == 0.0)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Wrap(
+                  spacing: (10 * scale).clamp(8.0, 12.0),
+                  runSpacing: (10 * scale).clamp(8.0, 12.0),
+                  children: searchHistory.map((item) {
+                    return GestureDetector(
+                      onTap: () => _selectFromHistory(item),
+                      child: Container(
+                        padding: EdgeInsets.all((10 * scale).clamp(8.0, 12.0)),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(
+                            isSmallScreen ? 10 : 12,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              item,
+                              style: TextStyle(
+                                fontSize: (12 * scale).clamp(11.0, 14.0),
+                                color: Color(0xFF6B7280),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            SizedBox(width: (10 * scale).clamp(8.0, 12.0)),
+                            GestureDetector(
+                              onTap: () {
+                                _removeFromHistory(item);
+                              },
+                              child: Icon(
+                                LucideIcons.circleX,
+                                size: (17 * scale).clamp(15.0, 19.0),
+                                color: Color(0xFF6B7280),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            // Placeholder text - show when no search and no filters (below history)
+            if (searchController.text.isEmpty &&
+                selectedCategory == "All" &&
+                selectedRating == 0.0)
+              Padding(
+                padding: EdgeInsets.only(top: (30 * scale).clamp(24.0, 36.0)),
+                child: Column(
+                  children: [
+                    Icon(
+                      LucideIcons.search,
+                      size: (48 * scale).clamp(40.0, 56.0),
+                      color: Colors.black26,
+                    ),
+                    SizedBox(height: (16 * scale).clamp(12.0, 20.0)),
+                    Text(
+                      "Please search your dream destination",
+                      style: TextStyle(
+                        fontSize: (14 * scale).clamp(13.0, 15.0),
+                        color: Colors.black45,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            if (searchController.text.isNotEmpty ||
+                selectedCategory != "All" ||
+                selectedRating > 0.0)
+              SizedBox(height: (30 * scale).clamp(24.0, 36.0)),
+            // Search Results - only show when user has searched or applied filters
+            if (searchController.text.isNotEmpty ||
+                selectedCategory != "All" ||
+                selectedRating > 0.0)
+              if (filteredDestinations.isEmpty)
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: (40 * scale).clamp(30.0, 50.0),
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(
+                          LucideIcons.searchX,
+                          size: (48 * scale).clamp(40.0, 56.0),
+                          color: Colors.black38,
+                        ),
+                        SizedBox(height: (16 * scale).clamp(12.0, 20.0)),
+                        Text(
+                          "No destinations found",
+                          style: TextStyle(
+                            fontSize: (16 * scale).clamp(14.0, 18.0),
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                Column(
+                  children: filteredDestinations.map((destination) {
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        bottom: (16 * scale).clamp(12.0, 20.0),
+                      ),
+                      child: _buildDestinationCard(
+                        destination,
+                        isSmallScreen,
+                        scale,
+                      ),
+                    );
+                  }).toList(),
+                ),
           ],
         ),
-        trailing: const Icon(Icons.arrow_forward_ios),
-        onTap: () => context.go('/detail/${destination.id}'),
       ),
     );
   }
