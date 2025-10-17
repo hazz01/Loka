@@ -11,6 +11,15 @@ class Destination {
   final bool hasVirtualTour;
   final String category; // Tourist Attraction, Culinary, Souvenir, Tour & Trip
   final double distance; // in km
+  
+  // Additional fields for detail page
+  final String? address;
+  final String? openingHours;
+  final double? latitude;
+  final double? longitude;
+  final List<TicketPrice>? ticketPrices;
+  final List<TourOption>? tourOptions;
+  final List<String>? activities;
 
   const Destination({
     required this.id,
@@ -23,6 +32,42 @@ class Destination {
     required this.hasVirtualTour,
     required this.category,
     this.distance = 0.0,
+    // Optional detail fields
+    this.address,
+    this.openingHours,
+    this.latitude,
+    this.longitude,
+    this.ticketPrices,
+    this.tourOptions,
+    this.activities,
+  });
+}
+
+class TicketPrice {
+  final String type; // "Weekday" or "Weekend"
+  final int price;
+  final bool isAvailable;
+
+  const TicketPrice({
+    required this.type,
+    required this.price,
+    this.isAvailable = true,
+  });
+}
+
+class TourOption {
+  final String id;
+  final String name;
+  final String description;
+  final int price;
+  final int destinationCount;
+
+  const TourOption({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.price,
+    required this.destinationCount,
   });
 }
 

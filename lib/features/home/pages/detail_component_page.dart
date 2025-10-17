@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../shared/data/models.dart';
+import '../services/destination_detail_service.dart';
 
 class DetailComponentPage extends StatefulWidget {
   final String destinationId;
@@ -18,22 +20,12 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
   String selectedTicketType = 'Weekday';
   String? selectedTour; // null means no tour selected
   bool isFavorite = false;
-
-  // Ticket prices
-  final int weekdayPrice = 50000;
-  final int weekendPrice = 0; // 0 means not available
-
-  // Tour options with prices
-  final Map<String, int> tourOptions = {
-    'Highlight Tour': 50000,
-    'Family Fun Tour': 150000,
-  };
+  bool isLoading = true;
+  Destination? destinationDetail;
 
   // Mapbox configuration
   static const String mapboxAccessToken =
       'pk.eyJ1IjoiaDQyNCIsImEiOiJja21ycXB0dnQwYWhnMnZudGR3eWFlOGJnIn0.NYHwuoDP3269P5dsZ7-HLQ';
-  static const double destinationLat = -7.9797;
-  static const double destinationLng = 112.6304;
 
   // ignore: unused_field
   MapboxMap? _mapboxMap;
@@ -42,12 +34,44 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
   void initState() {
     super.initState();
     MapboxOptions.setAccessToken(mapboxAccessToken);
+    _loadDestinationDetail();
+  }
+
+  Future<void> _loadDestinationDetail() async {
+    try {
+      final detail = await DestinationDetailService.getDestinationDetail(
+        widget.destinationId,
+      );
+      setState(() {
+        destinationDetail = detail;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load destination details'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _addCustomMarker(
     MapboxMap mapboxMap, {
     double size = 1.5,
   }) async {
+    if (destinationDetail == null ||
+        destinationDetail!.latitude == null ||
+        destinationDetail!.longitude == null) return;
+    
+    final lat = destinationDetail!.latitude!;
+    final lng = destinationDetail!.longitude!;
+    
     // Add custom circle annotation for the marker
     await mapboxMap.annotations.createCircleAnnotationManager().then((
       circleManager,
@@ -56,7 +80,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
       circleManager.create(
         CircleAnnotationOptions(
           geometry: Point(
-            coordinates: Position(destinationLng, destinationLat),
+            coordinates: Position(lng, lat),
           ),
           circleRadius: 20.0 * size,
           circleColor: 0x40539DF3, // Semi-transparent blue
@@ -68,7 +92,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
       circleManager.create(
         CircleAnnotationOptions(
           geometry: Point(
-            coordinates: Position(destinationLng, destinationLat),
+            coordinates: Position(lng, lat),
           ),
           circleRadius: 12.0 * size,
           circleColor: 0xFF539DF3, // Solid blue
@@ -81,7 +105,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
       circleManager.create(
         CircleAnnotationOptions(
           geometry: Point(
-            coordinates: Position(destinationLng, destinationLat),
+            coordinates: Position(lng, lat),
           ),
           circleRadius: 5.0 * size,
           circleColor: 0xFFFFFFFF, // White center
@@ -96,7 +120,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
       pulseManager.create(
         CircleAnnotationOptions(
           geometry: Point(
-            coordinates: Position(destinationLng, destinationLat),
+            coordinates: Position(lng, lat),
           ),
           circleRadius: 25.0 * size,
           circleColor: 0x20539DF3, // Very transparent blue
@@ -107,22 +131,49 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
   }
 
   int get totalPrice {
-    int ticketPrice = selectedTicketType == 'Weekday'
-        ? weekdayPrice
-        : weekendPrice;
-    int tourPrice = selectedTour != null ? (tourOptions[selectedTour] ?? 0) : 0;
+    if (destinationDetail == null || destinationDetail!.ticketPrices == null) {
+      return 0;
+    }
+    
+    final ticketPrice = destinationDetail!.ticketPrices!
+        .firstWhere(
+          (ticket) => ticket.type == selectedTicketType,
+          orElse: () => const TicketPrice(type: '', price: 0),
+        )
+        .price;
+    
+    final tourPrice = selectedTour != null && destinationDetail!.tourOptions != null
+        ? destinationDetail!.tourOptions!
+            .firstWhere(
+              (tour) => tour.id == selectedTour,
+              orElse: () => const TourOption(
+                id: '',
+                name: '',
+                description: '',
+                price: 0,
+                destinationCount: 0,
+              ),
+            )
+            .price
+        : 0;
+    
     return ticketPrice + tourPrice;
   }
 
   Future<void> _openGoogleMaps() async {
+    if (destinationDetail == null) return;
+    
+    final lat = destinationDetail!.latitude;
+    final lng = destinationDetail!.longitude;
+    
     // Try to open with Google Maps app first
     final googleMapsUrl = Uri.parse(
-      'google.navigation:q=$destinationLat,$destinationLng&mode=d',
+      'google.navigation:q=$lat,$lng&mode=d',
     );
 
     // If Google Maps app not available, use browser version
     final googleMapsBrowserUrl = Uri.parse(
-      'https://www.google.com/maps/dir/?api=1&destination=$destinationLat,$destinationLng',
+      'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng',
     );
 
     try {
@@ -157,7 +208,6 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
 
     // Responsive scaling factors
     final scale = isSmallScreen ? 0.85 : (screenWidth / 375).clamp(0.85, 1.1);
-    final textScale = MediaQuery.of(context).textScaleFactor.clamp(0.8, 1.2);
 
     return Scaffold(
       backgroundColor: Color(0xFFF4F4F4),
@@ -197,7 +247,34 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
           ),
         ],
       ),
-      body: Stack(
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFF539DF3),
+              ),
+            )
+          : destinationDetail == null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 64,
+                        color: Colors.grey,
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Destination not found',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : Stack(
         children: [
           // Main Content - Scrollable
           CustomScrollView(
@@ -223,8 +300,18 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                               ? screenHeight * 0.28
                               : screenHeight * 0.40,
                           child: Image.network(
-                            'https://abkistimewa.id/sekolah/assets/gallery/berita/42-20231102095419-13961295776543B81BC6EA9.jpeg',
+                            destinationDetail!.imageUrl,
                             fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                color: Colors.grey[300],
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  size: 64,
+                                  color: Colors.grey[500],
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),
@@ -263,7 +350,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                         children: [
                           Expanded(
                             child: Text(
-                              'kampoeng heritage kajoetangan',
+                              destinationDetail!.name.toLowerCase(),
                               style: TextStyle(
                                 fontSize: (18 * scale).clamp(14.0, 18.0),
                                 fontWeight: FontWeight.w500,
@@ -280,7 +367,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                '5.0',
+                                destinationDetail!.rating.toString(),
                                 style: TextStyle(
                                   fontSize: (16 * scale).clamp(14.0, 20.0),
                                   fontWeight: FontWeight.w600,
@@ -301,12 +388,14 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                             color: Color(0xFF969696),
                           ),
                           const SizedBox(width: 2),
-                          Text(
-                            'Jl. Besar Ijen Ggg. 4, Malang',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Color(0xFF969696),
-                              fontWeight: FontWeight.w500,
+                          Expanded(
+                            child: Text(
+                              destinationDetail!.address ?? destinationDetail!.location,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Color(0xFF969696),
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ],
@@ -315,24 +404,25 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                       SizedBox(height: isSmallScreen ? 2 : 4),
 
                       // Time
-                      Row(
-                        children: [
-                          Icon(
-                            LucideIcons.clock,
-                            size: 16,
-                            color: Color(0xFF969696),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '7:00 AM - 5:30 PM',
-                            style: TextStyle(
-                              fontSize: 13,
+                      if (destinationDetail!.openingHours != null)
+                        Row(
+                          children: [
+                            Icon(
+                              LucideIcons.clock,
+                              size: 16,
                               color: Color(0xFF969696),
-                              fontWeight: FontWeight.w500,
                             ),
-                          ),
-                        ],
-                      ),
+                            const SizedBox(width: 4),
+                            Text(
+                              destinationDetail!.openingHours!,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Color(0xFF969696),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
 
                       SizedBox(height: isSmallScreen ? 10 : 18),
 
@@ -442,7 +532,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                       ),
                       SizedBox(height: isSmallScreen ? 12 : 20),
                       Text(
-                        'Kampoeng Heritage Kajoetangan is a historical neighborhood in Malang, renowned for its well-preserved colonial-era architecture. This area offers a glimpse into the past with its vintage houses, old-fashioned shops, and traditional markets, providing visitors with a unique showcase of Indonesia\'s colonial history and local culture.\n\nIn addition to its historical charm, Kampoeng Heritage Kajoetangan is a vibrant cultural hub. It hosts various cultural festivals, art exhibitions, and traditional performances, showcasing local artistry. The neighborhood\'s quaint cafes and eateries add to its nostalgic ambiance, making it a beloved destination for history enthusiasts and culture lovers alike.',
+                        destinationDetail!.description,
                         style: TextStyle(
                           fontSize: (14 * scale).clamp(12.0, 14.0),
                           color: Color(0xFF8F8B8B),
@@ -487,345 +577,276 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                       const SizedBox(height: 20),
 
                       // Ticket Options - Dynamic based on selected type
-                      if (selectedTicketType == 'Weekday')
-                        Container(
-                          padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(
-                              isSmallScreen ? 8 : 12,
-                            ),
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Weekday",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color(0xFFB4B4B4),
-                                    ),
-                                  ),
-                                  SizedBox(height: 5),
-                                  Text(
-                                    "Ticket destination",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFF131313),
-                                    ),
-                                  ),
-                                ],
+                      Builder(builder: (context) {
+                        if (destinationDetail!.ticketPrices == null || 
+                            destinationDetail!.ticketPrices!.isEmpty) {
+                          return Container(
+                            padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[100],
+                              borderRadius: BorderRadius.circular(
+                                isSmallScreen ? 8 : 12,
                               ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "IDR ${weekdayPrice.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black.withOpacity(0.70),
-                                    ),
-                                  ),
-                                  SizedBox(height: 5),
-                                  Text(
-                                    "+tax",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color(0xFFB4B4B4),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        )
-                      else
-                        Container(
-                          padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: BorderRadius.circular(
-                              isSmallScreen ? 8 : 12,
                             ),
-                            border: Border.all(
-                              color: Colors.orange.withOpacity(0.3),
-                              width: 1,
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.info_outline,
-                                color: Colors.orange,
-                                size: isSmallScreen ? 18 : 24,
+                            child: Text(
+                              'Ticket information not available',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[600],
                               ),
-                              SizedBox(width: isSmallScreen ? 8 : 12),
-                              Expanded(
-                                child: Column(
+                            ),
+                          );
+                        }
+                        
+                        final selectedTicket = destinationDetail!.ticketPrices!
+                            .firstWhere(
+                          (ticket) => ticket.type == selectedTicketType,
+                          orElse: () => const TicketPrice(type: '', price: 0),
+                        );
+
+                        if (selectedTicket.isAvailable && selectedTicket.price > 0)
+                          return Container(
+                            padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(
+                                isSmallScreen ? 8 : 12,
+                              ),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      "Ticket Not Available",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.orange[800],
-                                      ),
-                                    ),
-                                    SizedBox(height: 4),
-                                    Text(
-                                      "Weekend tickets are currently unavailable. Please select Weekday.",
+                                      selectedTicketType,
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500,
-                                        color: Colors.grey[600],
+                                        color: Color(0xFFB4B4B4),
+                                      ),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      "Ticket destination",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xFF131313),
                                       ),
                                     ),
                                   ],
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      SizedBox(height: isSmallScreen ? 20 : 35),
-                      // Available Tour
-                      Text(
-                        'Available Tour',
-                        style: TextStyle(
-                          fontSize: (16 * scale).clamp(14.0, 20.0),
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF131313),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      // Tour Option 1
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (selectedTour == 'Highlight Tour') {
-                              selectedTour =
-                                  null; // Deselect if already selected
-                            } else {
-                              selectedTour = 'Highlight Tour';
-                            }
-                          });
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(
-                              isSmallScreen ? 8 : 12,
-                            ),
-                            border: selectedTour == 'Highlight Tour'
-                                ? Border.all(color: Color(0xFF539DF3), width: 2)
-                                : null,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    width: isSmallScreen ? 18 : 24,
-                                    height: isSmallScreen ? 18 : 24,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: selectedTour == 'Highlight Tour'
-                                            ? Color(0xFF539DF3)
-                                            : Color(0xFFB4B4B4),
-                                        width: 2,
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "IDR ${selectedTicket.price.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black.withOpacity(0.70),
                                       ),
                                     ),
-                                    child: selectedTour == 'Highlight Tour'
-                                        ? Center(
-                                            child: Container(
-                                              width: isSmallScreen ? 8 : 12,
-                                              height: isSmallScreen ? 8 : 12,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: Color(0xFF539DF3),
-                                              ),
-                                            ),
-                                          )
-                                        : null,
+                                    SizedBox(height: 5),
+                                    Text(
+                                      "+tax",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color(0xFFB4B4B4),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        else
+                          return Container(
+                            padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[100],
+                              borderRadius: BorderRadius.circular(
+                                isSmallScreen ? 8 : 12,
+                              ),
+                              border: Border.all(
+                                color: Colors.orange.withOpacity(0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.info_outline,
+                                  color: Colors.orange,
+                                  size: isSmallScreen ? 18 : 24,
+                                ),
+                                SizedBox(width: isSmallScreen ? 8 : 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Ticket Not Available",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.orange[800],
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        "$selectedTicketType tickets are currently unavailable. Please select another option.",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(width: isSmallScreen ? 8 : 12),
+                                ),
+                              ],
+                            ),
+                          );
+                      }),
+                      SizedBox(height: isSmallScreen ? 20 : 35),
+                      // Available Tour
+                      if (destinationDetail!.tourOptions != null && 
+                          destinationDetail!.tourOptions!.isNotEmpty) ...[
+                        Text(
+                          'Available Tour',
+                          style: TextStyle(
+                            fontSize: (16 * scale).clamp(14.0, 20.0),
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF131313),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        // Dynamic Tour Options
+                        ...destinationDetail!.tourOptions!.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final tour = entry.value;
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              bottom: index < destinationDetail!.tourOptions!.length - 1
+                                  ? (isSmallScreen ? 10 : 15)
+                                  : 0,
+                            ),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                if (selectedTour == tour.id) {
+                                  selectedTour = null; // Deselect if already selected
+                                } else {
+                                  selectedTour = tour.id;
+                                }
+                              });
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(
+                                  isSmallScreen ? 8 : 12,
+                                ),
+                                border: selectedTour == tour.id
+                                    ? Border.all(color: Color(0xFF539DF3), width: 2)
+                                    : null,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        width: isSmallScreen ? 18 : 24,
+                                        height: isSmallScreen ? 18 : 24,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: selectedTour == tour.id
+                                                ? Color(0xFF539DF3)
+                                                : Color(0xFFB4B4B4),
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: selectedTour == tour.id
+                                            ? Center(
+                                                child: Container(
+                                                  width: isSmallScreen ? 8 : 12,
+                                                  height: isSmallScreen ? 8 : 12,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Color(0xFF539DF3),
+                                                  ),
+                                                ),
+                                              )
+                                            : null,
+                                      ),
+                                      SizedBox(width: isSmallScreen ? 8 : 12),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            tour.name,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              color: Color(0xFFB4B4B4),
+                                            ),
+                                          ),
+                                          SizedBox(height: isSmallScreen ? 3 : 5),
+                                          Text(
+                                            '${tour.destinationCount} Destination',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xFF131313),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                   Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        'Highlight Tour',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFFB4B4B4),
-                                        ),
-                                      ),
-                                      SizedBox(height: isSmallScreen ? 3 : 5),
-                                      const Text(
-                                        '5 Destination',
+                                        'IDR ${tour.price.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
-                                          color: Color(0xFF131313),
+                                          color: Colors.black.withOpacity(0.70),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'IDR ${tourOptions['Highlight Tour']!.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black.withOpacity(0.70),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    '+tax',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color(0xFFB4B4B4),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(height: isSmallScreen ? 10 : 15),
-
-                      // Tour Option 2
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (selectedTour == 'Family Fun Tour') {
-                              selectedTour =
-                                  null; // Deselect if already selected
-                            } else {
-                              selectedTour = 'Family Fun Tour';
-                            }
-                          });
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(
-                              isSmallScreen ? 8 : 12,
-                            ),
-                            border: selectedTour == 'Family Fun Tour'
-                                ? Border.all(color: Color(0xFF539DF3), width: 2)
-                                : null,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    width: isSmallScreen ? 18 : 24,
-                                    height: isSmallScreen ? 18 : 24,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: selectedTour == 'Family Fun Tour'
-                                            ? Color(0xFF539DF3)
-                                            : Color(0xFFB4B4B4),
-                                        width: 2,
-                                      ),
-                                    ),
-                                    child: selectedTour == 'Family Fun Tour'
-                                        ? Center(
-                                            child: Container(
-                                              width: isSmallScreen ? 8 : 12,
-                                              height: isSmallScreen ? 8 : 12,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: Color(0xFF539DF3),
-                                              ),
-                                            ),
-                                          )
-                                        : null,
-                                  ),
-                                  SizedBox(width: isSmallScreen ? 8 : 12),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
+                                      const SizedBox(height: 5),
                                       Text(
-                                        'Family Fun Tour',
+                                        '+tax',
                                         style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500,
                                           color: Color(0xFFB4B4B4),
                                         ),
                                       ),
-                                      SizedBox(height: isSmallScreen ? 3 : 5),
-                                      const Text(
-                                        '5 Destination',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: Color(0xFF131313),
-                                        ),
-                                      ),
                                     ],
                                   ),
                                 ],
                               ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'IDR ${tourOptions['Family Fun Tour']!.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black.withOpacity(0.70),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    '+tax',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color(0xFFB4B4B4),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      }).toList(),
+                      ],
 
                       SizedBox(height: isSmallScreen ? 20 : 35),
 
@@ -857,25 +878,39 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                                     : screenHeight *
                                           0.25, // 25% of screen height
                                 width: double.infinity,
-                                child: MapWidget(
-                                  cameraOptions: CameraOptions(
-                                    center: Point(
-                                      coordinates: Position(
-                                        destinationLng,
-                                        destinationLat,
+                                child: destinationDetail!.longitude != null &&
+                                        destinationDetail!.latitude != null
+                                    ? MapWidget(
+                                        cameraOptions: CameraOptions(
+                                          center: Point(
+                                            coordinates: Position(
+                                              destinationDetail!.longitude!,
+                                              destinationDetail!.latitude!,
+                                            ),
+                                          ),
+                                          zoom: 14.0,
+                                        ),
+                                        styleUri: MapboxStyles.MAPBOX_STREETS,
+                                        onMapCreated: (MapboxMap mapboxMap) async {
+                                          // Add custom marker
+                                          await _addCustomMarker(
+                                            mapboxMap,
+                                            size: 1.2,
+                                          );
+                                        },
+                                      )
+                                    : Container(
+                                        color: Colors.grey[300],
+                                        child: Center(
+                                          child: Text(
+                                            'Map not available',
+                                            style: TextStyle(
+                                              color: Colors.grey[600],
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                    zoom: 14.0,
-                                  ),
-                                  styleUri: MapboxStyles.MAPBOX_STREETS,
-                                  onMapCreated: (MapboxMap mapboxMap) async {
-                                    // Add custom marker
-                                    await _addCustomMarker(
-                                      mapboxMap,
-                                      size: 1.2,
-                                    );
-                                  },
-                                ),
                               ),
                               // Overlay to indicate it's tappable
                               Positioned(
@@ -921,32 +956,21 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                       SizedBox(height: isSmallScreen ? 20 : 35),
 
                       // Activities and Attractions
-                      Text(
-                        'Activities and Attractions',
-                        style: TextStyle(
-                          fontSize: (16 * scale).clamp(14.0, 20.0),
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF131313),
+                      if (destinationDetail!.activities != null && 
+                          destinationDetail!.activities!.isNotEmpty) ...[
+                        Text(
+                          'Activities and Attractions',
+                          style: TextStyle(
+                            fontSize: (16 * scale).clamp(14.0, 20.0),
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF131313),
+                          ),
                         ),
-                      ),
-                      SizedBox(height: isSmallScreen ? 12 : 20),
-                      _buildBulletPoint(
-                        'Explore the rich history of Malang',
-                        scale,
-                      ),
-                      _buildBulletPoint(
-                        'Antiques and artifacts exhibition',
-                        scale,
-                      ),
-                      _buildBulletPoint(
-                        'Photography with ancient houses in the background',
-                        scale,
-                      ),
-                      _buildBulletPoint(
-                        'Local cultural performances (specific schedules)',
-                        scale,
-                      ),
-                      _buildBulletPoint('Interactive historical tours', scale),
+                        SizedBox(height: isSmallScreen ? 12 : 20),
+                        ...destinationDetail!.activities!.map(
+                          (activity) => _buildBulletPoint(activity, scale),
+                        ).toList(),
+                      ],
                     ],
                   ),
                 ),
@@ -1010,8 +1034,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                     child: SizedBox(
                       height: double.infinity,
                       child: ElevatedButton(
-                        onPressed:
-                            (selectedTicketType == 'Weekday' && totalPrice > 0)
+                        onPressed: (totalPrice > 0)
                             ? () {
                                 context.go(
                                   '/detail/${widget.destinationId}/booking',
@@ -1043,9 +1066,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                                 18.0,
                               ),
                               fontWeight: FontWeight.w600,
-                              color:
-                                  (selectedTicketType == 'Weekday' &&
-                                      totalPrice > 0)
+                              color: (totalPrice > 0)
                                   ? Colors.white
                                   : Colors.grey[400],
                             ),
@@ -1064,6 +1085,10 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
   }
 
   void _showFullscreenMap() {
+    if (destinationDetail == null || 
+        destinationDetail!.longitude == null ||
+        destinationDetail!.latitude == null) return;
+    
     showDialog(
       context: context,
       barrierColor: Colors.black87,
@@ -1078,7 +1103,10 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                 child: MapWidget(
                   cameraOptions: CameraOptions(
                     center: Point(
-                      coordinates: Position(destinationLng, destinationLat),
+                      coordinates: Position(
+                        destinationDetail!.longitude!,
+                        destinationDetail!.latitude!,
+                      ),
                     ),
                     zoom: 15.0,
                   ),
@@ -1137,7 +1165,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Kampoeng Heritage Kajoetangan',
+                        destinationDetail!.name,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -1155,7 +1183,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                           SizedBox(width: 6),
                           Expanded(
                             child: Text(
-                              'Jl. Besar Ijen Ggg. 4, Malang',
+                              destinationDetail!.address ?? destinationDetail!.location,
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Color(0xFF969696),
