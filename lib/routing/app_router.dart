@@ -17,7 +17,6 @@ import '../features/home/pages/kategori_city_page.dart';
 import '../features/home/pages/explore_page.dart';
 import '../features/search/pages/search_page.dart';
 import '../features/saved/pages/saved_plan_page.dart';
-import '../features/saved/pages/trip_plan_page.dart';
 import '../features/profile/pages/profile_page.dart';
 import '../features/profile/pages/transaction_history_page.dart';
 
@@ -58,16 +57,6 @@ class AppRouter {
                 path: '/saved',
                 name: 'saved',
                 builder: (context, state) => const SavedPlanPage(),
-                routes: [
-                  GoRoute(
-                    path: 'trip/:tripId',
-                    name: 'trip-plan',
-                    builder: (context, state) {
-                      final tripId = state.pathParameters['tripId']!;
-                      return TripPlanPage(tripId: tripId);
-                    },
-                  ),
-                ],
               ),
             ],
           ),
