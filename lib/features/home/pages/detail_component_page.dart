@@ -350,7 +350,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                         children: [
                           Expanded(
                             child: Text(
-                              destinationDetail!.name.toLowerCase(),
+                              destinationDetail!.name,
                               style: TextStyle(
                                 fontSize: (18 * scale).clamp(14.0, 18.0),
                                 fontWeight: FontWeight.w500,

@@ -25,9 +25,13 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   void _loadDestinations() {
     setState(() {
-      recommendedDestinations = MockDataSource.getDestinationsByCategory(
-        selectedCategory,
-      );
+      // Fixed recommended destinations - destinations partnered with Loka
+      recommendedDestinations = [
+        MockDataSource.destinations.firstWhere((d) => d.id == 'dest_23'), // Desa Wisata Bulukerto
+        MockDataSource.destinations.firstWhere((d) => d.id == 'dest_1'),  // Jatim Park 1
+        MockDataSource.destinations.firstWhere((d) => d.id == 'dest_21'), // Kampung Jodipan
+        MockDataSource.destinations.firstWhere((d) => d.id == 'dest_22'), // Kampung Tanaka
+      ];
       nearestDestinations = MockDataSource.getNearestDestinations(limit: 10);
     });
   }
@@ -314,10 +318,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                           () {
                             setState(() {
                               selectedCategory = 'Tourist Attraction';
-                              recommendedDestinations =
-                                  MockDataSource.getDestinationsByCategory(
-                                    selectedCategory,
-                                  );
                             });
                           },
                         ),
@@ -329,10 +329,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                           () {
                             setState(() {
                               selectedCategory = 'Culinary';
-                              recommendedDestinations =
-                                  MockDataSource.getDestinationsByCategory(
-                                    selectedCategory,
-                                  );
                             });
                           },
                         ),
@@ -344,10 +340,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                           () {
                             setState(() {
                               selectedCategory = 'Souvenir';
-                              recommendedDestinations =
-                                  MockDataSource.getDestinationsByCategory(
-                                    selectedCategory,
-                                  );
                             });
                           },
                         ),
@@ -359,10 +351,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                           () {
                             setState(() {
                               selectedCategory = 'Tour & Trip';
-                              recommendedDestinations =
-                                  MockDataSource.getDestinationsByCategory(
-                                    selectedCategory,
-                                  );
                             });
                           },
                         ),
@@ -372,42 +360,85 @@ class _HomePageState extends ConsumerState<HomePage> {
 
                   SizedBox(height: isSmallScreen ? 16 : 20),
 
-                  // Recommended Section Header
+                  // Partner Destinations Section Header
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Recommended',
-                            style: TextStyle(
-                              fontSize: sectionTitleSize,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () =>
-                                context.go('/explore/$selectedCategory'),
-                            child: Text(
-                              'Explore',
-                              style: TextStyle(
-                                fontSize: sectionLinkSize,
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF539DF3),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: isSmallScreen ? 8 : 10,
+                                      vertical: isSmallScreen ? 4 : 5,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Color(0xFF539DF3),
+                                          Color(0xFF3B7DD8),
+                                        ],
+                                      ),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          LucideIcons.badgeCheck,
+                                          size: isSmallScreen ? 12 : 14,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          'VERIFIED PARTNER',
+                                          style: TextStyle(
+                                            fontSize: isSmallScreen ? 9 : 10,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
+                              SizedBox(height: isSmallScreen ? 8 : 10),
+                              Text(
+                                'Featured Destinations',
+                                style: TextStyle(
+                                  fontSize: sectionTitleSize,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              SizedBox(height: isSmallScreen ? 4 : 6),
+                              Text(
+                                'Explore our exclusive partner destinations',
+                                style: TextStyle(
+                                  fontSize: isSmallScreen ? 11 : 12,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ],
                   ),
 
-                  SizedBox(height: isSmallScreen ? 12 : 14),
+                  SizedBox(height: isSmallScreen ? 14 : 16),
 
-                  // Recommended Cards - Horizontal Scroll
+                  // Partner Destinations Cards - Horizontal Scroll
                   SizedBox(
-                    height: isSmallScreen ? 252 : 282,
+                    height: isSmallScreen ? 270 : 300,
                     child: recommendedDestinations.isEmpty
                         ? Center(
                             child: Text(
@@ -621,6 +652,46 @@ class _HomePageState extends ConsumerState<HomePage> {
                             LucideIcons.heart,
                             color: Colors.red,
                             size: heartIconSize,
+                          ),
+                        ),
+                      ),
+                      // Partnership Badge
+                      Positioned(
+                        top: heartPosition,
+                        left: heartPosition,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isSmallScreen ? 6 : 8,
+                            vertical: isSmallScreen ? 4 : 5,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Color(0xFF539DF3),
+                                Color(0xFF3B7DD8),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                LucideIcons.badgeCheck,
+                                size: isSmallScreen ? 10 : 11,
+                                color: Colors.white,
+                              ),
+                              SizedBox(width: 3),
+                              Text(
+                                'PARTNER',
+                                style: TextStyle(
+                                  fontSize: isSmallScreen ? 8 : 9,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
