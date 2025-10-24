@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loka/features/home/pages/loading_screen.dart';
+import 'package:loka/features/home/pages/splash_page.dart';
 import 'package:loka/features/home/pages/timeline_trip_Page.dart';
 import 'package:loka/features/home/models/trip_response_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -22,8 +23,14 @@ import '../features/profile/pages/transaction_history_page.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/',
+    initialLocation: '/splash',
     routes: [
+      GoRoute(
+        path: '/splash',
+        name: 'splash',
+        builder: (context, state) => const SplashPage(),
+      ),
+
       // Bottom Navigation Shell
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {

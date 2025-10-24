@@ -45,7 +45,6 @@ class _HomePageState extends ConsumerState<HomePage> {
     final headerTextSmall = isSmallScreen ? 10.0 : 12.0;
     final headerTextMedium = isSmallScreen ? 12.0 : 14.0;
     final headerTextLocation = isSmallScreen ? 13.0 : 15.0;
-    final headerMapPinSize = isSmallScreen ? 12.0 : 14.0;
     final searchIconSize = isSmallScreen ? 18.0 : 20.0;
     final searchTextSize = isSmallScreen ? 12.0 : 14.0;
     final searchPadding = isSmallScreen ? 14.0 : 16.0;
@@ -157,10 +156,26 @@ class _HomePageState extends ConsumerState<HomePage> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                LucideIcons.mapPin,
-                                color: Colors.white,
-                                size: headerMapPinSize,
+                              // Hero target for app logo (transition from splash)
+                              Hero(
+                                tag: 'app-logo',
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: Container(
+                                    width: isSmallScreen ? 28 : 34,
+                                    height: isSmallScreen ? 28 : 34,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Icon(
+                                      Icons.explore,
+                                      color: const Color(0xFF539DF3),
+                                      size: isSmallScreen ? 16 : 20,
+                                    ),
+                                  ),
+                                ),
                               ),
                               const SizedBox(width: 5),
                               Text(
