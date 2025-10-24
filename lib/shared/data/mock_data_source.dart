@@ -291,7 +291,7 @@ class MockDataSource {
     ),
     const Destination(
       id: 'dest_14',
-      name: 'Kampung Wisata Keramik',
+      name: 'Wisata Keramik',
       description:
           'Sentra keramik dengan berbagai produk kerajinan tangan yang unik.',
       imageUrl:

@@ -54,6 +54,7 @@ dependencies:
   webview_flutter_wkwebview: ^3.23.1
   device_info_plus: ^12.1.0
   flutter_launcher_icons: ^0.14.4
+  card_loading: ^0.3.2
 
 dev_dependencies:
   flutter_test:

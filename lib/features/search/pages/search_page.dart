@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:card_loading/card_loading.dart';
 
 // Destination Model
 class Destination {
@@ -36,6 +37,7 @@ class _SearchPageState extends State<SearchPage> {
   String selectedCategory = "All";
   String selectedPriceRange = "All";
   double selectedRating = 0.0;
+  bool _isSearching = false;
 
   // Dummy data destinations
   final List<Destination> allDestinations = [
@@ -112,21 +114,34 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void _performSearch(String query) {
+    // simulate search delay and show skeletons
     setState(() {
-      if (query.isEmpty) {
-        filteredDestinations = [];
-      } else {
-        filteredDestinations = allDestinations.where((destination) {
-          return destination.name.toLowerCase().contains(query.toLowerCase()) ||
-              destination.location.toLowerCase().contains(
-                query.toLowerCase(),
-              ) ||
-              destination.category.toLowerCase().contains(query.toLowerCase());
-        }).toList();
-      }
+      _isSearching = true;
+    });
 
-      // Apply filters
-      _applyFilters();
+    Future.delayed(const Duration(milliseconds: 400), () {
+      if (!mounted) return;
+      setState(() {
+        if (query.isEmpty) {
+          filteredDestinations = [];
+        } else {
+          filteredDestinations = allDestinations.where((destination) {
+            return destination.name.toLowerCase().contains(
+                  query.toLowerCase(),
+                ) ||
+                destination.location.toLowerCase().contains(
+                  query.toLowerCase(),
+                ) ||
+                destination.category.toLowerCase().contains(
+                  query.toLowerCase(),
+                );
+          }).toList();
+        }
+
+        // Apply filters
+        _applyFilters();
+        _isSearching = false;
+      });
     });
   }
 
@@ -443,6 +458,18 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
+  Future<void> _onRefreshSearch() async {
+    // reset search state to simulate a refresh
+    setState(() {
+      searchController.clear();
+      filteredDestinations = [];
+      selectedCategory = "All";
+      selectedRating = 0.0;
+    });
+
+    await Future.delayed(const Duration(milliseconds: 300));
+  }
+
   Widget _buildDestinationCard(
     Destination destination,
     bool isSmallScreen,
@@ -594,214 +621,238 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(
-          horizontal: isSmallScreen ? 20 : 30,
-          vertical: isSmallScreen ? 16 : 20,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: searchController,
-                    onChanged: _performSearch,
-                    onSubmitted: (value) {
-                      _addToSearchHistory(value);
-                      _performSearch(value);
-                    },
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: 'Search destination here',
-                      hintStyle: TextStyle(
-                        color: Colors.black.withOpacity(0.3),
-                        fontSize: (14 * scale).clamp(12.0, 16.0),
-                        fontWeight: FontWeight.w500,
+      body: RefreshIndicator(
+        onRefresh: _onRefreshSearch,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.symmetric(
+            horizontal: isSmallScreen ? 20 : 30,
+            vertical: isSmallScreen ? 16 : 20,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: searchController,
+                      onChanged: _performSearch,
+                      onSubmitted: (value) {
+                        _addToSearchHistory(value);
+                        _performSearch(value);
+                      },
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: 'Search destination here',
+                        hintStyle: TextStyle(
+                          color: Colors.black.withOpacity(0.3),
+                          fontSize: (14 * scale).clamp(12.0, 16.0),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        prefixIcon: Icon(
+                          LucideIcons.search,
+                          color: Colors.black.withOpacity(0.3),
+                          size: (17 * scale).clamp(15.0, 19.0),
+                        ),
+                        suffixIcon: searchController.text.isNotEmpty
+                            ? IconButton(
+                                icon: Icon(
+                                  LucideIcons.x,
+                                  color: Colors.black.withOpacity(0.3),
+                                  size: (17 * scale).clamp(15.0, 19.0),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    searchController.clear();
+                                    _performSearch('');
+                                  });
+                                },
+                              )
+                            : null,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            isSmallScreen ? 10 : 12,
+                          ),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: (20 * scale).clamp(16.0, 24.0),
+                          vertical: (12 * scale).clamp(10.0, 14.0),
+                        ),
                       ),
-                      prefixIcon: Icon(
-                        LucideIcons.search,
-                        color: Colors.black.withOpacity(0.3),
-                        size: (17 * scale).clamp(15.0, 19.0),
-                      ),
-                      suffixIcon: searchController.text.isNotEmpty
-                          ? IconButton(
-                              icon: Icon(
-                                LucideIcons.x,
-                                color: Colors.black.withOpacity(0.3),
-                                size: (17 * scale).clamp(15.0, 19.0),
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  searchController.clear();
-                                  _performSearch('');
-                                });
-                              },
-                            )
-                          : null,
-                      border: OutlineInputBorder(
+                    ),
+                  ),
+                  SizedBox(width: (10 * scale).clamp(8.0, 12.0)),
+                  GestureDetector(
+                    onTap: _showFilterBottomSheet,
+                    child: Container(
+                      padding: EdgeInsets.all((12 * scale).clamp(10.0, 14.0)),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(
                           isSmallScreen ? 10 : 12,
                         ),
-                        borderSide: BorderSide.none,
                       ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: (20 * scale).clamp(16.0, 24.0),
-                        vertical: (12 * scale).clamp(10.0, 14.0),
+                      child: Icon(
+                        LucideIcons.settings2,
+                        color: Color(0xFF212121),
+                        size: (24 * scale).clamp(22.0, 26.0),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(width: (10 * scale).clamp(8.0, 12.0)),
-                GestureDetector(
-                  onTap: _showFilterBottomSheet,
-                  child: Container(
-                    padding: EdgeInsets.all((12 * scale).clamp(10.0, 14.0)),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(
-                        isSmallScreen ? 10 : 12,
-                      ),
-                    ),
-                    child: Icon(
-                      LucideIcons.settings2,
-                      color: Color(0xFF212121),
-                      size: (24 * scale).clamp(22.0, 26.0),
-                    ),
+                ],
+              ),
+              SizedBox(height: (20 * scale).clamp(16.0, 24.0)),
+              // Search History - only show when search is empty and no active filters
+              if (searchHistory.isNotEmpty &&
+                  searchController.text.isEmpty &&
+                  selectedCategory == "All" &&
+                  selectedRating == 0.0)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Wrap(
+                    spacing: (10 * scale).clamp(8.0, 12.0),
+                    runSpacing: (10 * scale).clamp(8.0, 12.0),
+                    children: searchHistory.map((item) {
+                      return GestureDetector(
+                        onTap: () => _selectFromHistory(item),
+                        child: Container(
+                          padding: EdgeInsets.all(
+                            (10 * scale).clamp(8.0, 12.0),
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(
+                              isSmallScreen ? 10 : 12,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                item,
+                                style: TextStyle(
+                                  fontSize: (12 * scale).clamp(11.0, 14.0),
+                                  color: Color(0xFF6B7280),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              SizedBox(width: (10 * scale).clamp(8.0, 12.0)),
+                              GestureDetector(
+                                onTap: () {
+                                  _removeFromHistory(item);
+                                },
+                                child: Icon(
+                                  LucideIcons.circleX,
+                                  size: (17 * scale).clamp(15.0, 19.0),
+                                  color: Color(0xFF6B7280),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
-              ],
-            ),
-            SizedBox(height: (20 * scale).clamp(16.0, 24.0)),
-            // Search History - only show when search is empty and no active filters
-            if (searchHistory.isNotEmpty &&
-                searchController.text.isEmpty &&
-                selectedCategory == "All" &&
-                selectedRating == 0.0)
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Wrap(
-                  spacing: (10 * scale).clamp(8.0, 12.0),
-                  runSpacing: (10 * scale).clamp(8.0, 12.0),
-                  children: searchHistory.map((item) {
-                    return GestureDetector(
-                      onTap: () => _selectFromHistory(item),
-                      child: Container(
-                        padding: EdgeInsets.all((10 * scale).clamp(8.0, 12.0)),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
+              // Placeholder text - show when no search and no filters (below history)
+              if (searchController.text.isEmpty &&
+                  selectedCategory == "All" &&
+                  selectedRating == 0.0)
+                Padding(
+                  padding: EdgeInsets.only(top: (30 * scale).clamp(24.0, 36.0)),
+                  child: Column(
+                    children: [
+                      Icon(
+                        LucideIcons.search,
+                        size: (48 * scale).clamp(40.0, 56.0),
+                        color: Colors.black26,
+                      ),
+                      SizedBox(height: (16 * scale).clamp(12.0, 20.0)),
+                      Text(
+                        "Please search your dream destination",
+                        style: TextStyle(
+                          fontSize: (14 * scale).clamp(13.0, 15.0),
+                          color: Colors.black45,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              if (searchController.text.isNotEmpty ||
+                  selectedCategory != "All" ||
+                  selectedRating > 0.0)
+                SizedBox(height: (30 * scale).clamp(24.0, 36.0)),
+              // Search Results - only show when user has searched or applied filters
+              if (searchController.text.isNotEmpty ||
+                  selectedCategory != "All" ||
+                  selectedRating > 0.0)
+                if (_isSearching)
+                  Column(
+                    children: List.generate(5, (index) {
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          bottom: (16 * scale).clamp(12.0, 20.0),
+                        ),
+                        child: CardLoading(
+                          height: isSmallScreen
+                              ? (100 * scale).clamp(80.0, 110.0)
+                              : 110,
                           borderRadius: BorderRadius.circular(
                             isSmallScreen ? 10 : 12,
                           ),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              item,
-                              style: TextStyle(
-                                fontSize: (12 * scale).clamp(11.0, 14.0),
-                                color: Color(0xFF6B7280),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(width: (10 * scale).clamp(8.0, 12.0)),
-                            GestureDetector(
-                              onTap: () {
-                                _removeFromHistory(item);
-                              },
-                              child: Icon(
-                                LucideIcons.circleX,
-                                size: (17 * scale).clamp(15.0, 19.0),
-                                color: Color(0xFF6B7280),
-                              ),
-                            ),
-                          ],
-                        ),
+                      );
+                    }),
+                  )
+                else if (filteredDestinations.isEmpty)
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: (40 * scale).clamp(30.0, 50.0),
                       ),
-                    );
-                  }).toList(),
-                ),
-              ),
-            // Placeholder text - show when no search and no filters (below history)
-            if (searchController.text.isEmpty &&
-                selectedCategory == "All" &&
-                selectedRating == 0.0)
-              Padding(
-                padding: EdgeInsets.only(top: (30 * scale).clamp(24.0, 36.0)),
-                child: Column(
-                  children: [
-                    Icon(
-                      LucideIcons.search,
-                      size: (48 * scale).clamp(40.0, 56.0),
-                      color: Colors.black26,
-                    ),
-                    SizedBox(height: (16 * scale).clamp(12.0, 20.0)),
-                    Text(
-                      "Please search your dream destination",
-                      style: TextStyle(
-                        fontSize: (14 * scale).clamp(13.0, 15.0),
-                        color: Colors.black45,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            if (searchController.text.isNotEmpty ||
-                selectedCategory != "All" ||
-                selectedRating > 0.0)
-              SizedBox(height: (30 * scale).clamp(24.0, 36.0)),
-            // Search Results - only show when user has searched or applied filters
-            if (searchController.text.isNotEmpty ||
-                selectedCategory != "All" ||
-                selectedRating > 0.0)
-              if (filteredDestinations.isEmpty)
-                Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: (40 * scale).clamp(30.0, 50.0),
-                    ),
-                    child: Column(
-                      children: [
-                        Icon(
-                          LucideIcons.searchX,
-                          size: (48 * scale).clamp(40.0, 56.0),
-                          color: Colors.black38,
-                        ),
-                        SizedBox(height: (16 * scale).clamp(12.0, 20.0)),
-                        Text(
-                          "No destinations found",
-                          style: TextStyle(
-                            fontSize: (16 * scale).clamp(14.0, 18.0),
-                            color: Colors.black54,
-                            fontWeight: FontWeight.w500,
+                      child: Column(
+                        children: [
+                          Icon(
+                            LucideIcons.searchX,
+                            size: (48 * scale).clamp(40.0, 56.0),
+                            color: Colors.black38,
                           ),
-                        ),
-                      ],
+                          SizedBox(height: (16 * scale).clamp(12.0, 20.0)),
+                          Text(
+                            "No destinations found",
+                            style: TextStyle(
+                              fontSize: (16 * scale).clamp(14.0, 18.0),
+                              color: Colors.black54,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                  )
+                else
+                  Column(
+                    children: filteredDestinations.map((destination) {
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          bottom: (16 * scale).clamp(12.0, 20.0),
+                        ),
+                        child: _buildDestinationCard(
+                          destination,
+                          isSmallScreen,
+                          scale,
+                        ),
+                      );
+                    }).toList(),
                   ),
-                )
-              else
-                Column(
-                  children: filteredDestinations.map((destination) {
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        bottom: (16 * scale).clamp(12.0, 20.0),
-                      ),
-                      child: _buildDestinationCard(
-                        destination,
-                        isSmallScreen,
-                        scale,
-                      ),
-                    );
-                  }).toList(),
-                ),
-          ],
+            ],
+          ),
         ),
       ),
     );
