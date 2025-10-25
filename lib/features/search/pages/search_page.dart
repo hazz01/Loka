@@ -1,27 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:go_router/go_router.dart';
 import 'package:card_loading/card_loading.dart';
 
-// Destination Model
-class Destination {
-  final String id;
-  final String name;
-  final String distance;
-  final double rating;
-  final String image;
-  final String category;
-  final String location;
-
-  Destination({
-    required this.id,
-    required this.name,
-    required this.distance,
-    required this.rating,
-    required this.image,
-    required this.category,
-    required this.location,
-  });
-}
+// Use shared destination model and mock data so detail pages can resolve IDs
+import '../../../shared/data/models.dart';
+import '../../../shared/data/mock_data_source.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -38,73 +22,18 @@ class _SearchPageState extends State<SearchPage> {
   String selectedPriceRange = "All";
   double selectedRating = 0.0;
   bool _isSearching = false;
-
-  // Dummy data destinations
-  final List<Destination> allDestinations = [
-    Destination(
-      id: "1",
-      name: "Monas - National Monument",
-      distance: "5 Km from you",
-      rating: 4.4,
-      image: "https://images.unsplash.com/photo-1555899242-2e3b0faaf4ef?w=400",
-      category: "Monument",
-      location: "Jakarta",
-    ),
-    Destination(
-      id: "2",
-      name: "Jatim Park 1",
-      distance: "12 Km from you",
-      rating: 4.7,
-      image:
-          "https://images.unsplash.com/photo-1594138247273-15b480a8e536?w=400",
-      category: "Theme Park",
-      location: "Malang",
-    ),
-    Destination(
-      id: "3",
-      name: "Budug Asu Waterfall",
-      distance: "8 Km from you",
-      rating: 4.5,
-      image:
-          "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=400",
-      category: "Nature",
-      location: "Malang",
-    ),
-    Destination(
-      id: "4",
-      name: "Borobudur Temple",
-      distance: "150 Km from you",
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1556575849-d5ceb0d1d8c5?w=400",
-      category: "Temple",
-      location: "Yogyakarta",
-    ),
-    Destination(
-      id: "5",
-      name: "Prambanan Temple",
-      distance: "145 Km from you",
-      rating: 4.8,
-      image:
-          "https://images.unsplash.com/photo-1591766353639-747bb0a0f5e2?w=400",
-      category: "Temple",
-      location: "Yogyakarta",
-    ),
-    Destination(
-      id: "6",
-      name: "Taman Safari Indonesia",
-      distance: "60 Km from you",
-      rating: 4.6,
-      image:
-          "https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=400",
-      category: "Safari Park",
-      location: "Bogor",
-    ),
-  ];
+  // Use mock data from shared MockDataSource so detail page can find the
+  // destination by id. Copy the list to avoid accidental mutation of the
+  // original mock list.
+  final List<Destination> allDestinations = List<Destination>.from(
+    MockDataSource.destinations,
+  );
 
   @override
   void initState() {
     super.initState();
-    // Don't initialize filteredDestinations - keep it empty until user searches
+    // Initialize to show all destinations by default
+    filteredDestinations = List<Destination>.from(allDestinations);
   }
 
   @override
@@ -123,7 +52,8 @@ class _SearchPageState extends State<SearchPage> {
       if (!mounted) return;
       setState(() {
         if (query.isEmpty) {
-          filteredDestinations = [];
+          // show all destinations when query is empty
+          filteredDestinations = List<Destination>.from(allDestinations);
         } else {
           filteredDestinations = allDestinations.where((destination) {
             return destination.name.toLowerCase().contains(
@@ -459,15 +389,22 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<void> _onRefreshSearch() async {
-    // reset search state to simulate a refresh
+    // Simulate a refresh: show skeletons briefly then restore full list
     setState(() {
-      searchController.clear();
-      filteredDestinations = [];
-      selectedCategory = "All";
-      selectedRating = 0.0;
+      _isSearching = true;
     });
 
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 350));
+
+    if (!mounted) return;
+    setState(() {
+      searchController.clear();
+      selectedCategory = "All";
+      selectedRating = 0.0;
+      // restore all destinations after refresh
+      filteredDestinations = List<Destination>.from(allDestinations);
+      _isSearching = false;
+    });
   }
 
   Widget _buildDestinationCard(
@@ -475,16 +412,25 @@ class _SearchPageState extends State<SearchPage> {
     bool isSmallScreen,
     double scale,
   ) {
+    // Use styling similar to ExplorePage's destination card and make sure we
+    // reference the shared model fields (imageUrl, distance as double).
+    final imageSize = isSmallScreen ? 80.0 : 100.0;
+    final imagePlaceholderIconSize = isSmallScreen ? 32.0 : 40.0;
+    final titleFontSize = isSmallScreen ? 13.0 : 16.0;
+    final subtitleFontSize = isSmallScreen ? 11.0 : 13.0;
+    final iconSize = isSmallScreen ? 12.0 : 14.0;
+    final chevronSize = isSmallScreen ? 20.0 : 24.0;
+    final spacingWidth = isSmallScreen ? 10.0 : 16.0;
+    final cardPadding = isSmallScreen ? 10.0 : 12.0;
+    final imageRadius = isSmallScreen ? 10.0 : 12.0;
+
     return GestureDetector(
-      onTap: () {
-        // Navigation to detail page
-        // context.go('/detail/${destination.id}');
-      },
+      onTap: () => context.go('/detail/${destination.id}'),
       child: Container(
-        padding: EdgeInsets.all((16 * scale).clamp(14.0, 18.0)),
+        padding: EdgeInsets.all(cardPadding),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(isSmallScreen ? 10 : 12),
+          borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -496,29 +442,29 @@ class _SearchPageState extends State<SearchPage> {
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(isSmallScreen ? 10 : 12),
+              borderRadius: BorderRadius.circular(imageRadius),
               child: Image.network(
-                destination.image,
-                width: (80 * scale).clamp(70.0, 90.0),
-                height: (80 * scale).clamp(70.0, 90.0),
+                destination.imageUrl,
+                width: imageSize,
+                height: imageSize,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    width: (80 * scale).clamp(70.0, 90.0),
-                    height: (80 * scale).clamp(70.0, 90.0),
+                    width: imageSize,
+                    height: imageSize,
                     color: Colors.grey[300],
                     child: Icon(
                       LucideIcons.image,
-                      color: Colors.grey[400],
-                      size: (32 * scale).clamp(28.0, 36.0),
+                      color: Colors.grey,
+                      size: imagePlaceholderIconSize,
                     ),
                   );
                 },
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
                   return Container(
-                    width: (80 * scale).clamp(70.0, 90.0),
-                    height: (80 * scale).clamp(70.0, 90.0),
+                    width: imageSize,
+                    height: imageSize,
                     color: Colors.grey[200],
                     child: Center(
                       child: CircularProgressIndicator(
@@ -532,53 +478,72 @@ class _SearchPageState extends State<SearchPage> {
                 },
               ),
             ),
-            SizedBox(width: (16 * scale).clamp(12.0, 20.0)),
+            SizedBox(width: spacingWidth),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    destination.name,
+                    style: TextStyle(
+                      fontSize: titleFontSize,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF1B1E28),
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: isSmallScreen ? 6 : 8),
                   Row(
                     children: [
                       Icon(
                         LucideIcons.mapPin,
-                        size: (16 * scale).clamp(14.0, 18.0),
+                        size: iconSize,
                         color: const Color(0xFF7D848D),
                       ),
-                      SizedBox(width: (5 * scale).clamp(4.0, 6.0)),
-                      Text(
-                        destination.distance,
-                        style: TextStyle(
-                          fontSize: (13 * scale).clamp(12.0, 14.0),
-                          color: const Color(0xFF7D848D),
-                          fontWeight: FontWeight.normal,
+                      SizedBox(width: isSmallScreen ? 3 : 4),
+                      Expanded(
+                        child: Text(
+                          destination.location,
+                          style: TextStyle(
+                            fontSize: subtitleFontSize,
+                            color: const Color(0xFF7D848D),
+                            fontWeight: FontWeight.normal,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: (8 * scale).clamp(6.0, 10.0)),
-                  Text(
-                    destination.name,
-                    style: TextStyle(
-                      fontSize: (14 * scale).clamp(13.0, 15.0),
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xFF1B1E28),
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: (8 * scale).clamp(6.0, 10.0)),
+                  SizedBox(height: isSmallScreen ? 6 : 8),
                   Row(
                     children: [
                       Icon(
                         LucideIcons.star,
-                        size: (16 * scale).clamp(14.0, 18.0),
+                        size: iconSize,
+                        color: const Color(0xFFF8D548),
+                      ),
+                      SizedBox(width: isSmallScreen ? 3 : 4),
+                      Text(
+                        destination.rating.toStringAsFixed(1),
+                        style: TextStyle(
+                          fontSize: subtitleFontSize,
+                          color: const Color(0xFF7D848D),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(width: isSmallScreen ? 8 : 12),
+                      Icon(
+                        LucideIcons.navigation,
+                        size: iconSize,
                         color: const Color(0xFF7D848D),
                       ),
-                      SizedBox(width: (5 * scale).clamp(4.0, 6.0)),
+                      SizedBox(width: isSmallScreen ? 3 : 4),
                       Text(
-                        destination.rating.toString(),
+                        '${destination.distance.toStringAsFixed(1)} km',
                         style: TextStyle(
-                          fontSize: (13 * scale).clamp(12.0, 14.0),
+                          fontSize: subtitleFontSize,
                           color: const Color(0xFF7D848D),
                           fontWeight: FontWeight.normal,
                         ),
@@ -591,7 +556,7 @@ class _SearchPageState extends State<SearchPage> {
             Icon(
               LucideIcons.chevronRight,
               color: const Color(0xFF539DF3),
-              size: (24 * scale).clamp(22.0, 26.0),
+              size: chevronSize,
             ),
           ],
         ),
@@ -759,98 +724,68 @@ class _SearchPageState extends State<SearchPage> {
                     }).toList(),
                   ),
                 ),
-              // Placeholder text - show when no search and no filters (below history)
-              if (searchController.text.isEmpty &&
-                  selectedCategory == "All" &&
-                  selectedRating == 0.0)
-                Padding(
-                  padding: EdgeInsets.only(top: (30 * scale).clamp(24.0, 36.0)),
-                  child: Column(
-                    children: [
-                      Icon(
-                        LucideIcons.search,
-                        size: (48 * scale).clamp(40.0, 56.0),
-                        color: Colors.black26,
+              SizedBox(height: (20 * scale).clamp(16.0, 24.0)),
+              // Search Results - always show results (defaults to all destinations)
+              SizedBox(height: (12 * scale).clamp(10.0, 16.0)),
+              if (_isSearching)
+                Column(
+                  children: List.generate(5, (index) {
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        bottom: (16 * scale).clamp(12.0, 20.0),
                       ),
-                      SizedBox(height: (16 * scale).clamp(12.0, 20.0)),
-                      Text(
-                        "Please search your dream destination",
-                        style: TextStyle(
-                          fontSize: (14 * scale).clamp(13.0, 15.0),
-                          color: Colors.black45,
-                          fontWeight: FontWeight.w400,
+                      child: CardLoading(
+                        height: isSmallScreen
+                            ? (100 * scale).clamp(80.0, 110.0)
+                            : 110,
+                        borderRadius: BorderRadius.circular(
+                          isSmallScreen ? 10 : 12,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              if (searchController.text.isNotEmpty ||
-                  selectedCategory != "All" ||
-                  selectedRating > 0.0)
-                SizedBox(height: (30 * scale).clamp(24.0, 36.0)),
-              // Search Results - only show when user has searched or applied filters
-              if (searchController.text.isNotEmpty ||
-                  selectedCategory != "All" ||
-                  selectedRating > 0.0)
-                if (_isSearching)
-                  Column(
-                    children: List.generate(5, (index) {
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          bottom: (16 * scale).clamp(12.0, 20.0),
-                        ),
-                        child: CardLoading(
-                          height: isSmallScreen
-                              ? (100 * scale).clamp(80.0, 110.0)
-                              : 110,
-                          borderRadius: BorderRadius.circular(
-                            isSmallScreen ? 10 : 12,
-                          ),
-                        ),
-                      );
-                    }),
-                  )
-                else if (filteredDestinations.isEmpty)
-                  Center(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: (40 * scale).clamp(30.0, 50.0),
-                      ),
-                      child: Column(
-                        children: [
-                          Icon(
-                            LucideIcons.searchX,
-                            size: (48 * scale).clamp(40.0, 56.0),
-                            color: Colors.black38,
-                          ),
-                          SizedBox(height: (16 * scale).clamp(12.0, 20.0)),
-                          Text(
-                            "No destinations found",
-                            style: TextStyle(
-                              fontSize: (16 * scale).clamp(14.0, 18.0),
-                              color: Colors.black54,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
+                    );
+                  }),
+                )
+              else if (filteredDestinations.isEmpty)
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: (40 * scale).clamp(30.0, 50.0),
                     ),
-                  )
-                else
-                  Column(
-                    children: filteredDestinations.map((destination) {
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          bottom: (16 * scale).clamp(12.0, 20.0),
+                    child: Column(
+                      children: [
+                        Icon(
+                          LucideIcons.searchX,
+                          size: (48 * scale).clamp(40.0, 56.0),
+                          color: Colors.black38,
                         ),
-                        child: _buildDestinationCard(
-                          destination,
-                          isSmallScreen,
-                          scale,
+                        SizedBox(height: (16 * scale).clamp(12.0, 20.0)),
+                        Text(
+                          "No destinations found",
+                          style: TextStyle(
+                            fontSize: (16 * scale).clamp(14.0, 18.0),
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      );
-                    }).toList(),
+                      ],
+                    ),
                   ),
+                )
+              else
+                Column(
+                  children: filteredDestinations.map((destination) {
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        bottom: (16 * scale).clamp(12.0, 20.0),
+                      ),
+                      child: _buildDestinationCard(
+                        destination,
+                        isSmallScreen,
+                        scale,
+                      ),
+                    );
+                  }).toList(),
+                ),
             ],
           ),
         ),
