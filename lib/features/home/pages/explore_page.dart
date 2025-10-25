@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:card_loading/card_loading.dart';
 import '../../../shared/data/models.dart';
 import '../../../shared/data/mock_data_source.dart';
 
@@ -21,6 +22,12 @@ class _ExplorePageState extends State<ExplorePage> {
   void initState() {
     super.initState();
     _loadDestinations();
+  }
+
+  Future<void> _refresh() async {
+    // Reuse loading logic
+    _loadDestinations();
+    await Future.delayed(const Duration(milliseconds: 500));
   }
 
   void _loadDestinations() {
@@ -76,46 +83,69 @@ class _ExplorePageState extends State<ExplorePage> {
           ),
         ),
       ),
-      body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFF539DF3)),
-            )
-          : destinations.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+      body: RefreshIndicator(
+        onRefresh: _refresh,
+        child: isLoading
+            ? ListView.separated(
+                padding: EdgeInsets.symmetric(
+                  horizontal: listPadding,
+                  vertical: listVerticalPadding,
+                ),
+                itemCount: 6,
+                separatorBuilder: (_, __) =>
+                    SizedBox(height: isSmallScreen ? 12 : 16),
+                itemBuilder: (context, index) {
+                  return CardLoading(
+                    height: isSmallScreen ? 88 : 100,
+                    borderRadius: BorderRadius.circular(12),
+                  );
+                },
+              )
+            : destinations.isEmpty
+            ? ListView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: listPadding,
+                  vertical: listVerticalPadding,
+                ),
                 children: [
-                  Icon(
-                    LucideIcons.searchX,
-                    size: emptyIconSize,
-                    color: Colors.grey[400],
-                  ),
-                  SizedBox(height: isSmallScreen ? 12 : 16),
-                  Text(
-                    'Tidak ada destinasi ditemukan',
-                    style: TextStyle(
-                      fontSize: emptyTextSize,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w500,
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          LucideIcons.searchX,
+                          size: emptyIconSize,
+                          color: Colors.grey[400],
+                        ),
+                        SizedBox(height: isSmallScreen ? 12 : 16),
+                        Text(
+                          'Tidak ada destinasi ditemukan',
+                          style: TextStyle(
+                            fontSize: emptyTextSize,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
+              )
+            : ListView.builder(
+                padding: EdgeInsets.symmetric(
+                  horizontal: listPadding,
+                  vertical: listVerticalPadding,
+                ),
+                itemCount: destinations.length,
+                itemBuilder: (context, index) {
+                  final destination = destinations[index];
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: isSmallScreen ? 12 : 15),
+                    child: _buildDestinationCard(destination),
+                  );
+                },
               ),
-            )
-          : ListView.builder(
-              padding: EdgeInsets.symmetric(
-                horizontal: listPadding,
-                vertical: listVerticalPadding,
-              ),
-              itemCount: destinations.length,
-              itemBuilder: (context, index) {
-                final destination = destinations[index];
-                return Padding(
-                  padding: EdgeInsets.only(bottom: isSmallScreen ? 12 : 15),
-                  child: _buildDestinationCard(destination),
-                );
-              },
-            ),
+      ),
     );
   }
 
