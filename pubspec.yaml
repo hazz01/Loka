@@ -53,6 +53,7 @@ dependencies:
   webview_flutter_android: ^4.10.5
   webview_flutter_wkwebview: ^3.23.1
   device_info_plus: ^12.1.0
+  shared_preferences: ^2.3.3
 
 dev_dependencies:
   flutter_test:

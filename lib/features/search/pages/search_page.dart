@@ -1,26 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-
-// Destination Model
-class Destination {
-  final String id;
-  final String name;
-  final String distance;
-  final double rating;
-  final String image;
-  final String category;
-  final String location;
-
-  Destination({
-    required this.id,
-    required this.name,
-    required this.distance,
-    required this.rating,
-    required this.image,
-    required this.category,
-    required this.location,
-  });
-}
+import '../../../shared/data/models.dart';
+import '../../../shared/data/mock_data_source.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -31,73 +12,14 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController searchController = TextEditingController();
-  List<String> searchHistory = ["Jatim Park 1", "Budug Asu"];
+  List<String> searchHistory = ["Museum Angkut", "Jatim Park 1"];
   List<Destination> filteredDestinations = [];
   String selectedCategory = "All";
   String selectedPriceRange = "All";
   double selectedRating = 0.0;
 
-  // Dummy data destinations
-  final List<Destination> allDestinations = [
-    Destination(
-      id: "1",
-      name: "Monas - National Monument",
-      distance: "5 Km from you",
-      rating: 4.4,
-      image: "https://images.unsplash.com/photo-1555899242-2e3b0faaf4ef?w=400",
-      category: "Monument",
-      location: "Jakarta",
-    ),
-    Destination(
-      id: "2",
-      name: "Jatim Park 1",
-      distance: "12 Km from you",
-      rating: 4.7,
-      image:
-          "https://images.unsplash.com/photo-1594138247273-15b480a8e536?w=400",
-      category: "Theme Park",
-      location: "Malang",
-    ),
-    Destination(
-      id: "3",
-      name: "Budug Asu Waterfall",
-      distance: "8 Km from you",
-      rating: 4.5,
-      image:
-          "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=400",
-      category: "Nature",
-      location: "Malang",
-    ),
-    Destination(
-      id: "4",
-      name: "Borobudur Temple",
-      distance: "150 Km from you",
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1556575849-d5ceb0d1d8c5?w=400",
-      category: "Temple",
-      location: "Yogyakarta",
-    ),
-    Destination(
-      id: "5",
-      name: "Prambanan Temple",
-      distance: "145 Km from you",
-      rating: 4.8,
-      image:
-          "https://images.unsplash.com/photo-1591766353639-747bb0a0f5e2?w=400",
-      category: "Temple",
-      location: "Yogyakarta",
-    ),
-    Destination(
-      id: "6",
-      name: "Taman Safari Indonesia",
-      distance: "60 Km from you",
-      rating: 4.6,
-      image:
-          "https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=400",
-      category: "Safari Park",
-      location: "Bogor",
-    ),
-  ];
+  // Get data from main mock data source
+  List<Destination> get allDestinations => MockDataSource.destinations;
 
   @override
   void initState() {
@@ -255,11 +177,11 @@ class _SearchPageState extends State<SearchPage> {
                           children:
                               [
                                 "All",
-                                "Monument",
-                                "Theme Park",
-                                "Nature",
-                                "Temple",
-                                "Safari Park",
+                                "Tourist Attraction",
+                                "Heritage",
+                                "Culinary",
+                                "Souvenir",
+                                "Tour & Trip",
                               ].map((category) {
                                 final isSelected = selectedCategory == category;
                                 return GestureDetector(
@@ -471,7 +393,7 @@ class _SearchPageState extends State<SearchPage> {
             ClipRRect(
               borderRadius: BorderRadius.circular(isSmallScreen ? 10 : 12),
               child: Image.network(
-                destination.image,
+                destination.imageUrl,
                 width: (80 * scale).clamp(70.0, 90.0),
                 height: (80 * scale).clamp(70.0, 90.0),
                 fit: BoxFit.cover,
@@ -519,7 +441,7 @@ class _SearchPageState extends State<SearchPage> {
                       ),
                       SizedBox(width: (5 * scale).clamp(4.0, 6.0)),
                       Text(
-                        destination.distance,
+                        '${destination.distance.toStringAsFixed(1)} Km from you',
                         style: TextStyle(
                           fontSize: (13 * scale).clamp(12.0, 14.0),
                           color: const Color(0xFF7D848D),
