@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:card_loading/card_loading.dart';
 import '../../../shared/data/models.dart';
 import '../../../shared/data/mock_data_source.dart';
+import '../state/home_providers.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -14,7 +15,9 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  String selectedCategory = 'Partner';
+  // selectedCategory is now stored in Riverpod provider so it persists
+  // across navigation. Use the provider (ref) to read/write it.
+
   late List<Destination> recommendedDestinations;
   late List<Destination> nearestDestinations;
   bool _isLoading = true; // show card loading placeholders on first load
@@ -32,20 +35,24 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();
+    // Load using the current provider value
     _loadDestinations();
   }
 
   void _loadDestinations() {
     setState(() {
+      // Read selectedCategory from provider to be resilient across navigation
+      final currentCategory = ref.read(selectedCategoryProvider);
+
       // If the selected category is 'Partner', show the curated partner list.
-      if (selectedCategory == 'Partner') {
+      if (currentCategory == 'Partner') {
         recommendedDestinations = MockDataSource.destinations
             .where((d) => _partnerIds.contains(d.id))
             .toList();
       } else {
         // Otherwise, show destinations that match the selected category.
         recommendedDestinations = MockDataSource.destinations
-            .where((d) => d.category == selectedCategory)
+            .where((d) => d.category == currentCategory)
             .toList();
       }
 
@@ -59,6 +66,9 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
+
+    // Watch the shared selectedCategory so Home will rebuild when it changes.
+    final currentCategory = ref.watch(selectedCategoryProvider);
 
     // Responsive sizing - Header
     final headerHeight = isSmallScreen ? 250.0 : 280.0;
@@ -351,11 +361,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                           _buildCategoryChip(
                             'Partner',
                             LucideIcons.badgeCheck,
-                            selectedCategory == 'Partner',
+                            currentCategory == 'Partner',
                             () {
-                              setState(() {
-                                selectedCategory = 'Partner';
-                              });
+                              // Persist selection globally
+                              ref
+                                      .read(selectedCategoryProvider.notifier)
+                                      .state =
+                                  'Partner';
                               _loadDestinations();
                             },
                           ),
@@ -363,11 +375,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                           _buildCategoryChip(
                             'Tourist Attraction',
                             LucideIcons.treePine,
-                            selectedCategory == 'Tourist Attraction',
+                            currentCategory == 'Tourist Attraction',
                             () {
-                              setState(() {
-                                selectedCategory = 'Tourist Attraction';
-                              });
+                              ref
+                                      .read(selectedCategoryProvider.notifier)
+                                      .state =
+                                  'Tourist Attraction';
                               _loadDestinations();
                             },
                           ),
@@ -375,11 +388,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                           _buildCategoryChip(
                             'Culinary',
                             LucideIcons.utensilsCrossed,
-                            selectedCategory == 'Culinary',
+                            currentCategory == 'Culinary',
                             () {
-                              setState(() {
-                                selectedCategory = 'Culinary';
-                              });
+                              ref
+                                      .read(selectedCategoryProvider.notifier)
+                                      .state =
+                                  'Culinary';
                               _loadDestinations();
                             },
                           ),
@@ -387,11 +401,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                           _buildCategoryChip(
                             'Souvenir',
                             LucideIcons.gift,
-                            selectedCategory == 'Souvenir',
+                            currentCategory == 'Souvenir',
                             () {
-                              setState(() {
-                                selectedCategory = 'Souvenir';
-                              });
+                              ref
+                                      .read(selectedCategoryProvider.notifier)
+                                      .state =
+                                  'Souvenir';
                               _loadDestinations();
                             },
                           ),
@@ -399,11 +414,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                           _buildCategoryChip(
                             'Tour & Trip',
                             LucideIcons.map,
-                            selectedCategory == 'Tour & Trip',
+                            currentCategory == 'Tour & Trip',
                             () {
-                              setState(() {
-                                selectedCategory = 'Tour & Trip';
-                              });
+                              ref
+                                      .read(selectedCategoryProvider.notifier)
+                                      .state =
+                                  'Tour & Trip';
                               _loadDestinations();
                             },
                           ),
@@ -414,7 +430,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     SizedBox(height: isSmallScreen ? 16 : 20),
 
                     // Recommended / Partner header
-                    if (selectedCategory == 'Partner')
+                    if (currentCategory == 'Partner')
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -505,7 +521,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           ),
                           GestureDetector(
                             onTap: () => context.go(
-                              '/explore/${Uri.encodeComponent(selectedCategory)}',
+                              '/explore/${Uri.encodeComponent(currentCategory)}',
                             ),
                             child: Text(
                               'Explore',
@@ -639,13 +655,14 @@ class _HomePageState extends ConsumerState<HomePage> {
 
     if (!mounted) return;
     setState(() {
-      if (selectedCategory == 'Partner') {
+      final currentCategory = ref.read(selectedCategoryProvider);
+      if (currentCategory == 'Partner') {
         recommendedDestinations = MockDataSource.destinations
             .where((d) => _partnerIds.contains(d.id))
             .toList();
       } else {
         recommendedDestinations = MockDataSource.destinations
-            .where((d) => d.category == selectedCategory)
+            .where((d) => d.category == currentCategory)
             .toList();
       }
       nearestDestinations = MockDataSource.getNearestDestinations(limit: 10);
