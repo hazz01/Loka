@@ -1,27 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:go_router/go_router.dart';
 import 'package:card_loading/card_loading.dart';
 
-// Destination Model
-class Destination {
-  final String id;
-  final String name;
-  final String distance;
-  final double rating;
-  final String image;
-  final String category;
-  final String location;
-
-  Destination({
-    required this.id,
-    required this.name,
-    required this.distance,
-    required this.rating,
-    required this.image,
-    required this.category,
-    required this.location,
-  });
-}
+// Use shared destination model and mock data so detail pages can resolve IDs
+import '../../../shared/data/models.dart';
+import '../../../shared/data/mock_data_source.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -38,68 +22,12 @@ class _SearchPageState extends State<SearchPage> {
   String selectedPriceRange = "All";
   double selectedRating = 0.0;
   bool _isSearching = false;
-
-  // Dummy data destinations
-  final List<Destination> allDestinations = [
-    Destination(
-      id: "1",
-      name: "Monas - National Monument",
-      distance: "5 Km from you",
-      rating: 4.4,
-      image: "https://images.unsplash.com/photo-1555899242-2e3b0faaf4ef?w=400",
-      category: "Monument",
-      location: "Jakarta",
-    ),
-    Destination(
-      id: "2",
-      name: "Jatim Park 1",
-      distance: "12 Km from you",
-      rating: 4.7,
-      image:
-          "https://images.unsplash.com/photo-1594138247273-15b480a8e536?w=400",
-      category: "Theme Park",
-      location: "Malang",
-    ),
-    Destination(
-      id: "3",
-      name: "Budug Asu Waterfall",
-      distance: "8 Km from you",
-      rating: 4.5,
-      image:
-          "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=400",
-      category: "Nature",
-      location: "Malang",
-    ),
-    Destination(
-      id: "4",
-      name: "Borobudur Temple",
-      distance: "150 Km from you",
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1556575849-d5ceb0d1d8c5?w=400",
-      category: "Temple",
-      location: "Yogyakarta",
-    ),
-    Destination(
-      id: "5",
-      name: "Prambanan Temple",
-      distance: "145 Km from you",
-      rating: 4.8,
-      image:
-          "https://images.unsplash.com/photo-1591766353639-747bb0a0f5e2?w=400",
-      category: "Temple",
-      location: "Yogyakarta",
-    ),
-    Destination(
-      id: "6",
-      name: "Taman Safari Indonesia",
-      distance: "60 Km from you",
-      rating: 4.6,
-      image:
-          "https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=400",
-      category: "Safari Park",
-      location: "Bogor",
-    ),
-  ];
+  // Use mock data from shared MockDataSource so detail page can find the
+  // destination by id. Copy the list to avoid accidental mutation of the
+  // original mock list.
+  final List<Destination> allDestinations = List<Destination>.from(
+    MockDataSource.destinations,
+  );
 
   @override
   void initState() {
@@ -516,9 +444,9 @@ class _SearchPageState extends State<SearchPage> {
             ClipRRect(
               borderRadius: BorderRadius.circular(imageRadius),
               child: Image.network(
-                destination.image,
-                width: (80 * scale).clamp(70.0, 90.0),
-                height: (80 * scale).clamp(70.0, 90.0),
+                destination.imageUrl,
+                width: imageSize,
+                height: imageSize,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
@@ -573,13 +501,17 @@ class _SearchPageState extends State<SearchPage> {
                         size: iconSize,
                         color: const Color(0xFF7D848D),
                       ),
-                      SizedBox(width: (5 * scale).clamp(4.0, 6.0)),
-                      Text(
-                        destination.distance,
-                        style: TextStyle(
-                          fontSize: (13 * scale).clamp(12.0, 14.0),
-                          color: const Color(0xFF7D848D),
-                          fontWeight: FontWeight.normal,
+                      SizedBox(width: isSmallScreen ? 3 : 4),
+                      Expanded(
+                        child: Text(
+                          destination.location,
+                          style: TextStyle(
+                            fontSize: subtitleFontSize,
+                            color: const Color(0xFF7D848D),
+                            fontWeight: FontWeight.normal,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
