@@ -729,18 +729,16 @@ class _SearchPageState extends State<SearchPage> {
               SizedBox(height: (12 * scale).clamp(10.0, 16.0)),
               if (_isSearching)
                 Column(
-                  children: List.generate(5, (index) {
+                  children: List.generate(6, (index) {
                     return Padding(
-                      padding: EdgeInsets.only(
-                        bottom: (16 * scale).clamp(12.0, 20.0),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isSmallScreen ? 16 : 20,
+                        vertical: isSmallScreen ? 8 : 10,
                       ),
                       child: CardLoading(
-                        height: isSmallScreen
-                            ? (100 * scale).clamp(80.0, 110.0)
-                            : 110,
-                        borderRadius: BorderRadius.circular(
-                          isSmallScreen ? 10 : 12,
-                        ),
+                        // Use same container style as Home page skeletons
+                        height: isSmallScreen ? 84 : 100,
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     );
                   }),
