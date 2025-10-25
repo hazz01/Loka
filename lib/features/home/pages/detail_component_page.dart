@@ -420,9 +420,86 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                                 (destinationDetail!.virtualTourUrl ?? '')
                                     .isNotEmpty)
                               GestureDetector(
-                                onTap: () => context.go(
-                                  '/detail/${widget.destinationId}/virtual-tour',
-                                ),
+                                onTap: () async {
+                                  final urlStr =
+                                      (destinationDetail!.virtualTourUrl ?? '')
+                                          .trim();
+                                  if (urlStr.isEmpty) {
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Virtual tour URL not available',
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    return;
+                                  }
+
+                                  Uri? uri;
+                                  try {
+                                    uri = Uri.parse(urlStr);
+                                  } catch (_) {
+                                    uri = null;
+                                  }
+
+                                  if (uri == null ||
+                                      !(uri.hasScheme &&
+                                          (uri.scheme.startsWith('http') ||
+                                              uri.scheme == 'https'))) {
+                                    // Try to prepend https if scheme missing
+                                    try {
+                                      uri = Uri.parse('https://$urlStr');
+                                    } catch (_) {
+                                      uri = null;
+                                    }
+                                  }
+
+                                  if (uri == null) {
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Invalid virtual tour URL',
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    return;
+                                  }
+
+                                  try {
+                                    // Prefer opening inside the app (in-app browser).
+                                    if (await canLaunchUrl(uri)) {
+                                      await launchUrl(
+                                        uri,
+                                        mode: LaunchMode.inAppWebView,
+                                      );
+                                    } else {
+                                      await launchUrl(
+                                        uri,
+                                        mode: LaunchMode.externalApplication,
+                                      );
+                                    }
+                                  } catch (e) {
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Could not open URL: ${e.toString()}',
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                },
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
                                     vertical: isSmallScreen ? 10 : 12,
