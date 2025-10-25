@@ -165,7 +165,7 @@ class _ExplorePageState extends State<ExplorePage> {
     final imageRadius = isSmallScreen ? 10.0 : 12.0;
 
     return GestureDetector(
-      onTap: () => context.go('/detail/${destination.id}'),
+      onTap: () => context.push('/detail/${destination.id}'),
       child: Container(
         padding: EdgeInsets.all(cardPadding),
         decoration: BoxDecoration(

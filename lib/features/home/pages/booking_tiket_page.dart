@@ -203,7 +203,7 @@ class _BookingTiketPageState extends State<BookingTiketPage> {
             color: Colors.black,
             size: (25 * scale).clamp(22.0, 28.0),
           ),
-          onPressed: () => context.go('/detail/${widget.destinationId}'),
+          onPressed: () => context.pop(),
         ),
       ),
       body: SingleChildScrollView(

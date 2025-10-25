@@ -718,7 +718,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final heartPosition = isSmallScreen ? 8.0 : 10.0;
 
     return GestureDetector(
-      onTap: () => context.go('/detail/$id'),
+      onTap: () => context.push('/detail/$id'),
       child: Container(
         width: cardWidth,
         margin: EdgeInsets.only(right: isSmallScreen ? 12 : 15),
@@ -888,7 +888,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final spaceBetween = isSmallScreen ? 14.0 : 18.0;
 
     return GestureDetector(
-      onTap: () => context.go('/detail/$id'),
+      onTap: () => context.push('/detail/$id'),
       child: Container(
         padding: EdgeInsets.all(cardPadding),
         decoration: BoxDecoration(

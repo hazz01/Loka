@@ -39,16 +39,17 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
       final destination = await DestinationDetailService.getDestinationDetail(
         widget.destinationId,
       );
-      
+
       if (mounted) {
-        final url = destination?.virtualTourUrl ?? 
+        final url =
+            destination?.virtualTourUrl ??
             'https://vragio-vtour.benspace.xyz/vragio%20web%20kajoetangan/'; // Fallback URL
-        
+
         // Validasi URL
         if (url.isEmpty) {
           throw Exception('URL virtual tour tidak tersedia');
         }
-        
+
         // Validasi format URL
         try {
           final uri = Uri.parse(url);
@@ -58,11 +59,11 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
         } catch (e) {
           throw Exception('Format URL tidak valid: ${e.toString()}');
         }
-        
+
         setState(() {
           _virtualTourUrl = url;
         });
-        
+
         _initializeWebView();
       }
     } catch (e) {
@@ -109,7 +110,7 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
       });
       return;
     }
-    
+
     // Inisialisasi platform-specific implementation
     late final PlatformWebViewControllerCreationParams params;
     if (WebViewPlatform.instance is AndroidWebViewPlatform) {
@@ -124,7 +125,7 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
     }
 
     final controller = WebViewController.fromPlatformCreationParams(params);
-    
+
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(Colors.black)
@@ -169,7 +170,8 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
               setState(() {
                 _isLoading = false;
                 _hasError = true;
-                _errorMessage = 'HTTP Error: ${error.response?.statusCode ?? "Unknown"}';
+                _errorMessage =
+                    'HTTP Error: ${error.response?.statusCode ?? "Unknown"}';
               });
             }
           },
@@ -182,12 +184,12 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
       (controller.platform as AndroidWebViewController)
           .setMediaPlaybackRequiresUserGesture(false);
     }
-    
+
     // Set controller dan load URL
     setState(() {
       _controller = controller;
     });
-    
+
     // Load URL setelah controller siap
     controller.loadRequest(Uri.parse(_virtualTourUrl));
   }
@@ -201,7 +203,7 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
       _loadDestinationAndInitialize();
       return;
     }
-    
+
     setState(() {
       _hasError = false;
       _isLoading = true;
@@ -305,7 +307,10 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
             ),
 
           // Top bar dengan tombol back dan VR
-          if (!_isLoading && !_hasError && _controller != null && _virtualTourUrl.isNotEmpty)
+          if (!_isLoading &&
+              !_hasError &&
+              _controller != null &&
+              _virtualTourUrl.isNotEmpty)
             Positioned(
               top: 0,
               left: 0,
@@ -331,8 +336,7 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
                         color: Colors.black.withOpacity(0.5),
                         borderRadius: BorderRadius.circular(8),
                         child: InkWell(
-                          onTap: () =>
-                              context.go('/detail/${widget.destinationId}'),
+                          onTap: () => context.pop(),
                           borderRadius: BorderRadius.circular(8),
                           child: const Padding(
                             padding: EdgeInsets.all(8.0),

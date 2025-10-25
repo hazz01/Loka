@@ -67,11 +67,12 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
   }) async {
     if (destinationDetail == null ||
         destinationDetail!.latitude == null ||
-        destinationDetail!.longitude == null) return;
-    
+        destinationDetail!.longitude == null)
+      return;
+
     final lat = destinationDetail!.latitude!;
     final lng = destinationDetail!.longitude!;
-    
+
     // Add custom circle annotation for the marker
     await mapboxMap.annotations.createCircleAnnotationManager().then((
       circleManager,
@@ -79,9 +80,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
       // Outer glow circle (shadow effect)
       circleManager.create(
         CircleAnnotationOptions(
-          geometry: Point(
-            coordinates: Position(lng, lat),
-          ),
+          geometry: Point(coordinates: Position(lng, lat)),
           circleRadius: 20.0 * size,
           circleColor: 0x40539DF3, // Semi-transparent blue
           circleBlur: 1.0,
@@ -91,9 +90,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
       // Main circle
       circleManager.create(
         CircleAnnotationOptions(
-          geometry: Point(
-            coordinates: Position(lng, lat),
-          ),
+          geometry: Point(coordinates: Position(lng, lat)),
           circleRadius: 12.0 * size,
           circleColor: 0xFF539DF3, // Solid blue
           circleStrokeWidth: 3.0 * size,
@@ -104,9 +101,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
       // Inner circle
       circleManager.create(
         CircleAnnotationOptions(
-          geometry: Point(
-            coordinates: Position(lng, lat),
-          ),
+          geometry: Point(coordinates: Position(lng, lat)),
           circleRadius: 5.0 * size,
           circleColor: 0xFFFFFFFF, // White center
         ),
@@ -119,9 +114,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
     ) async {
       pulseManager.create(
         CircleAnnotationOptions(
-          geometry: Point(
-            coordinates: Position(lng, lat),
-          ),
+          geometry: Point(coordinates: Position(lng, lat)),
           circleRadius: 25.0 * size,
           circleColor: 0x20539DF3, // Very transparent blue
           circleBlur: 0.8,
@@ -134,42 +127,41 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
     if (destinationDetail == null || destinationDetail!.ticketPrices == null) {
       return 0;
     }
-    
+
     final ticketPrice = destinationDetail!.ticketPrices!
         .firstWhere(
           (ticket) => ticket.type == selectedTicketType,
           orElse: () => const TicketPrice(type: '', price: 0),
         )
         .price;
-    
-    final tourPrice = selectedTour != null && destinationDetail!.tourOptions != null
+
+    final tourPrice =
+        selectedTour != null && destinationDetail!.tourOptions != null
         ? destinationDetail!.tourOptions!
-            .firstWhere(
-              (tour) => tour.id == selectedTour,
-              orElse: () => const TourOption(
-                id: '',
-                name: '',
-                description: '',
-                price: 0,
-                destinationCount: 0,
-              ),
-            )
-            .price
+              .firstWhere(
+                (tour) => tour.id == selectedTour,
+                orElse: () => const TourOption(
+                  id: '',
+                  name: '',
+                  description: '',
+                  price: 0,
+                  destinationCount: 0,
+                ),
+              )
+              .price
         : 0;
-    
+
     return ticketPrice + tourPrice;
   }
 
   Future<void> _openGoogleMaps() async {
     if (destinationDetail == null) return;
-    
+
     final lat = destinationDetail!.latitude;
     final lng = destinationDetail!.longitude;
-    
+
     // Try to open with Google Maps app first
-    final googleMapsUrl = Uri.parse(
-      'google.navigation:q=$lat,$lng&mode=d',
-    );
+    final googleMapsUrl = Uri.parse('google.navigation:q=$lat,$lng&mode=d');
 
     // If Google Maps app not available, use browser version
     final googleMapsBrowserUrl = Uri.parse(
@@ -221,7 +213,7 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
             color: Colors.black,
             size: isSmallScreen ? 22 : 25,
           ),
-          onPressed: () => context.go('/'),
+          onPressed: () => context.pop(),
         ),
         centerTitle: true,
         title: Text(
@@ -248,737 +240,811 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
         ],
       ),
       body: isLoading
+          ? Center(child: CircularProgressIndicator(color: Color(0xFF539DF3)))
+          : destinationDetail == null
           ? Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFF539DF3),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 64, color: Colors.grey),
+                  SizedBox(height: 16),
+                  Text(
+                    'Destination not found',
+                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                  ),
+                ],
               ),
             )
-          : destinationDetail == null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.error_outline,
-                        size: 64,
-                        color: Colors.grey,
+          : Stack(
+              children: [
+                // Main Content - Scrollable
+                CustomScrollView(
+                  slivers: [
+                    // Content Section with horizontal margin
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isSmallScreen ? 16 : 30,
+                        vertical: isSmallScreen ? 6 : 10,
                       ),
-                      SizedBox(height: 16),
-                      Text(
-                        'Destination not found',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : Stack(
-        children: [
-          // Main Content - Scrollable
-          CustomScrollView(
-            slivers: [
-              // Content Section with horizontal margin
-              SliverPadding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: isSmallScreen ? 16 : 30,
-                  vertical: isSmallScreen ? 6 : 10,
-                ),
-                sliver: SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Image - Square/Rectangle shape
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(
-                          isSmallScreen ? 8 : 12,
-                        ),
-                        child: Container(
-                          width: double.infinity,
-                          height: isSmallScreen
-                              ? screenHeight * 0.28
-                              : screenHeight * 0.40,
-                          child: Image.network(
-                            destinationDetail!.imageUrl,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                color: Colors.grey[300],
-                                child: Icon(
-                                  Icons.image_not_supported,
-                                  size: 64,
-                                  color: Colors.grey[500],
+                      sliver: SliverToBoxAdapter(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Image - Square/Rectangle shape
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(
+                                isSmallScreen ? 8 : 12,
+                              ),
+                              child: Container(
+                                width: double.infinity,
+                                height: isSmallScreen
+                                    ? screenHeight * 0.28
+                                    : screenHeight * 0.40,
+                                child: Image.network(
+                                  destinationDetail!.imageUrl,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      color: Colors.grey[300],
+                                      child: Icon(
+                                        Icons.image_not_supported,
+                                        size: 64,
+                                        color: Colors.grey[500],
+                                      ),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(height: isSmallScreen ? 12 : 18),
-
-                      // Tabs (overview | maps | reviews)
-                      Row(
-                        children: [
-                          _buildTab('overview'),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Text(
-                              '|',
-                              style: TextStyle(color: Color(0xFF797979)),
+                              ),
                             ),
-                          ),
-                          _buildTab('maps'),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Text(
-                              '|',
-                              style: TextStyle(color: Color(0xFF797979)),
+
+                            SizedBox(height: isSmallScreen ? 12 : 18),
+
+                            // Tabs (overview | maps | reviews)
+                            Row(
+                              children: [
+                                _buildTab('overview'),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
+                                  child: Text(
+                                    '|',
+                                    style: TextStyle(color: Color(0xFF797979)),
+                                  ),
+                                ),
+                                _buildTab('maps'),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
+                                  child: Text(
+                                    '|',
+                                    style: TextStyle(color: Color(0xFF797979)),
+                                  ),
+                                ),
+                                _buildTab('reviews'),
+                              ],
                             ),
-                          ),
-                          _buildTab('reviews'),
-                        ],
-                      ),
 
-                      SizedBox(height: isSmallScreen ? 16 : 25),
+                            SizedBox(height: isSmallScreen ? 16 : 25),
 
-                      // Title and Rating
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              destinationDetail!.name,
+                            // Title and Rating
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    destinationDetail!.name,
+                                    style: TextStyle(
+                                      fontSize: (18 * scale).clamp(14.0, 18.0),
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.star,
+                                      color: Colors.amber,
+                                      size: (20 * scale).clamp(18.0, 24.0),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      destinationDetail!.rating.toString(),
+                                      style: TextStyle(
+                                        fontSize: (16 * scale).clamp(
+                                          14.0,
+                                          20.0,
+                                        ),
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: isSmallScreen ? 3 : 5),
+                            // Location
+                            Row(
+                              children: [
+                                Icon(
+                                  LucideIcons.mapPin,
+                                  size: 16,
+                                  color: Color(0xFF969696),
+                                ),
+                                const SizedBox(width: 2),
+                                Expanded(
+                                  child: Text(
+                                    destinationDetail!.address ??
+                                        destinationDetail!.location,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Color(0xFF969696),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            SizedBox(height: isSmallScreen ? 2 : 4),
+
+                            // Time
+                            if (destinationDetail!.openingHours != null)
+                              Row(
+                                children: [
+                                  Icon(
+                                    LucideIcons.clock,
+                                    size: 16,
+                                    color: Color(0xFF969696),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    destinationDetail!.openingHours!,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Color(0xFF969696),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                            SizedBox(height: isSmallScreen ? 10 : 18),
+
+                            // 360 View Button
+                            GestureDetector(
+                              onTap: () => context.go(
+                                '/detail/${widget.destinationId}/virtual-tour',
+                              ),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: isSmallScreen ? 10 : 12,
+                                  horizontal: isSmallScreen ? 8 : 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Color(0xFF539DF3),
+                                  borderRadius: BorderRadius.circular(
+                                    isSmallScreen ? 8 : 12,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      'assets/image/360_icon.png',
+                                      width: (30 * scale).clamp(
+                                        isSmallScreen ? 20.0 : 24.0,
+                                        36.0,
+                                      ),
+                                      height: (30 * scale).clamp(
+                                        isSmallScreen ? 20.0 : 24.0,
+                                        36.0,
+                                      ),
+                                      color: Colors.white,
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: isSmallScreen ? 6 : 8,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              'See 360 View destination',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: (16 * scale).clamp(
+                                                  12.0,
+                                                  14.0,
+                                                ),
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            Text(
+                                              'See 360 View you will want to see',
+                                              style: TextStyle(
+                                                color: Colors.white.withOpacity(
+                                                  0.70,
+                                                ),
+                                                fontSize: (10 * scale).clamp(
+                                                  9.0,
+                                                  10.0,
+                                                ),
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: isSmallScreen ? 6 : 8,
+                                        vertical: isSmallScreen ? 7 : 10,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(
+                                          isSmallScreen ? 6 : 8,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'Try 360 View',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: (9 * scale).clamp(
+                                            8.0,
+                                            11.0,
+                                          ),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(height: isSmallScreen ? 18 : 28),
+
+                            // About destination
+                            Text(
+                              'About destination',
                               style: TextStyle(
-                                fontSize: (18 * scale).clamp(14.0, 18.0),
+                                fontSize: (16 * scale).clamp(14.0, 20.0),
                                 fontWeight: FontWeight.w500,
                                 color: Colors.black,
                               ),
                             ),
-                          ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.star,
-                                color: Colors.amber,
-                                size: (20 * scale).clamp(18.0, 24.0),
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                destinationDetail!.rating.toString(),
-                                style: TextStyle(
-                                  fontSize: (16 * scale).clamp(14.0, 20.0),
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: isSmallScreen ? 3 : 5),
-                      // Location
-                      Row(
-                        children: [
-                          Icon(
-                            LucideIcons.mapPin,
-                            size: 16,
-                            color: Color(0xFF969696),
-                          ),
-                          const SizedBox(width: 2),
-                          Expanded(
-                            child: Text(
-                              destinationDetail!.address ?? destinationDetail!.location,
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Color(0xFF969696),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      SizedBox(height: isSmallScreen ? 2 : 4),
-
-                      // Time
-                      if (destinationDetail!.openingHours != null)
-                        Row(
-                          children: [
-                            Icon(
-                              LucideIcons.clock,
-                              size: 16,
-                              color: Color(0xFF969696),
-                            ),
-                            const SizedBox(width: 4),
+                            SizedBox(height: isSmallScreen ? 12 : 20),
                             Text(
-                              destinationDetail!.openingHours!,
+                              destinationDetail!.description,
                               style: TextStyle(
-                                fontSize: 13,
-                                color: Color(0xFF969696),
+                                fontSize: (14 * scale).clamp(12.0, 14.0),
+                                color: Color(0xFF8F8B8B),
                                 fontWeight: FontWeight.w500,
+                                height: 1.6,
                               ),
                             ),
-                          ],
-                        ),
 
-                      SizedBox(height: isSmallScreen ? 10 : 18),
+                            SizedBox(height: isSmallScreen ? 20 : 35),
 
-                      // 360 View Button
-                      GestureDetector(
-                        onTap: () => context.go(
-                          '/detail/${widget.destinationId}/virtual-tour',
-                        ),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            vertical: isSmallScreen ? 10 : 12,
-                            horizontal: isSmallScreen ? 8 : 10,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Color(0xFF539DF3),
-                            borderRadius: BorderRadius.circular(
-                              isSmallScreen ? 8 : 12,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                'assets/image/360_icon.png',
-                                width: (30 * scale).clamp(
-                                  isSmallScreen ? 20.0 : 24.0,
-                                  36.0,
-                                ),
-                                height: (30 * scale).clamp(
-                                  isSmallScreen ? 20.0 : 24.0,
-                                  36.0,
-                                ),
-                                color: Colors.white,
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: isSmallScreen ? 6 : 8,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        'See 360 View destination',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: (16 * scale).clamp(
-                                            12.0,
-                                            14.0,
-                                          ),
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      Text(
-                                        'See 360 View you will want to see',
-                                        style: TextStyle(
-                                          color: Colors.white.withOpacity(0.70),
-                                          fontSize: (10 * scale).clamp(
-                                            9.0,
-                                            10.0,
-                                          ),
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: isSmallScreen ? 6 : 8,
-                                  vertical: isSmallScreen ? 7 : 10,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(
-                                    isSmallScreen ? 6 : 8,
-                                  ),
-                                ),
-                                child: Text(
-                                  'Try 360 View',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: (9 * scale).clamp(8.0, 11.0),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(height: isSmallScreen ? 18 : 28),
-
-                      // About destination
-                      Text(
-                        'About destination',
-                        style: TextStyle(
-                          fontSize: (16 * scale).clamp(14.0, 20.0),
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black,
-                        ),
-                      ),
-                      SizedBox(height: isSmallScreen ? 12 : 20),
-                      Text(
-                        destinationDetail!.description,
-                        style: TextStyle(
-                          fontSize: (14 * scale).clamp(12.0, 14.0),
-                          color: Color(0xFF8F8B8B),
-                          fontWeight: FontWeight.w500,
-                          height: 1.6,
-                        ),
-                      ),
-
-                      SizedBox(height: isSmallScreen ? 20 : 35),
-
-                      // Ticket Price Section
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Ticket Price',
-                            style: TextStyle(
-                              fontSize: (16 * scale).clamp(14.0, 20.0),
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF131313),
-                            ),
-                          ),
-                          // Weekday/Weekend Toggle on the right
-                          Row(
-                            children: [
-                              _buildTicketTypeButton(
-                                'Weekday',
-                                selectedTicketType == 'Weekday',
-                                scale,
-                              ),
-                              const SizedBox(width: 8),
-                              _buildTicketTypeButton(
-                                'Weekend',
-                                selectedTicketType == 'Weekend',
-                                scale,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // Ticket Options - Dynamic based on selected type
-                      Builder(builder: (context) {
-                        if (destinationDetail!.ticketPrices == null || 
-                            destinationDetail!.ticketPrices!.isEmpty) {
-                          return Container(
-                            padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              borderRadius: BorderRadius.circular(
-                                isSmallScreen ? 8 : 12,
-                              ),
-                            ),
-                            child: Text(
-                              'Ticket information not available',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          );
-                        }
-                        
-                        final selectedTicket = destinationDetail!.ticketPrices!
-                            .firstWhere(
-                          (ticket) => ticket.type == selectedTicketType,
-                          orElse: () => const TicketPrice(type: '', price: 0),
-                        );
-
-                        if (selectedTicket.isAvailable && selectedTicket.price > 0)
-                          return Container(
-                            padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(
-                                isSmallScreen ? 8 : 12,
-                              ),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                            // Ticket Price Section
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      selectedTicketType,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFFB4B4B4),
-                                      ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Text(
-                                      "Ticket destination",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFF131313),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "IDR ${selectedTicket.price.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.black.withOpacity(0.70),
-                                      ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Text(
-                                      "+tax",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFFB4B4B4),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          );
-                        else
-                          return Container(
-                            padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              borderRadius: BorderRadius.circular(
-                                isSmallScreen ? 8 : 12,
-                              ),
-                              border: Border.all(
-                                color: Colors.orange.withOpacity(0.3),
-                                width: 1,
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.info_outline,
-                                  color: Colors.orange,
-                                  size: isSmallScreen ? 18 : 24,
-                                ),
-                                SizedBox(width: isSmallScreen ? 8 : 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Ticket Not Available",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.orange[800],
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        "$selectedTicketType tickets are currently unavailable. Please select another option.",
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.grey[600],
-                                        ),
-                                      ),
-                                    ],
+                                Text(
+                                  'Ticket Price',
+                                  style: TextStyle(
+                                    fontSize: (16 * scale).clamp(14.0, 20.0),
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFF131313),
                                   ),
                                 ),
+                                // Weekday/Weekend Toggle on the right
+                                Row(
+                                  children: [
+                                    _buildTicketTypeButton(
+                                      'Weekday',
+                                      selectedTicketType == 'Weekday',
+                                      scale,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _buildTicketTypeButton(
+                                      'Weekend',
+                                      selectedTicketType == 'Weekend',
+                                      scale,
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
-                          );
-                      }),
-                      SizedBox(height: isSmallScreen ? 20 : 35),
-                      // Available Tour
-                      if (destinationDetail!.tourOptions != null && 
-                          destinationDetail!.tourOptions!.isNotEmpty) ...[
-                        Text(
-                          'Available Tour',
-                          style: TextStyle(
-                            fontSize: (16 * scale).clamp(14.0, 20.0),
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF131313),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        // Dynamic Tour Options
-                        ...destinationDetail!.tourOptions!.asMap().entries.map((entry) {
-                          final index = entry.key;
-                          final tour = entry.value;
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              bottom: index < destinationDetail!.tourOptions!.length - 1
-                                  ? (isSmallScreen ? 10 : 15)
-                                  : 0,
-                            ),
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                if (selectedTour == tour.id) {
-                                  selectedTour = null; // Deselect if already selected
-                                } else {
-                                  selectedTour = tour.id;
+
+                            const SizedBox(height: 20),
+
+                            // Ticket Options - Dynamic based on selected type
+                            Builder(
+                              builder: (context) {
+                                if (destinationDetail!.ticketPrices == null ||
+                                    destinationDetail!.ticketPrices!.isEmpty) {
+                                  return Container(
+                                    padding: EdgeInsets.all(
+                                      isSmallScreen ? 12 : 20,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[100],
+                                      borderRadius: BorderRadius.circular(
+                                        isSmallScreen ? 8 : 12,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Ticket information not available',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  );
                                 }
-                              });
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(
-                                  isSmallScreen ? 8 : 12,
-                                ),
-                                border: selectedTour == tour.id
-                                    ? Border.all(color: Color(0xFF539DF3), width: 2)
-                                    : null,
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: isSmallScreen ? 18 : 24,
-                                        height: isSmallScreen ? 18 : 24,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: selectedTour == tour.id
-                                                ? Color(0xFF539DF3)
-                                                : Color(0xFFB4B4B4),
-                                            width: 2,
+
+                                final selectedTicket = destinationDetail!
+                                    .ticketPrices!
+                                    .firstWhere(
+                                      (ticket) =>
+                                          ticket.type == selectedTicketType,
+                                      orElse: () =>
+                                          const TicketPrice(type: '', price: 0),
+                                    );
+
+                                if (selectedTicket.isAvailable &&
+                                    selectedTicket.price > 0)
+                                  return Container(
+                                    padding: EdgeInsets.all(
+                                      isSmallScreen ? 12 : 20,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(
+                                        isSmallScreen ? 8 : 12,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              selectedTicketType,
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                                color: Color(0xFFB4B4B4),
+                                              ),
+                                            ),
+                                            SizedBox(height: 5),
+                                            Text(
+                                              "Ticket destination",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFF131313),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "IDR ${selectedTicket.price.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.black.withOpacity(
+                                                  0.70,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(height: 5),
+                                            Text(
+                                              "+tax",
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                                color: Color(0xFFB4B4B4),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                else
+                                  return Container(
+                                    padding: EdgeInsets.all(
+                                      isSmallScreen ? 12 : 20,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[100],
+                                      borderRadius: BorderRadius.circular(
+                                        isSmallScreen ? 8 : 12,
+                                      ),
+                                      border: Border.all(
+                                        color: Colors.orange.withOpacity(0.3),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.info_outline,
+                                          color: Colors.orange,
+                                          size: isSmallScreen ? 18 : 24,
+                                        ),
+                                        SizedBox(width: isSmallScreen ? 8 : 12),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Ticket Not Available",
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.orange[800],
+                                                ),
+                                              ),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                "$selectedTicketType tickets are currently unavailable. Please select another option.",
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.grey[600],
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        child: selectedTour == tour.id
-                                            ? Center(
-                                                child: Container(
-                                                  width: isSmallScreen ? 8 : 12,
-                                                  height: isSmallScreen ? 8 : 12,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Color(0xFF539DF3),
-                                                  ),
-                                                ),
+                                      ],
+                                    ),
+                                  );
+                              },
+                            ),
+                            SizedBox(height: isSmallScreen ? 20 : 35),
+                            // Available Tour
+                            if (destinationDetail!.tourOptions != null &&
+                                destinationDetail!.tourOptions!.isNotEmpty) ...[
+                              Text(
+                                'Available Tour',
+                                style: TextStyle(
+                                  fontSize: (16 * scale).clamp(14.0, 20.0),
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF131313),
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              // Dynamic Tour Options
+                              ...destinationDetail!.tourOptions!.asMap().entries.map((
+                                entry,
+                              ) {
+                                final index = entry.key;
+                                final tour = entry.value;
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                    bottom:
+                                        index <
+                                            destinationDetail!
+                                                    .tourOptions!
+                                                    .length -
+                                                1
+                                        ? (isSmallScreen ? 10 : 15)
+                                        : 0,
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        if (selectedTour == tour.id) {
+                                          selectedTour =
+                                              null; // Deselect if already selected
+                                        } else {
+                                          selectedTour = tour.id;
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(
+                                        isSmallScreen ? 12 : 20,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(
+                                          isSmallScreen ? 8 : 12,
+                                        ),
+                                        border: selectedTour == tour.id
+                                            ? Border.all(
+                                                color: Color(0xFF539DF3),
+                                                width: 2,
                                               )
                                             : null,
                                       ),
-                                      SizedBox(width: isSmallScreen ? 8 : 12),
-                                      Column(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                            CrossAxisAlignment.center,
                                         children: [
-                                          Text(
-                                            tour.name,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                              color: Color(0xFFB4B4B4),
-                                            ),
+                                          Row(
+                                            children: [
+                                              Container(
+                                                width: isSmallScreen ? 18 : 24,
+                                                height: isSmallScreen ? 18 : 24,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: Border.all(
+                                                    color:
+                                                        selectedTour == tour.id
+                                                        ? Color(0xFF539DF3)
+                                                        : Color(0xFFB4B4B4),
+                                                    width: 2,
+                                                  ),
+                                                ),
+                                                child: selectedTour == tour.id
+                                                    ? Center(
+                                                        child: Container(
+                                                          width: isSmallScreen
+                                                              ? 8
+                                                              : 12,
+                                                          height: isSmallScreen
+                                                              ? 8
+                                                              : 12,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                color: Color(
+                                                                  0xFF539DF3,
+                                                                ),
+                                                              ),
+                                                        ),
+                                                      )
+                                                    : null,
+                                              ),
+                                              SizedBox(
+                                                width: isSmallScreen ? 8 : 12,
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    tour.name,
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: Color(0xFFB4B4B4),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: isSmallScreen
+                                                        ? 3
+                                                        : 5,
+                                                  ),
+                                                  Text(
+                                                    '${tour.destinationCount} Destination',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: Color(0xFF131313),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
-                                          SizedBox(height: isSmallScreen ? 3 : 5),
-                                          Text(
-                                            '${tour.destinationCount} Destination',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: Color(0xFF131313),
-                                            ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                'IDR ${tour.price.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.black
+                                                      .withOpacity(0.70),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 5),
+                                              Text(
+                                                '+tax',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Color(0xFFB4B4B4),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'IDR ${tour.price.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black.withOpacity(0.70),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 5),
-                                      Text(
-                                        '+tax',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFFB4B4B4),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                      ],
-
-                      SizedBox(height: isSmallScreen ? 20 : 35),
-
-                      // Map Section
-                      Text(
-                        'Map',
-                        style: TextStyle(
-                          fontSize: (16 * scale).clamp(14.0, 20.0),
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF131313),
-                        ),
-                      ),
-                      SizedBox(height: isSmallScreen ? 12 : 20),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedTab = 'maps';
-                          });
-                          _showFullscreenMap();
-                        },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Stack(
-                            children: [
-                              // Mapbox Preview Map
-                              Container(
-                                height: isSmallScreen
-                                    ? screenHeight * 0.18
-                                    : screenHeight *
-                                          0.25, // 25% of screen height
-                                width: double.infinity,
-                                child: destinationDetail!.longitude != null &&
-                                        destinationDetail!.latitude != null
-                                    ? MapWidget(
-                                        cameraOptions: CameraOptions(
-                                          center: Point(
-                                            coordinates: Position(
-                                              destinationDetail!.longitude!,
-                                              destinationDetail!.latitude!,
-                                            ),
-                                          ),
-                                          zoom: 14.0,
-                                        ),
-                                        styleUri: MapboxStyles.MAPBOX_STREETS,
-                                        onMapCreated: (MapboxMap mapboxMap) async {
-                                          // Add custom marker
-                                          await _addCustomMarker(
-                                            mapboxMap,
-                                            size: 1.2,
-                                          );
-                                        },
-                                      )
-                                    : Container(
-                                        color: Colors.grey[300],
-                                        child: Center(
-                                          child: Text(
-                                            'Map not available',
-                                            style: TextStyle(
-                                              color: Colors.grey[600],
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                              ),
-                              // Overlay to indicate it's tappable
-                              Positioned(
-                                bottom: isSmallScreen ? 8 : 12,
-                                right: isSmallScreen ? 8 : 12,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: isSmallScreen ? 8 : 12,
-                                    vertical: isSmallScreen ? 4 : 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.7),
-                                    borderRadius: BorderRadius.circular(
-                                      isSmallScreen ? 14 : 20,
                                     ),
                                   ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.map,
-                                        color: Colors.white,
-                                        size: isSmallScreen ? 13 : 16,
-                                      ),
-                                      SizedBox(width: isSmallScreen ? 4 : 6),
-                                      Text(
-                                        'View on Map',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: isSmallScreen ? 10 : 12,
-                                          fontWeight: FontWeight.w500,
+                                );
+                              }).toList(),
+                            ],
+
+                            SizedBox(height: isSmallScreen ? 20 : 35),
+
+                            // Map Section
+                            Text(
+                              'Map',
+                              style: TextStyle(
+                                fontSize: (16 * scale).clamp(14.0, 20.0),
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF131313),
+                              ),
+                            ),
+                            SizedBox(height: isSmallScreen ? 12 : 20),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  selectedTab = 'maps';
+                                });
+                                _showFullscreenMap();
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Stack(
+                                  children: [
+                                    // Mapbox Preview Map
+                                    Container(
+                                      height: isSmallScreen
+                                          ? screenHeight * 0.18
+                                          : screenHeight *
+                                                0.25, // 25% of screen height
+                                      width: double.infinity,
+                                      child:
+                                          destinationDetail!.longitude !=
+                                                  null &&
+                                              destinationDetail!.latitude !=
+                                                  null
+                                          ? MapWidget(
+                                              cameraOptions: CameraOptions(
+                                                center: Point(
+                                                  coordinates: Position(
+                                                    destinationDetail!
+                                                        .longitude!,
+                                                    destinationDetail!
+                                                        .latitude!,
+                                                  ),
+                                                ),
+                                                zoom: 14.0,
+                                              ),
+                                              styleUri:
+                                                  MapboxStyles.MAPBOX_STREETS,
+                                              onMapCreated:
+                                                  (MapboxMap mapboxMap) async {
+                                                    // Add custom marker
+                                                    await _addCustomMarker(
+                                                      mapboxMap,
+                                                      size: 1.2,
+                                                    );
+                                                  },
+                                            )
+                                          : Container(
+                                              color: Colors.grey[300],
+                                              child: Center(
+                                                child: Text(
+                                                  'Map not available',
+                                                  style: TextStyle(
+                                                    color: Colors.grey[600],
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                    ),
+                                    // Overlay to indicate it's tappable
+                                    Positioned(
+                                      bottom: isSmallScreen ? 8 : 12,
+                                      right: isSmallScreen ? 8 : 12,
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: isSmallScreen ? 8 : 12,
+                                          vertical: isSmallScreen ? 4 : 6,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.7),
+                                          borderRadius: BorderRadius.circular(
+                                            isSmallScreen ? 14 : 20,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.map,
+                                              color: Colors.white,
+                                              size: isSmallScreen ? 13 : 16,
+                                            ),
+                                            SizedBox(
+                                              width: isSmallScreen ? 4 : 6,
+                                            ),
+                                            Text(
+                                              'View on Map',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: isSmallScreen
+                                                    ? 10
+                                                    : 12,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
+                            ),
+
+                            SizedBox(height: isSmallScreen ? 20 : 35),
+
+                            // Activities and Attractions
+                            if (destinationDetail!.activities != null &&
+                                destinationDetail!.activities!.isNotEmpty) ...[
+                              Text(
+                                'Activities and Attractions',
+                                style: TextStyle(
+                                  fontSize: (16 * scale).clamp(14.0, 20.0),
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF131313),
+                                ),
+                              ),
+                              SizedBox(height: isSmallScreen ? 12 : 20),
+                              ...destinationDetail!.activities!
+                                  .map(
+                                    (activity) =>
+                                        _buildBulletPoint(activity, scale),
+                                  )
+                                  .toList(),
                             ],
-                          ),
+                          ],
                         ),
                       ),
-
-                      SizedBox(height: isSmallScreen ? 20 : 35),
-
-                      // Activities and Attractions
-                      if (destinationDetail!.activities != null && 
-                          destinationDetail!.activities!.isNotEmpty) ...[
-                        Text(
-                          'Activities and Attractions',
-                          style: TextStyle(
-                            fontSize: (16 * scale).clamp(14.0, 20.0),
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF131313),
-                          ),
-                        ),
-                        SizedBox(height: isSmallScreen ? 12 : 20),
-                        ...destinationDetail!.activities!.map(
-                          (activity) => _buildBulletPoint(activity, scale),
-                        ).toList(),
-                      ],
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
+              ],
+            ),
       bottomNavigationBar: LayoutBuilder(
         builder: (context, constraints) {
           final bottomScale = constraints.maxWidth / 375;
@@ -1085,10 +1151,11 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
   }
 
   void _showFullscreenMap() {
-    if (destinationDetail == null || 
+    if (destinationDetail == null ||
         destinationDetail!.longitude == null ||
-        destinationDetail!.latitude == null) return;
-    
+        destinationDetail!.latitude == null)
+      return;
+
     showDialog(
       context: context,
       barrierColor: Colors.black87,
@@ -1183,7 +1250,8 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                           SizedBox(width: 6),
                           Expanded(
                             child: Text(
-                              destinationDetail!.address ?? destinationDetail!.location,
+                              destinationDetail!.address ??
+                                  destinationDetail!.location,
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Color(0xFF969696),
