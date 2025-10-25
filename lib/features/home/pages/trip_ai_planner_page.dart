@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loka/features/home/pages/place_holder_page.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class TripAIPlannerPage extends StatefulWidget {
@@ -82,6 +83,22 @@ class _TripAIPlannerPageState extends State<TripAIPlannerPage>
   void _navigateToCategory() {
     if (selectedCategory != null) {
       final category = categories.firstWhere((c) => c.id == selectedCategory);
+
+      // For 'province' and 'city', show a placeholder processing page
+      // then automatically return to this page after a delay.
+      if (selectedCategory == 'province' || selectedCategory == 'city') {
+        // Use the project's shared placeholder page for AI features.
+        // Wrap it in AutoPopPage so it returns to this screen automatically.
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) =>
+                AutoPopPage(child: const PlaceHolderAiPage(), seconds: 3),
+          ),
+        );
+        return;
+      }
+
+      // Default behavior: navigate to the configured route.
       context.go(category.route);
     }
   }
@@ -89,9 +106,7 @@ class _TripAIPlannerPageState extends State<TripAIPlannerPage>
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 768;
-    final isLargeScreen = screenWidth > 1024;
     final isSmallScreen = screenWidth < 600;
 
     // Responsive sizing
@@ -404,4 +419,29 @@ class CategoryData {
     required this.tags,
     required this.route,
   });
+}
+
+/// A small wrapper that shows [child] and automatically pops the route after
+/// [seconds]. This allows reusing `PlaceHolderAiPage` without modifying it.
+class AutoPopPage extends StatefulWidget {
+  final Widget child;
+  final int seconds;
+
+  const AutoPopPage({super.key, required this.child, this.seconds = 3});
+
+  @override
+  State<AutoPopPage> createState() => _AutoPopPageState();
+}
+
+class _AutoPopPageState extends State<AutoPopPage> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration(seconds: widget.seconds), () {
+      if (mounted) Navigator.of(context).pop();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
