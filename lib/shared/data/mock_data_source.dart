@@ -24,11 +24,13 @@ class MockDataSource {
       hasVirtualTour: true,
       category: 'Tourist Attraction',
       distance: 15.3,
-      address: 'Jl. Kartika No. 2, Sisir, Batu, Jawa Timur 65315, Indonesia', // added postal
+      address:
+          'Jl. Kartika No. 2, Sisir, Batu, Jawa Timur 65315, Indonesia', // added postal
       openingHours: '08:30 AM – 04:30 PM', // standardised format
       latitude: -7.8753,
       longitude: 112.5281,
-      virtualTourUrl: 'https://vragio-vtour.benspace.xyz/vragio%20web%20jatim%20park/',
+      virtualTourUrl:
+          'https://vragio-vtour.benspace.xyz/vragio%20web%20jatim%20park/',
       ticketPrices: [
         TicketPrice(type: 'Weekday', price: 80000, isAvailable: true),
         TicketPrice(type: 'Weekend', price: 120000, isAvailable: true),
@@ -70,11 +72,13 @@ class MockDataSource {
       hasVirtualTour: true,
       category: 'Tourist Attraction',
       distance: 16.5,
-      address: 'Jl. Terusan Sultan Agung No.2, Ngaglik, Batu, Jawa Timur 65316, Indonesia', // added postal
+      address:
+          'Jl. Terusan Sultan Agung No.2, Ngaglik, Batu, Jawa Timur 65316, Indonesia', // added postal
       openingHours: '12:00 PM – 08:00 PM',
       latitude: -7.8925,
       longitude: 112.5234,
-      virtualTourUrl: 'https://vragio-vtour.benspace.xyz/vragio%20web%20museum%20angkut/',
+      virtualTourUrl:
+          'https://vragio-vtour.benspace.xyz/vragio%20web%20museum%20angkut/',
       ticketPrices: [
         TicketPrice(type: 'Weekday', price: 100000, isAvailable: true),
         TicketPrice(type: 'Weekend', price: 130000, isAvailable: true),
@@ -116,11 +120,15 @@ class MockDataSource {
       hasVirtualTour: true,
       category: 'Tourist Attraction',
       distance: 16.1,
-      address: 'Jl. Oro-Oro Ombo No.9, Temas, Batu, Kota Batu, Jawa Timur 65315, Indonesia', // fixed address per web :contentReference[oaicite:0]{index=0}
-      openingHours: '08:30 AM – 04:30 PM', // per web :contentReference[oaicite:1]{index=1}
-      latitude: -7.8880, // approx from web :contentReference[oaicite:2]{index=2}
+      address:
+          'Jl. Oro-Oro Ombo No.9, Temas, Batu, Kota Batu, Jawa Timur 65315, Indonesia', // fixed address per web :contentReference[oaicite:0]{index=0}
+      openingHours:
+          '08:30 AM – 04:30 PM', // per web :contentReference[oaicite:1]{index=1}
+      latitude:
+          -7.8880, // approx from web :contentReference[oaicite:2]{index=2}
       longitude: 112.5296,
-      virtualTourUrl: 'https://vragio-vtour.benspace.xyz/vragio%20web%20jatim%20park%202/',
+      virtualTourUrl:
+          'https://vragio-vtour.benspace.xyz/vragio%20web%20jatim%20park%202/',
       ticketPrices: [
         TicketPrice(type: 'Weekday', price: 125000, isAvailable: true),
         TicketPrice(type: 'Weekend', price: 160000, isAvailable: true),
@@ -161,12 +169,17 @@ class MockDataSource {
       hasVirtualTour: false,
       category: 'Tourist Attraction',
       distance: 45.8,
-      address: 'Kawasan Taman Nasional Bromo Tengger Semeru, Jawa Timur, Indonesia',
+      address:
+          'Kawasan Taman Nasional Bromo Tengger Semeru, Jawa Timur, Indonesia',
       openingHours: '24 hours (sunrise to viewpoint)',
       latitude: -7.9425, // approximate
       longitude: 112.9539,
       ticketPrices: [
-        TicketPrice(type: 'General Admission', price: 100000, isAvailable: true),
+        TicketPrice(
+          type: 'General Admission',
+          price: 100000,
+          isAvailable: true,
+        ),
       ],
       tourOptions: [
         TourOption(
@@ -190,19 +203,25 @@ class MockDataSource {
       description:
           'Pantai indah dengan pura di atas pulau kecil, mirip Tanah Lot.',
       imageUrl:
-          'https://torch.id/cdn/shop/articles/Artikel_167_-_Preview.webp?v=1713337145&width=1100',
+          'https://i.pinimg.com/1200x/40/0a/db/400adba2b174b52c701a66e11c7671f6.jpg',
       location: 'Bantur, Malang',
       province: 'Jawa Timur',
       rating: 4.4,
       hasVirtualTour: false,
       category: 'Tourist Attraction',
       distance: 52.3,
-      address: 'Dusun Sumber Jambe, Desa Srigonco, Kecamatan Bantur, Kabupaten Malang, Jawa Timur 65179, Indonesia', // per web :contentReference[oaicite:3]{index=3}
-      openingHours: 'Open 24 hours', // per web :contentReference[oaicite:4]{index=4}
+      address:
+          'Dusun Sumber Jambe, Desa Srigonco, Kecamatan Bantur, Kabupaten Malang, Jawa Timur 65179, Indonesia', // per web :contentReference[oaicite:3]{index=3}
+      openingHours:
+          'Open 24 hours', // per web :contentReference[oaicite:4]{index=4}
       latitude: -8.1450, // approx
       longitude: 112.6350,
       ticketPrices: [
-        TicketPrice(type: 'Standard', price: 10000, isAvailable: true), // weekday price
+        TicketPrice(
+          type: 'Standard',
+          price: 10000,
+          isAvailable: true,
+        ), // weekday price
         TicketPrice(type: 'Weekend/Holiday', price: 15000, isAvailable: true),
       ],
       tourOptions: [
@@ -234,7 +253,8 @@ class MockDataSource {
       hasVirtualTour: false,
       category: 'Tourist Attraction',
       distance: 22.7,
-      address: 'Jl. Coban Rondo No. / Kawasan Wisata Air Terjun Coban Rondo, Dusun Krajan II, Pujon, Batu, Jawa Timur, Indonesia',
+      address:
+          'Jl. Coban Rondo No. / Kawasan Wisata Air Terjun Coban Rondo, Dusun Krajan II, Pujon, Batu, Jawa Timur, Indonesia',
       openingHours: '08:00 AM – 05:00 PM',
       latitude: -7.8320, // approximate
       longitude: 112.5250,
@@ -276,7 +296,8 @@ class MockDataSource {
       openingHours: '07:00 AM – 05:30 PM',
       latitude: -7.9797,
       longitude: 112.6304,
-      virtualTourUrl: 'https://vragio-vtour.benspace.xyz/vragio%20web%20kajoetangan/',
+      virtualTourUrl:
+          'https://vragio-vtour.benspace.xyz/vragio%20web%20kajoetangan/',
       ticketPrices: [
         TicketPrice(type: 'Standard', price: 50000, isAvailable: true),
       ],
@@ -318,11 +339,13 @@ class MockDataSource {
       hasVirtualTour: true,
       category: 'Heritage',
       distance: 3.2,
-      address: 'Jl. Jodipan, Kesatrian, Blimbing, Malang, Jawa Timur 65125, Indonesia',
+      address:
+          'Jl. Jodipan, Kesatrian, Blimbing, Malang, Jawa Timur 65125, Indonesia',
       openingHours: '08:00 AM – 05:00 PM',
       latitude: -7.9781,
       longitude: 112.6435,
-      virtualTourUrl: 'https://vragio-vtour.benspace.xyz/vragio%20web%20jodipan/',
+      virtualTourUrl:
+          'https://vragio-vtour.benspace.xyz/vragio%20web%20jodipan/',
       ticketPrices: [
         TicketPrice(type: 'Standard', price: 10000, isAvailable: true),
         TicketPrice(type: 'Weekend/Holiday', price: 15000, isAvailable: true),
@@ -370,7 +393,8 @@ class MockDataSource {
       openingHours: '08:00 AM – 06:00 PM',
       latitude: -7.8645,
       longitude: 112.5189,
-      virtualTourUrl: 'https://vragio-vtour.benspace.xyz/vragio%20web%20tanaka/',
+      virtualTourUrl:
+          'https://vragio-vtour.benspace.xyz/vragio%20web%20tanaka/',
       ticketPrices: [
         TicketPrice(type: 'Weekday', price: 15000, isAvailable: true),
         TicketPrice(type: 'Weekend', price: 20000, isAvailable: true),
@@ -407,8 +431,7 @@ class MockDataSource {
       name: 'Desa Wisata Bulukerto',
       description:
           'Desa Wisata Bulukerto is an agro-tourism village located at the foot of Mount Arjuna, offering visitors a unique blend of natural beauty, agricultural experiences, and rural tourism. The village is renowned for its organic farming, cool mountain air, and stunning views of the surrounding mountains.\n\nVisitors can experience authentic rural life while enjoying modern tourism facilities. The village offers various activities including vegetable picking, coffee plantation tours, traditional food making workshops, and trekking through scenic landscapes. With its commitment to sustainable tourism and community empowerment, Bulukerto has become a model for successful rural tourism development in East Java.',
-      imageUrl:
-          'https://asset.kompas.com/crops/v2ifV8AAq5sDLFOe7YQscCdaZGw=/0x95:1361x1002/750x500/data/photo/2025/05/04/6816bc0f2630a.jpg',
+      imageUrl: 'https://jadesta.kemenparekraf.go.id/imgpost/94747.jpg',
       location: 'Bumiaji, Batu',
       province: 'Jawa Timur',
       rating: 4.8,
@@ -458,14 +481,15 @@ class MockDataSource {
       description:
           'Rumah makan bakso legendaris dengan cita rasa yang khas dan porsi melimpah.',
       imageUrl:
-          'https://asset.kompas.com/crops/v2ifV8AAq5sDLFOe7YQscCdaZGw=/0x95:1361x1002/750x500/data/photo/2025/05/04/6816bc0f2630a.jpg',
+          'https://asset.kompas.com/crops/0AiPpn10d3NmOW-234ZtBEapAQM=/61x0:902x561/1200x800/data/photo/2020/03/03/5e5e292d8b1dc.jpg',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 4.6,
       hasVirtualTour: false,
       category: 'Culinary',
       distance: 4.1,
-      address: 'Jl. Panglima Sudirman No. 89, Malang, Jawa Timur, Indonesia', // added placeholder (please verify)
+      address:
+          'Jl. Panglima Sudirman No. 89, Malang, Jawa Timur, Indonesia', // added placeholder (please verify)
       openingHours: '10:00 AM – 10:00 PM',
       latitude: -7.9830,
       longitude: 112.6210,
@@ -489,7 +513,8 @@ class MockDataSource {
       hasVirtualTour: false,
       category: 'Culinary',
       distance: 5.8,
-      address: 'Jl. Gatot Subroto No. 12, Malang, Jawa Timur, Indonesia', // added placeholder
+      address:
+          'Jl. Gatot Subroto No. 12, Malang, Jawa Timur, Indonesia', // added placeholder
       openingHours: '24 hours',
       latitude: -7.9785,
       longitude: 112.6420,
@@ -506,15 +531,17 @@ class MockDataSource {
       description:
           'Restoran bersejarah dengan interior klasik dan menu western yang legendaris.',
       imageUrl:
-          'https://assets.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/p3/30/2024/10/26/WhatsApp-Image-2024-10-23-at-170755-1051339154.jpeg',
+          'https://nahwatravel.co.id/wp-content/uploads/2022/04/Toko-Oen-Malang.jpg',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 4.4,
       hasVirtualTour: false,
       category: 'Culinary',
       distance: 2.9,
-      address: 'Jl. Jenderal Basuki Rahmat No.4, Malang, Jawa Timur, Indonesia', // added placeholder
-      openingHours: '09:00 AM – 11:00 PM & 05:00 PM – 10:00 PM', // typical split hours
+      address:
+          'Jl. Jenderal Basuki Rahmat No.4, Malang, Jawa Timur, Indonesia', // added placeholder
+      openingHours:
+          '09:00 AM – 11:00 PM & 05:00 PM – 10:00 PM', // typical split hours
       latitude: -7.9835,
       longitude: 112.6215,
       ticketPrices: [],
@@ -537,7 +564,8 @@ class MockDataSource {
       hasVirtualTour: false,
       category: 'Culinary',
       distance: 6.2,
-      address: 'Jl. Soekarno-Hatta No. 45, Malang, Jawa Timur, Indonesia', // added placeholder
+      address:
+          'Jl. Soekarno-Hatta No. 45, Malang, Jawa Timur, Indonesia', // added placeholder
       openingHours: '07:00 AM – 09:00 PM',
       latitude: -7.9750,
       longitude: 112.6600,
@@ -563,15 +591,14 @@ class MockDataSource {
       hasVirtualTour: false,
       category: 'Souvenir',
       distance: 3.7,
-      address: 'Jl. Raya Tlogomas No. 1, Malang, Jawa Timur, Indonesia', // placeholder
+      address:
+          'Jl. Raya Tlogomas No. 1, Malang, Jawa Timur, Indonesia', // placeholder
       openingHours: '08:00 AM – 07:00 PM',
       latitude: -7.9530,
       longitude: 112.6200,
       ticketPrices: [],
       tourOptions: [],
-      activities: [
-        'Browse local souvenir items – snacks, crafts, handicrafts',
-      ],
+      activities: ['Browse local souvenir items – snacks, crafts, handicrafts'],
     ),
     const Destination(
       id: 'dest_13',
@@ -586,15 +613,14 @@ class MockDataSource {
       hasVirtualTour: false,
       category: 'Souvenir',
       distance: 4.3,
-      address: 'Jl. Basuki Rahmat No. 50, Malang, Jawa Timur, Indonesia', // placeholder
+      address:
+          'Jl. Basuki Rahmat No. 50, Malang, Jawa Timur, Indonesia', // placeholder
       openingHours: '08:00 AM – 08:00 PM',
       latitude: -7.9850,
       longitude: 112.6190,
       ticketPrices: [],
       tourOptions: [],
-      activities: [
-        'Buy the famous pia cake as gift & snack',
-      ],
+      activities: ['Buy the famous pia cake as gift & snack'],
     ),
     const Destination(
       id: 'dest_14',
@@ -609,7 +635,8 @@ class MockDataSource {
       hasVirtualTour: false,
       category: 'Souvenir',
       distance: 8.9,
-      address: 'Jl. Soekarno-Hatta Km. 9, Malang, Jawa Timur, Indonesia', // placeholder
+      address:
+          'Jl. Soekarno-Hatta Km. 9, Malang, Jawa Timur, Indonesia', // placeholder
       openingHours: '09:00 AM – 06:00 PM',
       latitude: -7.9700,
       longitude: 112.6400,
@@ -633,15 +660,14 @@ class MockDataSource {
       hasVirtualTour: false,
       category: 'Souvenir',
       distance: 18.5,
-      address: 'Jl. Raya Oro-Oro Ombo No. 5, Batu, Jawa Timur, Indonesia', // placeholder
+      address:
+          'Jl. Raya Oro-Oro Ombo No. 5, Batu, Jawa Timur, Indonesia', // placeholder
       openingHours: '08:00 AM – 07:00 PM',
       latitude: -7.8810,
       longitude: 112.5280,
       ticketPrices: [],
       tourOptions: [],
-      activities: [
-        'Buy fresh Malang apples & apple products',
-      ],
+      activities: ['Buy fresh Malang apples & apple products'],
     ),
 
     // Tour & Trip
@@ -658,7 +684,8 @@ class MockDataSource {
       hasVirtualTour: false,
       category: 'Tour & Trip',
       distance: 19.2,
-      address: 'Jl. Trunojoyo No. 99, Batu, Jawa Timur, Indonesia', // placeholder
+      address:
+          'Jl. Trunojoyo No. 99, Batu, Jawa Timur, Indonesia', // placeholder
       openingHours: '08:00 AM – 05:00 PM',
       latitude: -7.8670,
       longitude: 112.5230,
@@ -682,7 +709,8 @@ class MockDataSource {
       hasVirtualTour: false,
       category: 'Tour & Trip',
       distance: 24.1,
-      address: 'Dusun Wonokitri, Pujon, Batu, Jawa Timur, Indonesia', // placeholder
+      address:
+          'Dusun Wonokitri, Pujon, Batu, Jawa Timur, Indonesia', // placeholder
       openingHours: '07:30 AM – 05:00 PM',
       latitude: -7.8150,
       longitude: 112.5450,
@@ -706,7 +734,8 @@ class MockDataSource {
       hasVirtualTour: false,
       category: 'Tour & Trip',
       distance: 17.8,
-      address: 'Desa Tulungrejo, Bumiaji, Batu, Jawa Timur, Indonesia', // placeholder
+      address:
+          'Desa Tulungrejo, Bumiaji, Batu, Jawa Timur, Indonesia', // placeholder
       openingHours: '08:00 AM – 05:00 PM',
       latitude: -7.8640,
       longitude: 112.5200,
@@ -730,7 +759,8 @@ class MockDataSource {
       hasVirtualTour: false,
       category: 'Tour & Trip',
       distance: 21.3,
-      address: 'Jl. Raya Selecta No. 1, Batu, Jawa Timur, Indonesia', // placeholder
+      address:
+          'Jl. Raya Selecta No. 1, Batu, Jawa Timur, Indonesia', // placeholder
       openingHours: '08:00 AM – 05:00 PM',
       latitude: -7.8675,
       longitude: 112.5380,
@@ -754,7 +784,8 @@ class MockDataSource {
       hasVirtualTour: false,
       category: 'Tour & Trip',
       distance: 23.5,
-      address: 'Bukit Paragliding, Gunung Banyak, Batu, Jawa Timur, Indonesia', // placeholder
+      address:
+          'Bukit Paragliding, Gunung Banyak, Batu, Jawa Timur, Indonesia', // placeholder
       openingHours: '09:00 AM – 05:00 PM',
       latitude: -7.8580,
       longitude: 112.5260,
