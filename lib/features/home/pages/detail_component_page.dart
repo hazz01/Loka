@@ -415,25 +415,123 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
 
                             SizedBox(height: isSmallScreen ? 10 : 18),
 
-                            // 360 View Button
-                            GestureDetector(
-                              onTap: () => context.go(
-                                '/detail/${widget.destinationId}/virtual-tour',
-                              ),
-                              child: Container(
+                            // 360 View Button — show only when virtual tour is available
+                            if (destinationDetail!.hasVirtualTour == true &&
+                                (destinationDetail!.virtualTourUrl ?? '')
+                                    .isNotEmpty)
+                              GestureDetector(
+                                onTap: () => context.go(
+                                  '/detail/${widget.destinationId}/virtual-tour',
+                                ),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: isSmallScreen ? 10 : 12,
+                                    horizontal: isSmallScreen ? 8 : 10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFF539DF3),
+                                    borderRadius: BorderRadius.circular(
+                                      isSmallScreen ? 8 : 12,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        'assets/image/360_icon.png',
+                                        width: (30 * scale).clamp(
+                                          isSmallScreen ? 20.0 : 24.0,
+                                          36.0,
+                                        ),
+                                        height: (30 * scale).clamp(
+                                          isSmallScreen ? 20.0 : 24.0,
+                                          36.0,
+                                        ),
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(width: isSmallScreen ? 8 : 12),
+                                      Expanded(
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: isSmallScreen ? 6 : 8,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                'See 360 View destination',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: (16 * scale).clamp(
+                                                    12.0,
+                                                    14.0,
+                                                  ),
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              Text(
+                                                'See 360 View you will want to see',
+                                                style: TextStyle(
+                                                  color: Colors.white
+                                                      .withOpacity(0.70),
+                                                  fontSize: (10 * scale).clamp(
+                                                    9.0,
+                                                    10.0,
+                                                  ),
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: isSmallScreen ? 6 : 8,
+                                          vertical: isSmallScreen ? 7 : 10,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                            isSmallScreen ? 6 : 8,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'Try 360 View',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: (9 * scale).clamp(
+                                              8.0,
+                                              11.0,
+                                            ),
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            else
+                              // Placeholder when no VR available (not partner)
+                              Container(
                                 padding: EdgeInsets.symmetric(
                                   vertical: isSmallScreen ? 10 : 12,
                                   horizontal: isSmallScreen ? 8 : 10,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Color(0xFF539DF3),
+                                  color: Colors.grey[200],
                                   borderRadius: BorderRadius.circular(
                                     isSmallScreen ? 8 : 12,
                                   ),
                                 ),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Image.asset(
@@ -446,73 +544,43 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                                         isSmallScreen ? 20.0 : 24.0,
                                         36.0,
                                       ),
-                                      color: Colors.white,
+                                      color: Colors.black87,
                                     ),
+                                    SizedBox(width: isSmallScreen ? 8 : 12),
                                     Expanded(
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: isSmallScreen ? 6 : 8,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              'See 360 View destination',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: (16 * scale).clamp(
-                                                  12.0,
-                                                  14.0,
-                                                ),
-                                                fontWeight: FontWeight.w600,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            '360 View not available',
+                                            style: TextStyle(
+                                              color: Colors.black87,
+                                              fontSize: (16 * scale).clamp(
+                                                12.0,
+                                                14.0,
                                               ),
+                                              fontWeight: FontWeight.w600,
                                             ),
-                                            Text(
-                                              'See 360 View you will want to see',
-                                              style: TextStyle(
-                                                color: Colors.white.withOpacity(
-                                                  0.70,
-                                                ),
-                                                fontSize: (10 * scale).clamp(
-                                                  9.0,
-                                                  10.0,
-                                                ),
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: isSmallScreen ? 6 : 8,
-                                        vertical: isSmallScreen ? 7 : 10,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(
-                                          isSmallScreen ? 6 : 8,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        'Try 360 View',
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: (9 * scale).clamp(
-                                            8.0,
-                                            11.0,
                                           ),
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                          Text(
+                                            'Virtual tour not available for this destination (not a partner yet)',
+                                            style: TextStyle(
+                                              color: Colors.black54,
+                                              fontSize: (10 * scale).clamp(
+                                                9.0,
+                                                10.0,
+                                              ),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
 
                             SizedBox(height: isSmallScreen ? 18 : 28),
 
