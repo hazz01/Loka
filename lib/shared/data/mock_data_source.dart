@@ -29,8 +29,7 @@ class MockDataSource {
       openingHours: '08:30 AM – 04:30 PM', // standardised format
       latitude: -7.8753,
       longitude: 112.5281,
-      virtualTourUrl:
-          'https://vragio-vtour.benspace.xyz/vragio%20web%20jatim%20park/',
+      virtualTourUrl: 'https://jatimpark1.netlify.app/',
       ticketPrices: [
         TicketPrice(type: 'Weekday', price: 80000, isAvailable: true),
         TicketPrice(type: 'Weekend', price: 120000, isAvailable: true),
