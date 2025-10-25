@@ -119,36 +119,6 @@ class ProfilePage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "View Coin",
-                          style: TextStyle(
-                            color: Color(0xFF1B1E28),
-                            fontSize: (14 * scale).clamp(12.0, 16.0),
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                        SizedBox(height: (10 * scale).clamp(8.0, 12.0)),
-                        Text(
-                          "10",
-                          style: TextStyle(
-                            color: Color(0xFF539DF3),
-                            fontSize: (16 * scale).clamp(14.0, 18.0),
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    height: double.infinity,
-                    width: isSmallScreen ? 1 : 1.5,
-                    decoration: BoxDecoration(color: Color(0xFFF7F7F9)),
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
                           "Travel Trips",
                           style: TextStyle(
                             color: Color(0xFF1B1E28),
@@ -203,76 +173,6 @@ class ProfilePage extends StatelessWidget {
             ),
             SizedBox(height: (30 * scale).clamp(24.0, 36.0)),
             Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: (18 * scale).clamp(14.0, 22.0),
-                vertical: (16 * scale).clamp(12.0, 20.0),
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(isSmallScreen ? 10 : 12),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      'ViewCoin use for 360 view',
-                      style: TextStyle(
-                        fontSize: (15 * scale).clamp(13.0, 17.0),
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF1B1E28),
-                      ),
-                    ),
-                  ),
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () {},
-                      borderRadius: BorderRadius.circular(
-                        isSmallScreen ? 8 : 10,
-                      ),
-                      splashColor: Colors.blue.withOpacity(0.3),
-                      highlightColor: Colors.blue.withOpacity(0.1),
-                      child: Ink(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: (10 * scale).clamp(8.0, 12.0),
-                          vertical: (7 * scale).clamp(6.0, 9.0),
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(
-                            isSmallScreen ? 8 : 10,
-                          ),
-                          border: Border.all(color: Color(0xFF539DF3)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Buy coin',
-                              style: TextStyle(
-                                color: const Color(0xFF539DF3),
-                                fontSize: (14 * scale).clamp(12.0, 16.0),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(width: (4 * scale).clamp(2.0, 6.0)),
-                            Icon(
-                              LucideIcons.chevronRight,
-                              size: (19 * scale).clamp(17.0, 22.0),
-                              color: const Color(0xFF539DF3),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: (10 * scale).clamp(8.0, 12.0)),
-            Container(
               width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -294,8 +194,7 @@ class ProfilePage extends StatelessWidget {
                     icon: LucideIcons.bookmark,
                     title: "Favorite",
                     onTap: () {
-                      // Handle profile tap
-                      print("Favorite tapped");
+                      context.go('/favorite-trips');
                     },
                     isSmallScreen: isSmallScreen,
                     scale: scale,
@@ -304,8 +203,7 @@ class ProfilePage extends StatelessWidget {
                     icon: LucideIcons.planeTakeoff,
                     title: "Previous Trips",
                     onTap: () {
-                      // Handle profile tap
-                      print("Previous Trips tapped");
+                      context.go('/previous-trips');
                     },
                     isSmallScreen: isSmallScreen,
                     scale: scale,

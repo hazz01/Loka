@@ -3,12 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:url_launcher/link.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 // ignore: depend_on_referenced_packages
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 // ignore: depend_on_referenced_packages
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
+import '../services/destination_detail_service.dart';
 
 class VirtualTourPage extends StatefulWidget {
   final String destinationId;
@@ -20,24 +20,60 @@ class VirtualTourPage extends StatefulWidget {
 }
 
 class _VirtualTourPageState extends State<VirtualTourPage> {
-  late final WebViewController _controller;
+  WebViewController? _controller; // Ubah ke nullable
   bool _isLoading = true;
   bool _hasError = false;
   String _errorMessage = '';
-
-  // URL Virtual Tour - bisa disesuaikan berdasarkan destinationId
-  String get virtualTourUrl {
-    // Contoh: mapping destinationId ke URL yang sesuai
-    // Untuk demo, kita gunakan URL yang Anda berikan
-    return 'https://vragio-vtour.benspace.xyz/vragio%20web%20kajoetangan/';
-  }
+  String _virtualTourUrl = '';
 
   @override
   void initState() {
     super.initState();
     // Set landscape orientation saat halaman dibuka
     _setLandscapeMode();
-    _initializeWebView();
+    _loadDestinationAndInitialize();
+  }
+
+  Future<void> _loadDestinationAndInitialize() async {
+    try {
+      final destination = await DestinationDetailService.getDestinationDetail(
+        widget.destinationId,
+      );
+      
+      if (mounted) {
+        final url = destination?.virtualTourUrl ?? 
+            'https://vragio-vtour.benspace.xyz/vragio%20web%20kajoetangan/'; // Fallback URL
+        
+        // Validasi URL
+        if (url.isEmpty) {
+          throw Exception('URL virtual tour tidak tersedia');
+        }
+        
+        // Validasi format URL
+        try {
+          final uri = Uri.parse(url);
+          if (!uri.hasScheme || (!uri.scheme.startsWith('http'))) {
+            throw Exception('Format URL tidak valid');
+          }
+        } catch (e) {
+          throw Exception('Format URL tidak valid: ${e.toString()}');
+        }
+        
+        setState(() {
+          _virtualTourUrl = url;
+        });
+        
+        _initializeWebView();
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _hasError = true;
+          _errorMessage = 'Gagal memuat virtual tour: ${e.toString()}';
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -64,6 +100,16 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
   }
 
   void _initializeWebView() {
+    // Pastikan URL sudah diset
+    if (_virtualTourUrl.isEmpty) {
+      setState(() {
+        _hasError = true;
+        _errorMessage = 'URL virtual tour tidak tersedia';
+        _isLoading = false;
+      });
+      return;
+    }
+    
     // Inisialisasi platform-specific implementation
     late final PlatformWebViewControllerCreationParams params;
     if (WebViewPlatform.instance is AndroidWebViewPlatform) {
@@ -77,24 +123,30 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
       params = const PlatformWebViewControllerCreationParams();
     }
 
-    _controller = WebViewController.fromPlatformCreationParams(params)
+    final controller = WebViewController.fromPlatformCreationParams(params);
+    
+    controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(Colors.black)
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (String url) {
-            setState(() {
-              _isLoading = true;
-              _hasError = false;
-            });
+            if (mounted) {
+              setState(() {
+                _isLoading = true;
+                _hasError = false;
+              });
+            }
           },
           onPageFinished: (String url) {
-            setState(() {
-              _isLoading = false;
-            });
+            if (mounted) {
+              setState(() {
+                _isLoading = false;
+              });
+            }
 
             // Inject CSS untuk menyembunyikan elemen yang tidak diperlukan (opsional)
-            _controller.runJavaScript('''
+            controller.runJavaScript('''
               (function() {
                 // Pastikan halaman sudah siap
                 if (document.readyState === 'complete') {
@@ -104,33 +156,57 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
             ''');
           },
           onWebResourceError: (WebResourceError error) {
-            setState(() {
-              _isLoading = false;
-              _hasError = true;
-              _errorMessage = error.description;
-            });
+            if (mounted) {
+              setState(() {
+                _isLoading = false;
+                _hasError = true;
+                _errorMessage = 'Gagal memuat resource: ${error.description}';
+              });
+            }
+          },
+          onHttpError: (HttpResponseError error) {
+            if (mounted) {
+              setState(() {
+                _isLoading = false;
+                _hasError = true;
+                _errorMessage = 'HTTP Error: ${error.response?.statusCode ?? "Unknown"}';
+              });
+            }
           },
         ),
-      )
-      ..loadRequest(Uri.parse(virtualTourUrl));
+      );
 
     // Konfigurasi tambahan untuk Android
-    if (_controller.platform is AndroidWebViewController) {
+    if (controller.platform is AndroidWebViewController) {
       AndroidWebViewController.enableDebugging(true);
-      (_controller.platform as AndroidWebViewController)
+      (controller.platform as AndroidWebViewController)
           .setMediaPlaybackRequiresUserGesture(false);
     }
+    
+    // Set controller dan load URL
+    setState(() {
+      _controller = controller;
+    });
+    
+    // Load URL setelah controller siap
+    controller.loadRequest(Uri.parse(_virtualTourUrl));
   }
 
   // Fungsi untuk membuka URL di browser eksternal untuk mode VR
 
   // Fungsi untuk reload halaman
   void _reloadPage() {
+    if (_controller == null) {
+      // Jika controller belum diinisialisasi, coba load ulang dari awal
+      _loadDestinationAndInitialize();
+      return;
+    }
+    
     setState(() {
       _hasError = false;
       _isLoading = true;
     });
-    _controller.reload();
+    _controller!.reload();
   }
 
   @override
@@ -140,8 +216,26 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
       body: Stack(
         children: [
           // WebView
-          if (!_hasError)
-            WebViewWidget(controller: _controller)
+          if (!_hasError && _controller != null)
+            WebViewWidget(controller: _controller!)
+          else if (!_hasError && _controller == null)
+            // Loading state saat controller belum siap
+            Container(
+              color: Colors.black,
+              child: const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(color: Colors.blue),
+                    SizedBox(height: 16),
+                    Text(
+                      'Mempersiapkan Virtual Tour...',
+                      style: TextStyle(color: Colors.white, fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
+            )
           else
             // Error state
             Center(
@@ -211,7 +305,7 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
             ),
 
           // Top bar dengan tombol back dan VR
-          if (!_isLoading && !_hasError)
+          if (!_isLoading && !_hasError && _controller != null && _virtualTourUrl.isNotEmpty)
             Positioned(
               top: 0,
               left: 0,
@@ -270,9 +364,7 @@ class _VirtualTourPageState extends State<VirtualTourPage> {
                         borderRadius: BorderRadius.circular(8),
                         child: Link(
                           target: LinkTarget.self,
-                          uri: Uri.parse(
-                            "https://vragio-vtour.benspace.xyz/vragio%20web%20kajoetangan/",
-                          ),
+                          uri: Uri.parse(_virtualTourUrl),
                           builder: (context, followLink) => InkWell(
                             onTap: followLink,
                             borderRadius: BorderRadius.circular(8),

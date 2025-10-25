@@ -3,12 +3,12 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../models/trip_destination_model.dart';
 
 class TripTimelineCard extends StatelessWidget {
-  final TripDestination destination;
+  final Activity activity;
   final bool isLast;
 
   const TripTimelineCard({
     super.key,
-    required this.destination,
+    required this.activity,
     this.isLast = false,
   });
 
@@ -29,6 +29,38 @@ class TripTimelineCard extends StatelessWidget {
     final imageSize = screenWidth < 360 ? 45.0 : 50.0;
     final iconSize = screenWidth < 360 ? 22.0 : 25.0;
     final mapIconSize = screenWidth < 360 ? 11.0 : 12.0;
+
+    // Determine icon and color based on activityType and destinationId
+    IconData activityIcon;
+    Color iconColor;
+    Color iconBgColor;
+    String activityName;
+    
+    if (activity.activityType == 'visit' && activity.destinationId != null) {
+      // Visit destination
+      activityIcon = LucideIcons.mapPin;
+      iconColor = const Color(0xFF539DF3);
+      iconBgColor = const Color(0xFFEBF5FF);
+      activityName = activity.destinationName ?? 'Visit';
+    } else if (activity.activityType == 'visit' && activity.destinationId == null) {
+      // Eat/Meal activity
+      activityIcon = LucideIcons.utensils;
+      iconColor = const Color(0xFF3BB758);
+      iconBgColor = const Color(0xFFE8F5E9);
+      activityName = 'Meal Time';
+    } else if (activity.activityType == 'travel') {
+      // Travel activity
+      activityIcon = LucideIcons.car;
+      iconColor = const Color(0xFFF49A47);
+      iconBgColor = const Color(0xFFFDEBDA);
+      activityName = 'Travel';
+    } else {
+      // Default fallback
+      activityIcon = LucideIcons.mapPin;
+      iconColor = const Color(0xFF539DF3);
+      iconBgColor = const Color(0xFFEBF5FF);
+      activityName = activity.destinationName ?? 'Activity';
+    }
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,7 +92,7 @@ class TripTimelineCard extends StatelessWidget {
             children: [
               // Time
               Text(
-                destination.timeRange,
+                activity.timeRange,
                 style: TextStyle(
                   fontSize: timeFontSize,
                   fontWeight: FontWeight.w500,
@@ -87,30 +119,18 @@ class TripTimelineCard extends StatelessWidget {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Image
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Container(
-                            width: imageSize,
-                            height: imageSize,
-                            color: const Color(0xFFE5E7EB),
-                            child: destination.imagePath.isNotEmpty
-                                ? Image.asset(
-                                    destination.imagePath,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Icon(
-                                        LucideIcons.image,
-                                        color: Color(0xFF9CA3AF),
-                                        size: iconSize,
-                                      );
-                                    },
-                                  )
-                                : Icon(
-                                    LucideIcons.image,
-                                    color: Color(0xFF9CA3AF),
-                                    size: iconSize,
-                                  ),
+                        // Icon based on activityType (replacing image)
+                        Container(
+                          width: imageSize,
+                          height: imageSize,
+                          decoration: BoxDecoration(
+                            color: iconBgColor,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            activityIcon,
+                            color: iconColor,
+                            size: iconSize,
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -121,7 +141,7 @@ class TripTimelineCard extends StatelessWidget {
                             children: [
                               // Name
                               Text(
-                                destination.name,
+                                activityName,
                                 style: TextStyle(
                                   fontSize: nameFontSize,
                                   fontWeight: FontWeight.w500,
@@ -130,9 +150,9 @@ class TripTimelineCard extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               // Duration
-                              if (destination.duration != null)
+                              if (activity.duration != null)
                                 Text(
-                                  destination.duration!,
+                                  activity.duration!,
                                   style: TextStyle(
                                     fontSize: durationFontSize,
                                     fontWeight: FontWeight.w500,
@@ -146,7 +166,7 @@ class TripTimelineCard extends StatelessWidget {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      destination.description,
+                      activity.notes,
                       style: TextStyle(
                         fontSize: descriptionFontSize,
                         fontWeight: FontWeight.w400,
@@ -154,29 +174,36 @@ class TripTimelineCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 5),
+                    // Price (only show for visit activities with destinationId)
+                    if (activity.activityType == 'visit' && 
+                        activity.destinationId != null && 
+                        activity.price != null)
+                      Row(
+                        children: [
+                          Text(
+                            'Start from ',
+                            style: TextStyle(
+                              fontSize: priceLabelFontSize,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFF8F8B8B),
+                            ),
+                          ),
+                          Text(
+                            activity.price!,
+                            style: TextStyle(
+                              fontSize: priceFontSize,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF539DF3),
+                            ),
+                          ),
+                        ],
+                      ),
+                    if (activity.activityType == 'visit' && 
+                        activity.destinationId != null && 
+                        activity.price != null)
+                      SizedBox(height: 12),
                     // Address (if available)
-                    Row(
-                      children: [
-                        Text(
-                          'Start from ',
-                          style: TextStyle(
-                            fontSize: priceLabelFontSize,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xFF8F8B8B),
-                          ),
-                        ),
-                        Text(
-                          destination.price,
-                          style: TextStyle(
-                            fontSize: priceFontSize,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF539DF3),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 12),
-                    if (destination.address != null)
+                    if (activity.address != null)
                       Container(
                         padding: EdgeInsets.all(6),
                         decoration: BoxDecoration(
@@ -195,7 +222,7 @@ class TripTimelineCard extends StatelessWidget {
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
-                                destination.address!,
+                                activity.address!,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(

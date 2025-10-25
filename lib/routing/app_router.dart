@@ -20,6 +20,8 @@ import '../features/search/pages/search_page.dart';
 import '../features/saved/pages/saved_plan_page.dart';
 import '../features/profile/pages/profile_page.dart';
 import '../features/profile/pages/transaction_history_page.dart';
+import '../features/profile/pages/previous_trips_page.dart';
+import '../features/profile/pages/favorite_trips_page.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -84,6 +86,16 @@ class AppRouter {
         path: '/transaction-history',
         name: 'transaction-history',
         builder: (context, state) => const TransactionHistoryPage(),
+      ),
+      GoRoute(
+        path: '/previous-trips',
+        name: 'previous-trips',
+        builder: (context, state) => const PreviousTripsPage(),
+      ),
+      GoRoute(
+        path: '/favorite-trips',
+        name: 'favorite-trips',
+        builder: (context, state) => const FavoriteTripsPage(),
       ),
       GoRoute(
         path: '/explore/:category',

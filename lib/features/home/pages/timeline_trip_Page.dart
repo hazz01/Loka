@@ -368,7 +368,7 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
                     final isLast = index == currentTrip.destinations.length - 1;
 
                     return TripTimelineCard(
-                      destination: activity.toDestination(),
+                      activity: activity,
                       isLast: isLast,
                     );
                   }).toList(),

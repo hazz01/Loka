@@ -1,6 +1,7 @@
 import 'models.dart';
 
 // Mock data source for the Loka Virtual Tour App
+
 class MockDataSource {
   static List<Destination> get destinations => _destinations;
   static List<TripPlan> get tripPlans => _tripPlans;
@@ -16,17 +17,18 @@ class MockDataSource {
       description:
           'Jatim Park 1 is a popular family-friendly theme park located in Batu, East Java. It offers a perfect blend of education and entertainment with various attractions including a learning gallery, science center, and numerous fun rides.\n\nThe park features interactive exhibits that make learning enjoyable for children and adults alike. With beautiful gardens, exciting water attractions, and cultural performances, it\'s an ideal destination for families looking to spend quality time together.',
       imageUrl:
-          'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400',
+          'https://nagantour.com/wp-content/uploads/2020/01/Jatim-Park-1.webp',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.5,
       hasVirtualTour: true,
       category: 'Tourist Attraction',
       distance: 15.3,
-      address: 'Jl. Kartika No.2, Sisir, Batu',
-      openingHours: '8:30 AM - 4:30 PM',
+      address: 'Jl. Kartika No. 2, Sisir, Batu, Jawa Timur 65315, Indonesia', // added postal
+      openingHours: '08:30 AM – 04:30 PM', // standardised format
       latitude: -7.8753,
       longitude: 112.5281,
+      virtualTourUrl: 'https://vragio-vtour.benspace.xyz/vragio%20web%20jatim%20park/',
       ticketPrices: [
         TicketPrice(type: 'Weekday', price: 80000, isAvailable: true),
         TicketPrice(type: 'Weekend', price: 120000, isAvailable: true),
@@ -61,17 +63,18 @@ class MockDataSource {
       description:
           'Museum Angkut is Asia\'s largest transportation museum, showcasing an impressive collection of vehicles from various eras and countries. The museum features vintage cars, motorcycles, aircraft, and traditional transportation modes.\n\nWith its unique thematic zones representing different countries and time periods, Museum Angkut offers an immersive journey through transportation history. Each zone is carefully designed to transport visitors to different parts of the world.',
       imageUrl:
-          'https://images.unsplash.com/photo-1568632234157-ce7aecd03d0d?w=400',
+          'https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/p2/232/2024/04/20/museum-angkot-Gangster-Town-3406340622.jpg',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.7,
       hasVirtualTour: true,
       category: 'Tourist Attraction',
       distance: 16.5,
-      address: 'Jl. Terusan Sultan Agung No.2, Ngaglik, Batu',
-      openingHours: '12:00 PM - 8:00 PM',
+      address: 'Jl. Terusan Sultan Agung No.2, Ngaglik, Batu, Jawa Timur 65316, Indonesia', // added postal
+      openingHours: '12:00 PM – 08:00 PM',
       latitude: -7.8925,
       longitude: 112.5234,
+      virtualTourUrl: 'https://vragio-vtour.benspace.xyz/vragio%20web%20museum%20angkut/',
       ticketPrices: [
         TicketPrice(type: 'Weekday', price: 100000, isAvailable: true),
         TicketPrice(type: 'Weekend', price: 130000, isAvailable: true),
@@ -106,27 +109,80 @@ class MockDataSource {
       description:
           'Taman wisata dengan kebun binatang dan museum satwa yang edukatif.',
       imageUrl:
-          'https://images.unsplash.com/photo-1580837119756-563d608dd119?w=400',
+          'https://nagantour.com/wp-content/smush-webp/2023/06/View-Jatim-Park-2.jpg.webp',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.6,
       hasVirtualTour: true,
       category: 'Tourist Attraction',
       distance: 16.1,
+      address: 'Jl. Oro-Oro Ombo No.9, Temas, Batu, Kota Batu, Jawa Timur 65315, Indonesia', // fixed address per web :contentReference[oaicite:0]{index=0}
+      openingHours: '08:30 AM – 04:30 PM', // per web :contentReference[oaicite:1]{index=1}
+      latitude: -7.8880, // approx from web :contentReference[oaicite:2]{index=2}
+      longitude: 112.5296,
+      virtualTourUrl: 'https://vragio-vtour.benspace.xyz/vragio%20web%20jatim%20park%202/',
+      ticketPrices: [
+        TicketPrice(type: 'Weekday', price: 125000, isAvailable: true),
+        TicketPrice(type: 'Weekend', price: 160000, isAvailable: true),
+      ],
+      tourOptions: [
+        TourOption(
+          id: 'tour_jp2_1',
+          name: 'Zoo & Museum Tour',
+          description: 'Batu Secret Zoo + Museum Satwa',
+          price: 150000,
+          destinationCount: 8,
+        ),
+        TourOption(
+          id: 'tour_jp2_2',
+          name: 'Drive-Thru Safari Experience',
+          description: 'Explore via vehicle within zoo area',
+          price: 200000,
+          destinationCount: 1,
+        ),
+      ],
+      activities: [
+        'Visit Batu Secret Zoo with wide variety of species',
+        'Explore Museum Satwa - dinosaur fossils & preserved animals',
+        'Ride educational exhibits about nature and conservation',
+        'Enjoy family rides and interactive zones',
+      ],
     ),
     const Destination(
       id: 'dest_4',
-      name: 'Bromo Tengger Semeru',
+      name: 'Bromo Tengger Semeru National Park',
       description:
           'Taman nasional dengan pemandangan gunung berapi yang spektakuler.',
       imageUrl:
-          'https://images.unsplash.com/photo-1605640840605-14ac1855827b?w=400',
+          'https://torch.id/cdn/shop/articles/Artikel_167_-_Preview.webp?v=1713337145&width=1100',
       location: 'Probolinggo',
       province: 'Jawa Timur',
       rating: 4.9,
       hasVirtualTour: false,
       category: 'Tourist Attraction',
       distance: 45.8,
+      address: 'Kawasan Taman Nasional Bromo Tengger Semeru, Jawa Timur, Indonesia',
+      openingHours: '24 hours (sunrise to viewpoint)',
+      latitude: -7.9425, // approximate
+      longitude: 112.9539,
+      ticketPrices: [
+        TicketPrice(type: 'General Admission', price: 100000, isAvailable: true),
+      ],
+      tourOptions: [
+        TourOption(
+          id: 'tour_bts_1',
+          name: 'Sunrise Jeep Package',
+          description: 'Jeep tour to Penanjakan & view Mt Bromo',
+          price: 900000,
+          destinationCount: 3,
+        ),
+      ],
+      activities: [
+        'Jeep sunrise tour to Penanjakan viewpoint',
+        'Trek across Sea of Sand and up Mt Bromo crater rim',
+        'Horse ride at Mt Bromo area',
+        'Photography at iconic landscape & sea of clouds',
+      ],
     ),
     const Destination(
       id: 'dest_5',
@@ -134,27 +190,72 @@ class MockDataSource {
       description:
           'Pantai indah dengan pura di atas pulau kecil, mirip Tanah Lot.',
       imageUrl:
-          'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400',
-      location: 'Malang',
+          'https://torch.id/cdn/shop/articles/Artikel_167_-_Preview.webp?v=1713337145&width=1100',
+      location: 'Bantur, Malang',
       province: 'Jawa Timur',
       rating: 4.4,
       hasVirtualTour: false,
       category: 'Tourist Attraction',
       distance: 52.3,
+      address: 'Dusun Sumber Jambe, Desa Srigonco, Kecamatan Bantur, Kabupaten Malang, Jawa Timur 65179, Indonesia', // per web :contentReference[oaicite:3]{index=3}
+      openingHours: 'Open 24 hours', // per web :contentReference[oaicite:4]{index=4}
+      latitude: -8.1450, // approx
+      longitude: 112.6350,
+      ticketPrices: [
+        TicketPrice(type: 'Standard', price: 10000, isAvailable: true), // weekday price
+        TicketPrice(type: 'Weekend/Holiday', price: 15000, isAvailable: true),
+      ],
+      tourOptions: [
+        TourOption(
+          id: 'tour_bal_1',
+          name: 'Sunset & Photography Tour',
+          description: 'Guided photo tour at the temple island & beach',
+          price: 50000,
+          destinationCount: 1,
+        ),
+      ],
+      activities: [
+        'Walk to the small island with Pura Luhur Amertha Jati',
+        'Beach photography at sunset',
+        'Relax on white sand & swim (with caution – waves can be strong)',
+        'Support local food & warung near beach',
+      ],
     ),
     const Destination(
       id: 'dest_6',
-      name: 'Coban Rondo',
+      name: 'Coban Rondo Waterfall',
       description:
           'Air terjun yang indah dengan suasana sejuk dan pemandangan yang memukau.',
       imageUrl:
-          'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=400',
+          'https://nagantour.com/wp-content/uploads/2024/02/air-terjun-coban-rondo.webp',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.3,
       hasVirtualTour: false,
       category: 'Tourist Attraction',
       distance: 22.7,
+      address: 'Jl. Coban Rondo No. / Kawasan Wisata Air Terjun Coban Rondo, Dusun Krajan II, Pujon, Batu, Jawa Timur, Indonesia',
+      openingHours: '08:00 AM – 05:00 PM',
+      latitude: -7.8320, // approximate
+      longitude: 112.5250,
+      ticketPrices: [
+        TicketPrice(type: 'Adult', price: 25000, isAvailable: true),
+        TicketPrice(type: 'Child', price: 15000, isAvailable: true),
+      ],
+      tourOptions: [
+        TourOption(
+          id: 'tour_cr_1',
+          name: 'Waterfall Hiking Tour',
+          description: 'Trek and explore forest area and waterfall',
+          price: 40000,
+          destinationCount: 1,
+        ),
+      ],
+      activities: [
+        'Hike through forest trail to waterfall viewpoint',
+        'Photography with waterfall backdrop',
+        'Enjoy picnic area near the waterfall',
+      ],
     ),
 
     // Culinary
@@ -162,22 +263,22 @@ class MockDataSource {
       id: 'dest_7',
       name: 'Kampoeng Heritage Kajoetangan',
       description:
-          'Kampoeng Heritage Kajoetangan is a historical neighborhood in Malang, renowned for its well-preserved colonial-era architecture. This area offers a glimpse into the past with its vintage houses, old-fashioned shops, and traditional markets, providing visitors with a unique showcase of Indonesia\'s colonial history and local culture.\n\nIn addition to its historical charm, Kampoeng Heritage Kajoetangan is a vibrant cultural hub. It hosts various cultural festivals, art exhibitions, and traditional performances, showcasing local artistry. The neighborhood\'s quaint cafes and eateries add to its nostalgic ambiance, making it a beloved destination for history enthusiasts and culture lovers alike.',
+          'Kampoeng Heritage Kajoetangan is a historical neighborhood in Malang, renowned for its well-preserved colonial-era architecture. This area offers a glimpse into the past with its vintage houses, old-fashioned shops, and traditional markets, providing visitors with a unique showcase of Indonesia’s colonial history and local culture.\n\nIn addition to its historical charm, Kampoeng Heritage Kajoetangan is a vibrant cultural hub. It hosts various cultural festivals, art exhibitions, and traditional performances, showcasing local artistry. The neighbourhood’s quaint cafes and eateries add to its nostalgic ambiance, making it a beloved destination for history enthusiasts and culture lovers alike.',
       imageUrl:
-          'https://abkistimewa.id/sekolah/assets/gallery/berita/42-20231102095419-13961295776543B81BC6EA9.jpeg',
+          'https://img.antarafoto.com/cache/1200x799/2025/02/23/kampung-heritage-kayutangan-malang-1gmzt-dom.webp',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 5.0,
       hasVirtualTour: true,
       category: 'Heritage',
       distance: 2.5,
-      address: 'Jl. Besar Ijen Ggg. 4, Malang',
-      openingHours: '7:00 AM - 5:30 PM',
+      address: 'Jl. Besar Ijen Gg. 4, Malang, Jawa Timur 65111, Indonesia',
+      openingHours: '07:00 AM – 05:30 PM',
       latitude: -7.9797,
       longitude: 112.6304,
+      virtualTourUrl: 'https://vragio-vtour.benspace.xyz/vragio%20web%20kajoetangan/',
       ticketPrices: [
-        TicketPrice(type: 'Weekday', price: 50000, isAvailable: true),
-        TicketPrice(type: 'Weekend', price: 0, isAvailable: false),
+        TicketPrice(type: 'Standard', price: 50000, isAvailable: true),
       ],
       tourOptions: [
         TourOption(
@@ -203,19 +304,177 @@ class MockDataSource {
         'Interactive historical tours',
       ],
     ),
+
+    const Destination(
+      id: 'dest_21',
+      name: 'Kampung Jodipan',
+      description:
+          'Kampung Jodipan, also known as the Rainbow Village, is a vibrant and colorful neighbourhood that has become one of Malang’s most Instagram-worthy destinations. Once a slum area, it has been transformed into a stunning tourist attraction with over 232 houses painted in bright, cheerful colours.\n\nThe village showcases beautiful street art, colourful murals, and rainbow-painted stairs and bridges. Visitors can explore narrow alleys adorned with creative artwork, take photos with the iconic rainbow river view, and experience the local community’s warmth. It’s a perfect example of community-driven urban renewal that combines art, culture, and tourism.',
+      imageUrl:
+          'https://asset.kompas.com/crops/6eF48vjTTANgCn8SgK1y-9Rgmn8=/0x21:740x391/780x390/data/photo/2020/09/01/5f4dff1968fb5.jpg',
+      location: 'Malang',
+      province: 'Jawa Timur',
+      rating: 4.7,
+      hasVirtualTour: true,
+      category: 'Heritage',
+      distance: 3.2,
+      address: 'Jl. Jodipan, Kesatrian, Blimbing, Malang, Jawa Timur 65125, Indonesia',
+      openingHours: '08:00 AM – 05:00 PM',
+      latitude: -7.9781,
+      longitude: 112.6435,
+      virtualTourUrl: 'https://vragio-vtour.benspace.xyz/vragio%20web%20jodipan/',
+      ticketPrices: [
+        TicketPrice(type: 'Standard', price: 10000, isAvailable: true),
+        TicketPrice(type: 'Weekend/Holiday', price: 15000, isAvailable: true),
+      ],
+      tourOptions: [
+        TourOption(
+          id: 'tour_jodipan_1',
+          name: 'Rainbow Walking Tour',
+          description: 'Guided tour through colourful alleys',
+          price: 30000,
+          destinationCount: 1,
+        ),
+        TourOption(
+          id: 'tour_jodipan_2',
+          name: 'Photography Package',
+          description: 'Best spots for Instagram photos',
+          price: 50000,
+          destinationCount: 1,
+        ),
+      ],
+      activities: [
+        'Walk through the colourful rainbow village',
+        'Take photos at the rainbow bridge and stairs',
+        'Explore creative street art and murals',
+        'Visit local community workshops',
+        'Enjoy the view of the colourful riverside',
+        'Support local artisans and handicrafts',
+      ],
+    ),
+
+    const Destination(
+      id: 'dest_22',
+      name: 'Kampung Umbulan Tanaka',
+      description:
+          'Kampung Umbulan Tanaka is a unique cultural village in Malang that combines traditional Javanese architecture with modern tourism concepts. The village showcases the authentic rural lifestyle while offering various cultural activities and experiences for visitors.\n\nNamed after the natural spring (umbulan) that flows through the village, this destination offers a peaceful retreat from urban life. Visitors can enjoy traditional farming activities, learn about local crafts, taste authentic Javanese cuisine, and immerse themselves in the warm hospitality of the village community. The village also features beautiful natural scenery with rice fields, bamboo groves, and traditional wooden houses.',
+      imageUrl:
+          'https://asset.kompas.com/crops/v2ifV8AAq5sDLFOe7YQscCdaZGw=/0x95:1361x1002/750x500/data/photo/2025/05/04/6816bc0f2630a.jpg',
+      location: 'Malang',
+      province: 'Jawa Timur',
+      rating: 4.6,
+      hasVirtualTour: true,
+      category: 'Heritage',
+      distance: 8.5,
+      address: 'Jl. Sumber Brantas, Bumiaji, Batu, Jawa Timur 65321, Indonesia',
+      openingHours: '08:00 AM – 06:00 PM',
+      latitude: -7.8645,
+      longitude: 112.5189,
+      virtualTourUrl: 'https://vragio-vtour.benspace.xyz/vragio%20web%20tanaka/',
+      ticketPrices: [
+        TicketPrice(type: 'Weekday', price: 15000, isAvailable: true),
+        TicketPrice(type: 'Weekend', price: 20000, isAvailable: true),
+      ],
+      tourOptions: [
+        TourOption(
+          id: 'tour_tanaka_1',
+          name: 'Village Cultural Tour',
+          description: 'Traditional village experience',
+          price: 40000,
+          destinationCount: 1,
+        ),
+        TourOption(
+          id: 'tour_tanaka_2',
+          name: 'Farming Experience',
+          description: 'Hands-on farming activities',
+          price: 60000,
+          destinationCount: 1,
+        ),
+      ],
+      activities: [
+        'Experience traditional Javanese village life',
+        'Visit the natural spring and water sources',
+        'Learn traditional farming and rice planting',
+        'Participate in local craft workshops',
+        'Taste authentic village cuisine',
+        'Explore traditional wooden house architecture',
+        'Enjoy peaceful walks through rice fields',
+      ],
+    ),
+
+    const Destination(
+      id: 'dest_23',
+      name: 'Desa Wisata Bulukerto',
+      description:
+          'Desa Wisata Bulukerto is an agro-tourism village located at the foot of Mount Arjuna, offering visitors a unique blend of natural beauty, agricultural experiences, and rural tourism. The village is renowned for its organic farming, cool mountain air, and stunning views of the surrounding mountains.\n\nVisitors can experience authentic rural life while enjoying modern tourism facilities. The village offers various activities including vegetable picking, coffee plantation tours, traditional food making workshops, and trekking through scenic landscapes. With its commitment to sustainable tourism and community empowerment, Bulukerto has become a model for successful rural tourism development in East Java.',
+      imageUrl:
+          'https://asset.kompas.com/crops/v2ifV8AAq5sDLFOe7YQscCdaZGw=/0x95:1361x1002/750x500/data/photo/2025/05/04/6816bc0f2630a.jpg',
+      location: 'Bumiaji, Batu',
+      province: 'Jawa Timur',
+      rating: 4.8,
+      hasVirtualTour: true,
+      category: 'Heritage',
+      distance: 12.8,
+      address: 'Bulukerto, Bumiaji, Batu, Jawa Timur, Indonesia',
+      openingHours: '07:00 AM – 06:00 PM',
+      latitude: -7.8523,
+      longitude: 112.5234,
+      virtualTourUrl: 'https://bulukerto-virtual-tour.web.app',
+      ticketPrices: [
+        TicketPrice(type: 'Weekday', price: 20000, isAvailable: true),
+        TicketPrice(type: 'Weekend', price: 25000, isAvailable: true),
+      ],
+      tourOptions: [
+        TourOption(
+          id: 'tour_bulukerto_1',
+          name: 'Agro Tourism Package',
+          description: 'Farm and plantation tour',
+          price: 75000,
+          destinationCount: 1,
+        ),
+        TourOption(
+          id: 'tour_bulukerto_2',
+          name: 'Full Day Experience',
+          description: 'Complete village experience',
+          price: 120000,
+          destinationCount: 1,
+        ),
+      ],
+      activities: [
+        'Pick fresh vegetables from organic farms',
+        'Tour coffee and tea plantations',
+        'Learn traditional food processing',
+        'Experience rural homestay living',
+        'Trek through scenic mountain trails',
+        'Visit local dairy farms',
+        'Enjoy panoramic mountain views',
+        'Participate in sustainable farming practices',
+      ],
+    ),
+
     const Destination(
       id: 'dest_8',
       name: 'Bakso President',
       description:
           'Rumah makan bakso legendaris dengan cita rasa yang khas dan porsi melimpah.',
       imageUrl:
-          'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400',
+          'https://asset.kompas.com/crops/v2ifV8AAq5sDLFOe7YQscCdaZGw=/0x95:1361x1002/750x500/data/photo/2025/05/04/6816bc0f2630a.jpg',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 4.6,
       hasVirtualTour: false,
       category: 'Culinary',
       distance: 4.1,
+      address: 'Jl. Panglima Sudirman No. 89, Malang, Jawa Timur, Indonesia', // added placeholder (please verify)
+      openingHours: '10:00 AM – 10:00 PM',
+      latitude: -7.9830,
+      longitude: 112.6210,
+      ticketPrices: [],
+      tourOptions: [],
+      activities: [
+        'Enjoy the legendary bakso with big portions',
+        'Try local favourite sides & sambal',
+      ],
     ),
     const Destination(
       id: 'dest_9',
@@ -223,41 +482,71 @@ class MockDataSource {
       description:
           'Kuliner rawon hitam legendaris yang buka 24 jam dengan rasa yang nikmat.',
       imageUrl:
-          'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=400',
+          'https://assets.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/p3/30/2024/10/26/WhatsApp-Image-2024-10-23-at-170755-1051339154.jpeg',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 4.7,
       hasVirtualTour: false,
       category: 'Culinary',
       distance: 5.8,
+      address: 'Jl. Gatot Subroto No. 12, Malang, Jawa Timur, Indonesia', // added placeholder
+      openingHours: '24 hours',
+      latitude: -7.9785,
+      longitude: 112.6420,
+      ticketPrices: [],
+      tourOptions: [],
+      activities: [
+        'Try the midnight rawon black soup',
+        'Experience the full flavour & spicy Sambal rawon',
+      ],
     ),
     const Destination(
       id: 'dest_10',
-      name: 'Toko Oen',
+      name: 'Toko Oen Malang',
       description:
           'Restoran bersejarah dengan interior klasik dan menu western yang legendaris.',
       imageUrl:
-          'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400',
+          'https://assets.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/p3/30/2024/10/26/WhatsApp-Image-2024-10-23-at-170755-1051339154.jpeg',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 4.4,
       hasVirtualTour: false,
       category: 'Culinary',
       distance: 2.9,
+      address: 'Jl. Jenderal Basuki Rahmat No.4, Malang, Jawa Timur, Indonesia', // added placeholder
+      openingHours: '09:00 AM – 11:00 PM & 05:00 PM – 10:00 PM', // typical split hours
+      latitude: -7.9835,
+      longitude: 112.6215,
+      ticketPrices: [],
+      tourOptions: [],
+      activities: [
+        'Enjoy colonial-era atmosphere and vintage interior',
+        'Try their legendary ice cream & western dishes',
+      ],
     ),
     const Destination(
       id: 'dest_11',
-      name: 'Depot Soto Madura',
+      name: 'Depot Soto Madura Malang',
       description:
           'Soto khas Madura dengan kuah yang gurih dan daging yang empuk.',
       imageUrl:
-          'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400',
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXSrmzpz8dRoCWIGf98b1CPxQ_0O0j5ytxZw&s',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 4.5,
       hasVirtualTour: false,
       category: 'Culinary',
       distance: 6.2,
+      address: 'Jl. Soekarno-Hatta No. 45, Malang, Jawa Timur, Indonesia', // added placeholder
+      openingHours: '07:00 AM – 09:00 PM',
+      latitude: -7.9750,
+      longitude: 112.6600,
+      ticketPrices: [],
+      tourOptions: [],
+      activities: [
+        'Savour authentic Madurese soto with rich flavour',
+        'Relax in humble local dining atmosphere',
+      ],
     ),
 
     // Souvenir
@@ -267,13 +556,22 @@ class MockDataSource {
       description:
           'Pusat oleh-oleh khas Malang dengan berbagai pilihan produk lokal.',
       imageUrl:
-          'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400',
+          'https://indomgb.s3.amazonaws.com/wp-content/uploads/2019/12/22054058/Falahi-Mubarok-Pasar-Bunga-Splindid-Malang-2.jpg',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 4.3,
       hasVirtualTour: false,
       category: 'Souvenir',
       distance: 3.7,
+      address: 'Jl. Raya Tlogomas No. 1, Malang, Jawa Timur, Indonesia', // placeholder
+      openingHours: '08:00 AM – 07:00 PM',
+      latitude: -7.9530,
+      longitude: 112.6200,
+      ticketPrices: [],
+      tourOptions: [],
+      activities: [
+        'Browse local souvenir items – snacks, crafts, handicrafts',
+      ],
     ),
     const Destination(
       id: 'dest_13',
@@ -281,27 +579,46 @@ class MockDataSource {
       description:
           'Toko kue pia legendaris dengan rasa yang autentik dan harga terjangkau.',
       imageUrl:
-          'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400',
+          'https://awsimages.detik.net.id/community/media/visual/2022/10/29/mencicipi-pia-cap-mangkok-pia-legendaris-dari-malang-sejak-1959-7_43.jpeg?w=1200',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 4.6,
       hasVirtualTour: false,
       category: 'Souvenir',
       distance: 4.3,
+      address: 'Jl. Basuki Rahmat No. 50, Malang, Jawa Timur, Indonesia', // placeholder
+      openingHours: '08:00 AM – 08:00 PM',
+      latitude: -7.9850,
+      longitude: 112.6190,
+      ticketPrices: [],
+      tourOptions: [],
+      activities: [
+        'Buy the famous pia cake as gift & snack',
+      ],
     ),
     const Destination(
       id: 'dest_14',
-      name: 'Wisata Keramik',
+      name: 'Kampung Wisata Keramik Malang',
       description:
           'Sentra keramik dengan berbagai produk kerajinan tangan yang unik.',
       imageUrl:
-          'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=400',
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA0TMPwzg_3Qqv5brCXAzGIS00f7OnTqssdg&s',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 4.2,
       hasVirtualTour: false,
       category: 'Souvenir',
       distance: 8.9,
+      address: 'Jl. Soekarno-Hatta Km. 9, Malang, Jawa Timur, Indonesia', // placeholder
+      openingHours: '09:00 AM – 06:00 PM',
+      latitude: -7.9700,
+      longitude: 112.6400,
+      ticketPrices: [],
+      tourOptions: [],
+      activities: [
+        'Explore ceramic craft demonstrations',
+        'Purchase handmade ceramic souvenirs',
+      ],
     ),
     const Destination(
       id: 'dest_15',
@@ -309,13 +626,22 @@ class MockDataSource {
       description:
           'Pusat oleh-oleh apel dan produk turunannya yang khas dari Malang.',
       imageUrl:
-          'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400',
+          'https://cdn.antaranews.com/cache/730x487/2019/02/09/Harga-Apel-Malang-Anjlok-090219-abs-3.jpg',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.4,
       hasVirtualTour: false,
       category: 'Souvenir',
       distance: 18.5,
+      address: 'Jl. Raya Oro-Oro Ombo No. 5, Batu, Jawa Timur, Indonesia', // placeholder
+      openingHours: '08:00 AM – 07:00 PM',
+      latitude: -7.8810,
+      longitude: 112.5280,
+      ticketPrices: [],
+      tourOptions: [],
+      activities: [
+        'Buy fresh Malang apples & apple products',
+      ],
     ),
 
     // Tour & Trip
@@ -325,13 +651,23 @@ class MockDataSource {
       description:
           'Tempat wisata petualangan dengan berbagai aktivitas outdoor yang seru.',
       imageUrl:
-          'https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=400',
+          'https://nagantour.com/wp-content/smush-webp/2024/11/Omah-Kayu-Paralayang-2.jpg.webp',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.5,
       hasVirtualTour: false,
       category: 'Tour & Trip',
       distance: 19.2,
+      address: 'Jl. Trunojoyo No. 99, Batu, Jawa Timur, Indonesia', // placeholder
+      openingHours: '08:00 AM – 05:00 PM',
+      latitude: -7.8670,
+      longitude: 112.5230,
+      ticketPrices: [],
+      tourOptions: [],
+      activities: [
+        'Stay in wooden tree-house lodging & enjoy nature',
+        'Zipline and photo spots amidst forest scenery',
+      ],
     ),
     const Destination(
       id: 'dest_17',
@@ -339,41 +675,71 @@ class MockDataSource {
       description:
           'Wisata air terjun dengan trekking yang menantang dan pemandangan alam yang indah.',
       imageUrl:
-          'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=400',
+          'https://travelspromo.com/wp-content/uploads/2019/05/air-terjun-coban-talun-Hamzah-Saefudin.jpg',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.6,
       hasVirtualTour: false,
       category: 'Tour & Trip',
       distance: 24.1,
+      address: 'Dusun Wonokitri, Pujon, Batu, Jawa Timur, Indonesia', // placeholder
+      openingHours: '07:30 AM – 05:00 PM',
+      latitude: -7.8150,
+      longitude: 112.5450,
+      ticketPrices: [],
+      tourOptions: [],
+      activities: [
+        'Trek forest trail to waterfall and enjoy autumn maple trees',
+        'Camp overnight under the stars near waterfall',
+      ],
     ),
     const Destination(
       id: 'dest_18',
-      name: 'Wisata Petik Apel',
+      name: 'Wisata Petik Apel Batu',
       description:
           'Kebun apel dengan aktivitas petik apel langsung dan edukasi pertanian.',
       imageUrl:
-          'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=400',
+          'https://statik.tempo.co/data/2023/04/19/id_1198336/1198336_720.jpg',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.4,
       hasVirtualTour: false,
       category: 'Tour & Trip',
       distance: 17.8,
+      address: 'Desa Tulungrejo, Bumiaji, Batu, Jawa Timur, Indonesia', // placeholder
+      openingHours: '08:00 AM – 05:00 PM',
+      latitude: -7.8640,
+      longitude: 112.5200,
+      ticketPrices: [],
+      tourOptions: [],
+      activities: [
+        'Pick fresh apples from orchard & educate on apple farming',
+        'Enjoy farm lunch and nature walk around orchard',
+      ],
     ),
     const Destination(
       id: 'dest_19',
-      name: 'Selecta',
+      name: 'Selecta Batu',
       description:
           'Taman wisata dengan kolam renang air panas dan taman bunga yang indah.',
       imageUrl:
-          'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400',
+          'https://nagantour.com/wp-content/smush-webp/2019/12/hamparan-bunga-Taman-Selecta-scaled.jpg.webp',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.3,
       hasVirtualTour: false,
       category: 'Tour & Trip',
       distance: 21.3,
+      address: 'Jl. Raya Selecta No. 1, Batu, Jawa Timur, Indonesia', // placeholder
+      openingHours: '08:00 AM – 05:00 PM',
+      latitude: -7.8675,
+      longitude: 112.5380,
+      ticketPrices: [],
+      tourOptions: [],
+      activities: [
+        'Wander flower gardens and relax in hot-spring pool',
+        'Family fun play area and picnic spots',
+      ],
     ),
     const Destination(
       id: 'dest_20',
@@ -381,13 +747,23 @@ class MockDataSource {
       description:
           'Spot paralayang dengan pemandangan kota Batu dan Malang yang spektakuler.',
       imageUrl:
-          'https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=400',
+          'https://nagantour.com/wp-content/uploads/2024/01/paralayang-batu.webp',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.7,
       hasVirtualTour: false,
       category: 'Tour & Trip',
       distance: 23.5,
+      address: 'Bukit Paragliding, Gunung Banyak, Batu, Jawa Timur, Indonesia', // placeholder
+      openingHours: '09:00 AM – 05:00 PM',
+      latitude: -7.8580,
+      longitude: 112.5260,
+      ticketPrices: [],
+      tourOptions: [],
+      activities: [
+        'Tandem paragliding and enjoy aerial views of Batu & Malang',
+        'Photography from vantage point at sunset',
+      ],
     ),
   ];
 
@@ -410,7 +786,7 @@ class MockDataSource {
       description: 'Amazing $duration-day trip to $province',
       destinations: List.generate(
         destCount,
-        (i) => 'dest_${(index * 10 + i) % 20}',
+        (i) => 'dest_${(index * 10 + i) % _destinations.length}',
       ),
       createdAt: DateTime.now().subtract(Duration(days: index * 2)),
       duration: duration,
@@ -487,7 +863,6 @@ class MockDataSource {
       isGreaterCity: false,
     ),
   ];
-
   // Pagination methods
   static Future<List<Destination>> getDestinations({
     required int page,

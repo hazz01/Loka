@@ -20,6 +20,7 @@ class Destination {
   final List<TicketPrice>? ticketPrices;
   final List<TourOption>? tourOptions;
   final List<String>? activities;
+  final String? virtualTourUrl; // URL untuk virtual tour
 
   const Destination({
     required this.id,
@@ -40,6 +41,7 @@ class Destination {
     this.ticketPrices,
     this.tourOptions,
     this.activities,
+    this.virtualTourUrl,
   });
 }
 

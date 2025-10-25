@@ -27,19 +27,14 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   void _loadDestinations() {
     setState(() {
-      _isLoading = true;
-    });
-
-    // simulate small load delay so skeletons are visible
-    Future.delayed(const Duration(milliseconds: 450), () {
-      if (!mounted) return;
-      setState(() {
-        recommendedDestinations = MockDataSource.getDestinationsByCategory(
-          selectedCategory,
-        );
-        nearestDestinations = MockDataSource.getNearestDestinations(limit: 10);
-        _isLoading = false;
-      });
+      // Fixed recommended destinations - destinations partnered with Loka
+      recommendedDestinations = [
+        MockDataSource.destinations.firstWhere((d) => d.id == 'dest_23'), // Desa Wisata Bulukerto
+        MockDataSource.destinations.firstWhere((d) => d.id == 'dest_1'),  // Jatim Park 1
+        MockDataSource.destinations.firstWhere((d) => d.id == 'dest_21'), // Kampung Jodipan
+        MockDataSource.destinations.firstWhere((d) => d.id == 'dest_22'), // Kampung Tanaka
+      ];
+      nearestDestinations = MockDataSource.getNearestDestinations(limit: 10);
     });
   }
 
@@ -330,156 +325,167 @@ class _HomePageState extends ConsumerState<HomePage> {
 
                     SizedBox(height: isSmallScreen ? 35 : 50),
 
-                    // Category Tabs - Horizontal Scrollable
-                    SizedBox(
-                      height: isSmallScreen ? 40 : 45,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          _buildCategoryChip(
-                            'Tourist Attraction',
-                            LucideIcons.treePine,
-                            selectedCategory == 'Tourist Attraction',
-                            () {
-                              setState(() {
-                                selectedCategory = 'Tourist Attraction';
-                                recommendedDestinations =
-                                    MockDataSource.getDestinationsByCategory(
-                                      selectedCategory,
-                                    );
-                              });
-                            },
-                          ),
-                          SizedBox(width: isSmallScreen ? 10 : 15),
-                          _buildCategoryChip(
-                            'Culinary',
-                            LucideIcons.utensilsCrossed,
-                            selectedCategory == 'Culinary',
-                            () {
-                              setState(() {
-                                selectedCategory = 'Culinary';
-                                recommendedDestinations =
-                                    MockDataSource.getDestinationsByCategory(
-                                      selectedCategory,
-                                    );
-                              });
-                            },
-                          ),
-                          SizedBox(width: isSmallScreen ? 10 : 15),
-                          _buildCategoryChip(
-                            'Souvenir',
-                            LucideIcons.gift,
-                            selectedCategory == 'Souvenir',
-                            () {
-                              setState(() {
-                                selectedCategory = 'Souvenir';
-                                recommendedDestinations =
-                                    MockDataSource.getDestinationsByCategory(
-                                      selectedCategory,
-                                    );
-                              });
-                            },
-                          ),
-                          SizedBox(width: isSmallScreen ? 10 : 15),
-                          _buildCategoryChip(
-                            'Tour & Trip',
-                            LucideIcons.map,
-                            selectedCategory == 'Tour & Trip',
-                            () {
-                              setState(() {
-                                selectedCategory = 'Tour & Trip';
-                                recommendedDestinations =
-                                    MockDataSource.getDestinationsByCategory(
-                                      selectedCategory,
-                                    );
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(height: isSmallScreen ? 16 : 20),
-
-                    // Recommended Section Header
-                    Column(
+                  // Category Tabs - Horizontal Scrollable
+                  SizedBox(
+                    height: isSmallScreen ? 40 : 45,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Recommended',
-                              style: TextStyle(
-                                fontSize: sectionTitleSize,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () =>
-                                  context.go('/explore/$selectedCategory'),
-                              child: Text(
-                                'Explore',
-                                style: TextStyle(
-                                  fontSize: sectionLinkSize,
-                                  fontWeight: FontWeight.w500,
-                                  color: const Color(0xFF539DF3),
-                                ),
-                              ),
-                            ),
-                          ],
+                        _buildCategoryChip(
+                          'Tourist Attraction',
+                          LucideIcons.treePine,
+                          selectedCategory == 'Tourist Attraction',
+                          () {
+                            setState(() {
+                              selectedCategory = 'Tourist Attraction';
+                            });
+                          },
+                        ),
+                        SizedBox(width: isSmallScreen ? 10 : 15),
+                        _buildCategoryChip(
+                          'Culinary',
+                          LucideIcons.utensilsCrossed,
+                          selectedCategory == 'Culinary',
+                          () {
+                            setState(() {
+                              selectedCategory = 'Culinary';
+                            });
+                          },
+                        ),
+                        SizedBox(width: isSmallScreen ? 10 : 15),
+                        _buildCategoryChip(
+                          'Souvenir',
+                          LucideIcons.gift,
+                          selectedCategory == 'Souvenir',
+                          () {
+                            setState(() {
+                              selectedCategory = 'Souvenir';
+                            });
+                          },
+                        ),
+                        SizedBox(width: isSmallScreen ? 10 : 15),
+                        _buildCategoryChip(
+                          'Tour & Trip',
+                          LucideIcons.map,
+                          selectedCategory == 'Tour & Trip',
+                          () {
+                            setState(() {
+                              selectedCategory = 'Tour & Trip';
+                            });
+                          },
                         ),
                       ],
                     ),
+                  ),
 
-                    SizedBox(height: isSmallScreen ? 12 : 14),
+                    SizedBox(height: isSmallScreen ? 16 : 20),
 
-                    // Recommended Cards - Horizontal Scroll (with skeleton)
-                    SizedBox(
-                      height: isSmallScreen ? 252 : 282,
-                      child: _isLoading
-                          ? ListView.separated(
-                              scrollDirection: Axis.horizontal,
-                              padding: EdgeInsets.symmetric(horizontal: 8),
-                              itemCount: 4,
-                              separatorBuilder: (_, __) => SizedBox(width: 12),
-                              itemBuilder: (context, index) {
-                                return SizedBox(
-                                  width: isSmallScreen ? 170 : 200,
-                                  child: CardLoading(
-                                    height: isSmallScreen ? 220 : 250,
-                                    borderRadius: BorderRadius.circular(12),
+                  // Partner Destinations Section Header
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: isSmallScreen ? 8 : 10,
+                                      vertical: isSmallScreen ? 4 : 5,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Color(0xFF539DF3),
+                                          Color(0xFF3B7DD8),
+                                        ],
+                                      ),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          LucideIcons.badgeCheck,
+                                          size: isSmallScreen ? 12 : 14,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          'VERIFIED PARTNER',
+                                          style: TextStyle(
+                                            fontSize: isSmallScreen ? 9 : 10,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                );
-                              },
-                            )
-                          : recommendedDestinations.isEmpty
-                          ? Center(
-                              child: Text(
-                                'Tidak ada destinasi ditemukan',
+                                ],
+                              ),
+                              SizedBox(height: isSmallScreen ? 8 : 10),
+                              Text(
+                                'Featured Destinations',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: sectionTitleSize,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              SizedBox(height: isSmallScreen ? 4 : 6),
+                              Text(
+                                'Explore our exclusive partner destinations',
+                                style: TextStyle(
+                                  fontSize: isSmallScreen ? 11 : 12,
+                                  fontWeight: FontWeight.w400,
                                   color: Colors.grey[600],
                                 ),
                               ),
-                            )
-                          : ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: recommendedDestinations.length > 5
-                                  ? 5
-                                  : recommendedDestinations.length,
-                              itemBuilder: (context, index) {
-                                final destination =
-                                    recommendedDestinations[index];
-                                return _buildRecommendedCard(
-                                  destination.imageUrl,
-                                  destination.name,
-                                  destination.rating,
-                                  destination.id,
-                                );
-                              },
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: isSmallScreen ? 14 : 16),
+
+                  // Partner Destinations Cards - Horizontal Scroll
+                  SizedBox(
+                    height: isSmallScreen ? 270 : 300,
+                    child: recommendedDestinations.isEmpty
+                        ? Center(
+                            child: Text(
+                              'Tidak ada destinasi ditemukan',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[600],
+                              ),
                             ),
-                    ),
+                          )
+                        : ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: recommendedDestinations.length > 5
+                                ? 5
+                                : recommendedDestinations.length,
+                            itemBuilder: (context, index) {
+                              final destination =
+                                  recommendedDestinations[index];
+                              return _buildRecommendedCard(
+                                destination.imageUrl,
+                                destination.name,
+                                destination.rating,
+                                destination.id,
+                              );
+                            },
+                          ),
+                  ),
 
                     SizedBox(height: isSmallScreen ? 20 : 30),
 
@@ -702,6 +708,46 @@ class _HomePageState extends ConsumerState<HomePage> {
                             LucideIcons.heart,
                             color: Colors.red,
                             size: heartIconSize,
+                          ),
+                        ),
+                      ),
+                      // Partnership Badge
+                      Positioned(
+                        top: heartPosition,
+                        left: heartPosition,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isSmallScreen ? 6 : 8,
+                            vertical: isSmallScreen ? 4 : 5,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Color(0xFF539DF3),
+                                Color(0xFF3B7DD8),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                LucideIcons.badgeCheck,
+                                size: isSmallScreen ? 10 : 11,
+                                color: Colors.white,
+                              ),
+                              SizedBox(width: 3),
+                              Text(
+                                'PARTNER',
+                                style: TextStyle(
+                                  fontSize: isSmallScreen ? 8 : 9,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
