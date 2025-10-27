@@ -82,6 +82,7 @@ class _KategoriCityPageState extends State<KategoriCityPage> {
   // --- Form validation ---
   bool get isFormValid {
     return selectedCity != null &&
+        selectedCity == 'Malang' && // Only allow Malang
         startDate != null &&
         endDate != null &&
         startTime != null &&
@@ -399,7 +400,99 @@ class _KategoriCityPageState extends State<KategoriCityPage> {
                     (city) => DropdownMenuItem(value: city, child: Text(city)),
                   )
                   .toList(),
-              onChanged: (val) => setState(() => selectedCity = val),
+              onChanged: (val) {
+                if (val != null && val != 'Malang') {
+                  // Show alert dialog if city is not Malang
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      title: Row(
+                        children: [
+                          Icon(
+                            LucideIcons.mapPin,
+                            color: Color(0xFF539DF3),
+                            size: 24,
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              'Service Limitation',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      content: Text(
+                        'Loka is currently only available for destinations in Malang Raya. Please select \'Malang\' as your city destination.',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black87,
+                          height: 1.5,
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            // Reset to null or set to Malang
+                            setState(() => selectedCity = null);
+                          },
+                          child: Text(
+                            'OK',
+                            style: TextStyle(
+                              color: Color(0xFF539DF3),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  setState(() => selectedCity = val);
+                }
+              },
+            ),
+            
+            // Info banner for Malang-only service
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Color(0xFFEEF5FE),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Color(0xFF539DF3).withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    LucideIcons.info,
+                    color: Color(0xFF539DF3),
+                    size: 18,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Currently, Loka services are exclusively available for Malang Raya destinations.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF1E40AF),
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: isSmallScreen ? 20 : 25),
 
