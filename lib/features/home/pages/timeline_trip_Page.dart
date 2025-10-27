@@ -110,20 +110,48 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
       );
     }).toList();
 
-    // Extract city name from originalRequest
-    // Check trip type to determine which field to use
-    final tripType = response.originalRequest['tripType'];
-    if (tripType != null && tripType is Map) {
-      // For greater_city and city types, use the name from tripType
-      cityName = tripType['name'] ?? 'Unknown City';
-    } else if (response.originalRequest['targetCities'] != null &&
-        response.originalRequest['targetCities'] is List &&
-        (response.originalRequest['targetCities'] as List).isNotEmpty) {
-      // Fallback: use first city from targetCities array
-      cityName = response.originalRequest['targetCities'][0] ?? 'Unknown City';
-    } else {
-      cityName = 'Unknown City';
+    // Extract city name from originalRequest with robust fallbacks. The
+    // backend may return the tripType as a Map, a plain String, or a
+    // typed object. We also fall back to the first element of
+    // targetCities. If nothing is available, default to 'Malang' to match
+    // the greater-city flow (and avoid showing 'Unknown City').
+    final original = response.originalRequest;
+    String? derivedCity;
+
+    try {
+      final tripType = original['tripType'];
+      if (tripType != null) {
+        if (tripType is Map) {
+          derivedCity = (tripType['name'] as String?)?.toString();
+        } else if (tripType is String) {
+          derivedCity = tripType;
+        } else {
+          // Handle typed object (may come from json decoding into a class)
+          try {
+            derivedCity = (tripType as dynamic).name as String?;
+          } catch (_) {
+            // ignore and continue to other fallbacks
+          }
+        }
+      }
+    } catch (_) {
+      // ignore
     }
+
+    // Fallback to targetCities array if tripType didn't yield a name
+    if ((derivedCity == null || derivedCity.isEmpty) &&
+        original['targetCities'] != null &&
+        original['targetCities'] is List &&
+        (original['targetCities'] as List).isNotEmpty) {
+      final first = (original['targetCities'] as List)[0];
+      derivedCity = first?.toString();
+    }
+
+    // Final fallback: prefer 'Malang' for greater-city flows to avoid
+    // showing 'Unknown City' to the user.
+    cityName = (derivedCity != null && derivedCity.isNotEmpty)
+        ? derivedCity
+        : 'Malang';
 
     tripSummary = response.summary;
     totalCost = response.totalEstimatedCost;
@@ -367,10 +395,7 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
                     final activity = entry.value;
                     final isLast = index == currentTrip.destinations.length - 1;
 
-                    return TripTimelineCard(
-                      activity: activity,
-                      isLast: isLast,
-                    );
+                    return TripTimelineCard(activity: activity, isLast: isLast);
                   }).toList(),
                 ],
               ),

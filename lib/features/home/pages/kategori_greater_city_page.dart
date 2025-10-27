@@ -393,10 +393,36 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
               ),
               items: cities
                   .map(
-                    (city) => DropdownMenuItem(value: city, child: Text(city)),
+                    (city) => DropdownMenuItem<String>(
+                      value: city,
+                      // Disable all cities except 'Malang' so the user must choose Malang.
+                      enabled: city == 'Malang',
+                      child: Text(
+                        city,
+                        style: TextStyle(
+                          color: city == 'Malang' ? Colors.black : Colors.grey,
+                        ),
+                      ),
+                    ),
                   )
                   .toList(),
-              onChanged: (val) => setState(() => selectedCity = val),
+              onChanged: (val) {
+                // Only allow selecting Malang. If somehow a non-enabled value
+                // is provided, ignore it and keep the previous selection.
+                if (val == null) return;
+                if (val == 'Malang') {
+                  setState(() => selectedCity = val);
+                } else {
+                  // Optional: provide a feedback
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Pilihan selain Malang tidak diperbolehkan.',
+                      ),
+                    ),
+                  );
+                }
+              },
             ),
             SizedBox(height: isSmallScreen ? 20 : 25),
 
