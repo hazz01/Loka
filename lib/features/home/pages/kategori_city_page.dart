@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:intl/intl.dart';
 import '../services/trip_service.dart';
 import '../models/trip_request_model.dart';
+import '../widgets/trip_error_dialog.dart';
 
 class KategoriCityPage extends StatefulWidget {
   const KategoriCityPage({super.key});
@@ -247,54 +248,9 @@ class _KategoriCityPageState extends State<KategoriCityPage> {
       // Debug print (remove in production)
       debugPrint('Error creating trip: $e');
 
-      // Show error dialog with better message
+      // Show error dialog with platform-aware message
       if (mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            title: Row(
-              children: [
-                Icon(Icons.error_outline, color: Colors.red),
-                SizedBox(width: 10),
-                Text('Error'),
-              ],
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Failed to create trip plan.'),
-                SizedBox(height: 10),
-                Text(
-                  'Details: ${e.toString()}',
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  'Please check your internet connection and try again.',
-                  style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  // Navigate to timeline with dummy data as fallback
-                  context.go('/trip-ai-planner/timeline');
-                },
-                child: const Text('View Sample'),
-              ),
-            ],
-          ),
-        );
+        TripErrorDialog.show(context, e.toString());
       }
     } finally {
       if (mounted) {
