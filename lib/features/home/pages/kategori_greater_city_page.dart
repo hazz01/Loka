@@ -80,17 +80,75 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
   }
 
   // --- Form validation ---
-  bool get isFormValid {
-    return selectedCity != null &&
-        startDate != null &&
-        endDate != null &&
-        startTime != null &&
-        endTime != null &&
-        cost != null &&
-        cost! > 0 &&
-        people > 0 &&
-        categories.values.any((selected) => selected);
+  bool _hasTimeError() {
+    if (startDate == null || endDate == null || startTime == null || endTime == null) {
+      return false;
+    }
+
+    final isSameDay = startDate!.year == endDate!.year &&
+        startDate!.month == endDate!.month &&
+        startDate!.day == endDate!.day;
+    
+    if (isSameDay) {
+      final timeOrder = ['Morning', 'Noon', 'Evening', 'Night'];
+      final startIndex = timeOrder.indexOf(startTime!);
+      final endIndex = timeOrder.indexOf(endTime!);
+      
+      return startIndex > endIndex;
+    }
+
+    return false;
   }
+
+  String? _validateForm() {
+    // 1. Check if all required fields are filled
+    if (selectedCity == null) return 'Please select a city';
+    if (startDate == null) return 'Please select start date';
+    if (endDate == null) return 'Please select end date';
+    if (startTime == null) return 'Please select start time of day';
+    if (endTime == null) return 'Please select end time of day';
+    if (cost == null || cost! <= 0) return 'Please enter your budget';
+    if (!categories.values.any((selected) => selected)) {
+      return 'Please select at least one category';
+    }
+
+    // 2. Validate start date is before or equal to end date
+    if (startDate!.isAfter(endDate!)) {
+      return 'Start date must be before or equal to end date';
+    }
+
+    // 3. Validate time of day if it's a single day trip
+    final isSameDay = startDate!.year == endDate!.year &&
+        startDate!.month == endDate!.month &&
+        startDate!.day == endDate!.day;
+    
+    if (isSameDay) {
+      final timeOrder = ['Morning', 'Noon', 'Evening', 'Night'];
+      final startIndex = timeOrder.indexOf(startTime!);
+      final endIndex = timeOrder.indexOf(endTime!);
+      
+      if (startIndex > endIndex) {
+        return 'For same-day trips, start time must be before end time';
+      }
+    }
+
+    // 4. Validate minimum cost (100,000 IDR)
+    if (cost! < 100000) {
+      return 'Minimum budget is IDR 100,000';
+    }
+
+    // 5. Validate number of people (1-10)
+    if (people < 1) {
+      return 'Number of people must be at least 1';
+    }
+    if (people > 10) {
+      return 'Number of people cannot exceed 10';
+    }
+
+    return null; // Form is valid
+  }
+
+  bool get isFormValid => _validateForm() == null;
 
   // --- Date picker helper ---
   Future<void> pickDate({required bool isStart}) async {
@@ -191,7 +249,33 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
 
   // --- Submit trip plan ---
   Future<void> submitTripPlan() async {
-    if (!isFormValid) return;
+    // Validate form and show error if invalid
+    final validationError = _validateForm();
+    if (validationError != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(LucideIcons.info, color: Colors.white, size: 20),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  validationError,
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Color(0xFFEF4444),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          duration: Duration(seconds: 4),
+        ),
+      );
+      return;
+    }
 
     setState(() {
       isLoading = true;
@@ -408,7 +492,9 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                           ),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Color(0xFFB5B5B5),
+                              color: (startDate != null && endDate != null && startDate!.isAfter(endDate!))
+                                  ? Color(0xFFEF4444)
+                                  : Color(0xFFB5B5B5),
                               width: 0.5,
                             ),
                             borderRadius: BorderRadius.circular(8),
@@ -453,7 +539,11 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                             horizontal: 12,
                           ),
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade300),
+                            border: Border.all(
+                              color: (startDate != null && endDate != null && startDate!.isAfter(endDate!))
+                                  ? Color(0xFFEF4444)
+                                  : Colors.grey.shade300,
+                            ),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -475,6 +565,24 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                 ),
               ],
             ),
+            // Show error message if dates are invalid
+            if (startDate != null && endDate != null && startDate!.isAfter(endDate!))
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Row(
+                  children: [
+                    Icon(LucideIcons.info, size: 14, color: Color(0xFFEF4444)),
+                    SizedBox(width: 4),
+                    Text(
+                      'Start date must be before or equal to end date',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Color(0xFFEF4444),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             SizedBox(height: isSmallScreen ? 20 : 25),
 
             // === Time Picker ===
@@ -507,21 +615,21 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: Color(0xFFB5B5B5),
+                              color: _hasTimeError() ? Color(0xFFEF4444) : Color(0xFFB5B5B5),
                               width: 0.5,
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: Color(0xFFB5B5B5),
+                              color: _hasTimeError() ? Color(0xFFEF4444) : Color(0xFFB5B5B5),
                               width: 0.5,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: Color(0xFFB5B5B5),
+                              color: _hasTimeError() ? Color(0xFFEF4444) : Color(0xFFB5B5B5),
                               width: 0.5,
                             ),
                           ),
@@ -569,21 +677,21 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: Color(0xFFB5B5B5),
+                              color: _hasTimeError() ? Color(0xFFEF4444) : Color(0xFFB5B5B5),
                               width: 0.5,
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: Color(0xFFB5B5B5),
+                              color: _hasTimeError() ? Color(0xFFEF4444) : Color(0xFFB5B5B5),
                               width: 0.5,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: Color(0xFFB5B5B5),
+                              color: _hasTimeError() ? Color(0xFFEF4444) : Color(0xFFB5B5B5),
                               width: 0.5,
                             ),
                           ),
@@ -605,6 +713,26 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                 ),
               ],
             ),
+            // Show error message if time order is invalid for same-day trips
+            if (_hasTimeError())
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Row(
+                  children: [
+                    Icon(LucideIcons.info, size: 14, color: Color(0xFFEF4444)),
+                    SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        'For same-day trips, start time must be before end time',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Color(0xFFEF4444),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             const SizedBox(height: 20),
 
             // === Cost & People ===
@@ -633,24 +761,37 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                             color: Colors.black54,
                             fontWeight: FontWeight.w400,
                           ),
+                          helperText: 'Min: IDR 100,000',
+                          helperStyle: TextStyle(
+                            fontSize: 11,
+                            color: (cost != null && cost! > 0 && cost! < 100000) 
+                                ? Color(0xFFEF4444) 
+                                : Colors.grey.shade600,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: Color(0xFFB5B5B5),
+                              color: (cost != null && cost! > 0 && cost! < 100000)
+                                  ? Color(0xFFEF4444)
+                                  : Color(0xFFB5B5B5),
                               width: 0.5,
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: Color(0xFFB5B5B5),
+                              color: (cost != null && cost! > 0 && cost! < 100000)
+                                  ? Color(0xFFEF4444)
+                                  : Color(0xFFB5B5B5),
                               width: 0.5,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: Color(0xFFB5B5B5),
+                              color: (cost != null && cost! > 0 && cost! < 100000)
+                                  ? Color(0xFFEF4444)
+                                  : Color(0xFFB5B5B5),
                               width: 0.5,
                             ),
                           ),
@@ -711,24 +852,37 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                             color: Colors.black54,
                             fontWeight: FontWeight.w400,
                           ),
+                          helperText: '1-10 people',
+                          helperStyle: TextStyle(
+                            fontSize: 11,
+                            color: (people < 1 || people > 10) 
+                                ? Color(0xFFEF4444) 
+                                : Colors.grey.shade600,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: Color(0xFFB5B5B5),
+                              color: (people < 1 || people > 10)
+                                  ? Color(0xFFEF4444)
+                                  : Color(0xFFB5B5B5),
                               width: 0.5,
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: Color(0xFFB5B5B5),
+                              color: (people < 1 || people > 10)
+                                  ? Color(0xFFEF4444)
+                                  : Color(0xFFB5B5B5),
                               width: 0.5,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: Color(0xFFB5B5B5),
+                              color: (people < 1 || people > 10)
+                                  ? Color(0xFFEF4444)
+                                  : Color(0xFFB5B5B5),
                               width: 0.5,
                             ),
                           ),
