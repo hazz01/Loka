@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'register/firstregist.dart';
-import 'secondregist.dart';
+import 'register/secondregist.dart';
 import 'thirdregist.dart';
 
 class RegisterPage extends StatefulWidget {

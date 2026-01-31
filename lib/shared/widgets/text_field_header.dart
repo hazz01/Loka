@@ -8,6 +8,8 @@ class TextFieldWithHeader extends StatefulWidget {
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
   final void Function(String)? onChanged;
+  final IconData? suffixIcon;
+  final VoidCallback? onSuffixIconTap;
 
   const TextFieldWithHeader({
     super.key,
@@ -18,6 +20,8 @@ class TextFieldWithHeader extends StatefulWidget {
     this.keyboardType,
     this.validator,
     this.onChanged,
+    this.suffixIcon,
+    this.onSuffixIconTap,
   });
 
   @override
@@ -88,24 +92,40 @@ class _TextFieldWithHeaderState extends State<TextFieldWithHeader> {
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: Colors.red, width: 1.5),
             ),
-            // Password visibility toggle
-            suffixIcon: widget.isPassword
-                ? IconButton(
-                    icon: Icon(
-                      _obscureText ? Icons.visibility_off : Icons.visibility,
-                      color: const Color(0xff757575),
-                      size: 22,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscureText = !_obscureText;
-                      });
-                    },
-                  )
-                : null,
+            // Suffix icon logic
+            suffixIcon: _buildSuffixIcon(),
           ),
         ),
       ],
     );
+  }
+
+  Widget? _buildSuffixIcon() {
+    // Priority 1: Password visibility toggle
+    if (widget.isPassword) {
+      return IconButton(
+        icon: Icon(
+          _obscureText ? Icons.visibility_off : Icons.visibility,
+          color: const Color(0xff757575),
+          size: 22,
+        ),
+        onPressed: () {
+          setState(() {
+            _obscureText = !_obscureText;
+          });
+        },
+      );
+    }
+
+    // Priority 2: Custom suffix icon
+    if (widget.suffixIcon != null) {
+      return IconButton(
+        icon: Icon(widget.suffixIcon, color: const Color(0xff757575), size: 22),
+        onPressed: widget.onSuffixIconTap,
+      );
+    }
+
+    // No icon
+    return null;
   }
 }
