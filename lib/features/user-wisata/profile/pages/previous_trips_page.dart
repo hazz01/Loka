@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import '../../../../shared/widgets/smart_image_widget.dart';
 
 class PreviousTripsPage extends StatelessWidget {
   const PreviousTripsPage({super.key});
@@ -11,52 +12,62 @@ class PreviousTripsPage extends StatelessWidget {
     final isSmallScreen = screenWidth < 600;
     final scale = isSmallScreen ? 0.85 : (screenWidth / 375).clamp(0.85, 1.1);
 
-    // Dummy data for previous trips
+    // Dummy data for previous trips menggunakan gambar lokal
     final previousTrips = [
       {
         'id': 1,
-        'destination': 'Bali Island',
-        'location': 'Bali, Indonesia',
-        'date': 'Dec 15-20, 2024',
-        'imageUrl': 'https://images.unsplash.com/photo-1537996194471-e657df975ab4',
+        'destination': 'Jatim Park 1',
+        'location': 'Batu, Jawa Timur',
+        'date': 'Dec 15-20, 2025',
+        'imageUrl': 'assets/image/homepage_travel/jatimpark_picture.png',
         'rating': 4.8,
         'activities': 3,
       },
       {
         'id': 2,
-        'destination': 'Mount Bromo',
-        'location': 'East Java, Indonesia',
-        'date': 'Nov 10-12, 2024',
-        'imageUrl': 'https://images.unsplash.com/photo-1555400082-f2b6b1c0b5d4',
+        'destination': 'Gunung Bromo',
+        'location': 'Probolinggo, Jawa Timur',
+        'date': 'Nov 10-12, 2025',
+        'imageUrl': 'assets/image/homepage_travel/gunung_bromo_picture.png',
         'rating': 4.9,
         'activities': 2,
       },
       {
         'id': 3,
-        'destination': 'Raja Ampat',
-        'location': 'West Papua, Indonesia',
-        'date': 'Oct 5-10, 2024',
-        'imageUrl': 'https://images.unsplash.com/photo-1559827260-dc66d52bef19',
-        'rating': 5.0,
-        'activities': 5,
+        'destination': 'Kampung Heritage Kajoetangan',
+        'location': 'Malang, Jawa Timur',
+        'date': 'Oct 5-10, 2025',
+        'imageUrl':
+            'assets/image/homepage_travel/kampung_heritagee_picture.png',
+        'rating': 4.6,
+        'activities': 4,
       },
       {
         'id': 4,
-        'destination': 'Borobudur Temple',
-        'location': 'Yogyakarta, Indonesia',
-        'date': 'Sep 20-22, 2024',
-        'imageUrl': 'https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272',
+        'destination': 'Coban Talun',
+        'location': 'Malang, Jawa Timur',
+        'date': 'Sep 20-22, 2025',
+        'imageUrl': 'assets/image/homepage_travel/coban_talun_picture.png',
         'rating': 4.7,
         'activities': 2,
       },
       {
         'id': 5,
-        'destination': 'Komodo Island',
-        'location': 'East Nusa Tenggara, Indonesia',
-        'date': 'Aug 12-16, 2024',
-        'imageUrl': 'https://images.unsplash.com/photo-1552055568-3fdaa072b9d5',
-        'rating': 4.9,
-        'activities': 4,
+        'destination': 'Desa Wisata Bulukerto',
+        'location': 'Batu, Jawa Timur',
+        'date': 'Aug 12-16, 2025',
+        'imageUrl': 'assets/image/homepage_travel/desa_bulukerto_picture.png',
+        'rating': 4.5,
+        'activities': 3,
+      },
+      {
+        'id': 6,
+        'destination': 'Paralayang Batu',
+        'location': 'Batu, Jawa Timur',
+        'date': 'Jul 8-10, 2025',
+        'imageUrl': 'assets/image/homepage_travel/paralayang_picture.png',
+        'rating': 4.8,
+        'activities': 2,
       },
     ];
 
@@ -110,9 +121,7 @@ class PreviousTripsPage extends StatelessWidget {
     required double scale,
   }) {
     return Container(
-      margin: EdgeInsets.only(
-        bottom: (16 * scale).clamp(12.0, 20.0),
-      ),
+      margin: EdgeInsets.only(bottom: (16 * scale).clamp(12.0, 20.0)),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
@@ -133,22 +142,14 @@ class PreviousTripsPage extends StatelessWidget {
               topLeft: Radius.circular(isSmallScreen ? 12 : 16),
               topRight: Radius.circular(isSmallScreen ? 12 : 16),
             ),
-            child: Container(
+            child: SmartImageWidget(
+              imageUrl: trip['imageUrl'],
               height: (180 * scale).clamp(160.0, 200.0),
               width: double.infinity,
-              child: Image.network(
-                trip['imageUrl'],
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[300],
-                    child: Icon(
-                      Icons.image_not_supported,
-                      size: 64,
-                      color: Colors.grey[500],
-                    ),
-                  );
-                },
+              fit: BoxFit.cover,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(isSmallScreen ? 12 : 16),
+                topRight: Radius.circular(isSmallScreen ? 12 : 16),
               ),
             ),
           ),

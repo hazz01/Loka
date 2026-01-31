@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:card_loading/card_loading.dart';
 import '../../../../shared/data/models.dart';
 import '../../../../shared/data/mock_data_source.dart';
+import '../../../../shared/widgets/smart_image_widget.dart';
 import '../state/home_providers.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -110,9 +111,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       height: headerHeight,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: NetworkImage(
-                            'https://ik.imagekit.io/tvlk/image/imageResource/2025/10/09/1760028548328-f4fcfe5f76665952afaf0d14d6d7fea5.png?tr=q-75',
-                          ),
+                          image: AssetImage('assets/image/city.png'),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -726,7 +725,6 @@ class _HomePageState extends ConsumerState<HomePage> {
     final isSmallScreen = screenWidth < 600;
     final cardWidth = isSmallScreen ? 170.0 : 200.0;
     final imageHeight = isSmallScreen ? 170.0 : 200.0;
-    final placeholderIconSize = isSmallScreen ? 45.0 : 60.0;
     final heartIconSize = isSmallScreen ? 18.0 : 20.0;
     final titleSize = isSmallScreen ? 11.0 : 12.0;
     final starSize = isSmallScreen ? 14.0 : 16.0;
@@ -763,26 +761,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                 children: [
                   Stack(
                     children: [
-                      ClipRRect(
+                      SmartImageWidget(
+                        imageUrl: imageUrl,
+                        height: imageHeight,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
                         borderRadius: BorderRadius.all(
                           Radius.circular(isSmallScreen ? 6 : 8),
-                        ),
-                        child: Image.network(
-                          imageUrl,
-                          height: imageHeight,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              height: imageHeight,
-                              color: Colors.grey[300],
-                              child: Icon(
-                                LucideIcons.image,
-                                color: Colors.grey,
-                                size: placeholderIconSize,
-                              ),
-                            );
-                          },
                         ),
                       ),
                       Positioned(
@@ -921,14 +906,12 @@ class _HomePageState extends ConsumerState<HomePage> {
         ),
         child: Row(
           children: [
-            ClipRRect(
+            SmartImageWidget(
+              imageUrl: imageUrl,
+              width: imageSize,
+              height: imageSize,
+              fit: BoxFit.cover,
               borderRadius: BorderRadius.circular(imageRadius),
-              child: Image.network(
-                imageUrl,
-                width: imageSize,
-                height: imageSize,
-                fit: BoxFit.cover,
-              ),
             ),
             SizedBox(width: spaceBetween),
             Expanded(

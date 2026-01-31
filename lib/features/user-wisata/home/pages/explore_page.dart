@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:card_loading/card_loading.dart';
 import '../../../../shared/data/models.dart';
 import '../../../../shared/data/mock_data_source.dart';
+import '../../../../shared/widgets/smart_image_widget.dart';
 
 class ExplorePage extends StatefulWidget {
   final String category;
@@ -155,7 +156,6 @@ class _ExplorePageState extends State<ExplorePage> {
 
     // Responsive sizing
     final imageSize = isSmallScreen ? 80.0 : 100.0;
-    final imagePlaceholderIconSize = isSmallScreen ? 32.0 : 40.0;
     final titleFontSize = isSmallScreen ? 13.0 : 16.0;
     final subtitleFontSize = isSmallScreen ? 11.0 : 13.0;
     final iconSize = isSmallScreen ? 12.0 : 14.0;
@@ -181,26 +181,12 @@ class _ExplorePageState extends State<ExplorePage> {
         ),
         child: Row(
           children: [
-            ClipRRect(
+            SmartImageWidget(
+              imageUrl: destination.imageUrl,
+              width: imageSize,
+              height: imageSize,
+              fit: BoxFit.cover,
               borderRadius: BorderRadius.circular(imageRadius),
-              child: Image.network(
-                destination.imageUrl,
-                width: imageSize,
-                height: imageSize,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: imageSize,
-                    height: imageSize,
-                    color: Colors.grey[300],
-                    child: Icon(
-                      LucideIcons.image,
-                      color: Colors.grey,
-                      size: imagePlaceholderIconSize,
-                    ),
-                  );
-                },
-              ),
             ),
             SizedBox(width: spacingWidth),
             Expanded(

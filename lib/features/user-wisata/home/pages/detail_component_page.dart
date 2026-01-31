@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../shared/data/models.dart';
+import '../../../../shared/widgets/smart_image_widget.dart';
 import '../services/destination_detail_service.dart';
 
 class DetailComponentPage extends StatefulWidget {
@@ -275,24 +276,15 @@ class _DetailComponentPageState extends State<DetailComponentPage> {
                               borderRadius: BorderRadius.circular(
                                 isSmallScreen ? 8 : 12,
                               ),
-                              child: Container(
+                              child: SmartImageWidget(
+                                imageUrl: destinationDetail!.imageUrl,
                                 width: double.infinity,
                                 height: isSmallScreen
                                     ? screenHeight * 0.28
                                     : screenHeight * 0.40,
-                                child: Image.network(
-                                  destinationDetail!.imageUrl,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      color: Colors.grey[300],
-                                      child: Icon(
-                                        Icons.image_not_supported,
-                                        size: 64,
-                                        color: Colors.grey[500],
-                                      ),
-                                    );
-                                  },
+                                fit: BoxFit.cover,
+                                borderRadius: BorderRadius.circular(
+                                  isSmallScreen ? 8 : 12,
                                 ),
                               ),
                             ),

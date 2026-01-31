@@ -6,6 +6,7 @@ import 'package:card_loading/card_loading.dart';
 // Use shared destination model and mock data so detail pages can resolve IDs
 import '../../../../shared/data/models.dart';
 import '../../../../shared/data/mock_data_source.dart';
+import '../../../../shared/widgets/smart_image_widget.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -415,7 +416,6 @@ class _SearchPageState extends State<SearchPage> {
     // Use styling similar to ExplorePage's destination card and make sure we
     // reference the shared model fields (imageUrl, distance as double).
     final imageSize = isSmallScreen ? 80.0 : 100.0;
-    final imagePlaceholderIconSize = isSmallScreen ? 32.0 : 40.0;
     final titleFontSize = isSmallScreen ? 13.0 : 16.0;
     final subtitleFontSize = isSmallScreen ? 11.0 : 13.0;
     final iconSize = isSmallScreen ? 12.0 : 14.0;
@@ -441,42 +441,12 @@ class _SearchPageState extends State<SearchPage> {
         ),
         child: Row(
           children: [
-            ClipRRect(
+            SmartImageWidget(
+              imageUrl: destination.imageUrl,
+              width: imageSize,
+              height: imageSize,
+              fit: BoxFit.cover,
               borderRadius: BorderRadius.circular(imageRadius),
-              child: Image.network(
-                destination.imageUrl,
-                width: imageSize,
-                height: imageSize,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: imageSize,
-                    height: imageSize,
-                    color: Colors.grey[300],
-                    child: Icon(
-                      LucideIcons.image,
-                      color: Colors.grey,
-                      size: imagePlaceholderIconSize,
-                    ),
-                  );
-                },
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Container(
-                    width: imageSize,
-                    height: imageSize,
-                    color: Colors.grey[200],
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          Color(0xFF539DF3),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
             ),
             SizedBox(width: spacingWidth),
             Expanded(

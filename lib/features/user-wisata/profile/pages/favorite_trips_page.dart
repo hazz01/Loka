@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../shared/widgets/smart_image_widget.dart';
 
 class FavoriteTripsPage extends StatefulWidget {
   const FavoriteTripsPage({super.key});
@@ -25,11 +26,13 @@ class _FavoriteTripsPageState extends State<FavoriteTripsPage> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final String? favoritesJson = prefs.getString('favorite_trips');
-      
+
       if (favoritesJson != null) {
         final List<dynamic> decoded = jsonDecode(favoritesJson);
         setState(() {
-          favoriteTrips = decoded.map((e) => Map<String, dynamic>.from(e)).toList();
+          favoriteTrips = decoded
+              .map((e) => Map<String, dynamic>.from(e))
+              .toList();
           isLoading = false;
         });
       } else {
@@ -45,39 +48,78 @@ class _FavoriteTripsPageState extends State<FavoriteTripsPage> {
   }
 
   Future<void> _initializeDummyData() async {
+    // Array data lokal untuk favorite trips menggunakan gambar lokal
     final dummyData = [
       {
-        'id': 'fav_1',
-        'destination': 'Jatim Park 1',
-        'location': 'Malang, East Java',
-        'imageUrl': 'https://images.unsplash.com/photo-1537996194471-e657df975ab4',
+        'id': 'trip_001',
+        'destination': 'Gunung Bromo',
+        'location': 'Probolinggo, Jawa Timur',
+        'imageUrl': 'assets/image/homepage_travel/gunung_bromo_picture.png',
+        'rating': 4.9,
+        'price': 'IDR 35K',
+        'category': 'Nature',
+      },
+      {
+        'id': 'trip_002',
+        'destination': 'Pantai Balekambang',
+        'location': 'Malang, Jawa Timur',
+        'imageUrl':
+            'assets/image/homepage_travel/pantai_balekambang_picture.png',
+        'rating': 4.7,
+        'price': 'IDR 15K',
+        'category': 'Beach',
+      },
+      {
+        'id': 'trip_003',
+        'destination': 'Jatim Park 2',
+        'location': 'Batu, Jawa Timur',
+        'imageUrl': 'assets/image/homepage_travel/jatimpark2_picture.png',
         'rating': 4.8,
-        'price': 'IDR 150K',
+        'price': 'IDR 100K',
         'category': 'Theme Park',
       },
       {
-        'id': 'fav_2',
-        'destination': 'Kampung Warna-Warni',
-        'location': 'Malang, East Java',
-        'imageUrl': 'https://images.unsplash.com/photo-1555400082-f2b6b1c0b5d4',
-        'rating': 4.7,
-        'price': 'IDR 50K',
+        'id': 'trip_004',
+        'destination': 'Museum Angkut',
+        'location': 'Batu, Jawa Timur',
+        'imageUrl': 'assets/image/homepage_travel/museum_angkut_picture.png',
+        'rating': 4.6,
+        'price': 'IDR 90K',
+        'category': 'Museum',
+      },
+      {
+        'id': 'trip_005',
+        'destination': 'Air Terjun Coban Rondo',
+        'location': 'Malang, Jawa Timur',
+        'imageUrl':
+            'assets/image/homepage_travel/air_terjun_coban_rondo_picture.png',
+        'rating': 4.5,
+        'price': 'IDR 20K',
+        'category': 'Nature',
+      },
+      {
+        'id': 'trip_006',
+        'destination': 'Kampung Warna Warni Jodipan',
+        'location': 'Malang, Jawa Timur',
+        'imageUrl': 'assets/image/homepage_travel/kampung_jodipan_picture.png',
+        'rating': 4.4,
+        'price': 'IDR 5K',
         'category': 'Cultural',
       },
       {
-        'id': 'fav_3',
-        'destination': 'Museum Angkut',
-        'location': 'Malang, East Java',
-        'imageUrl': 'https://images.unsplash.com/photo-1559827260-dc66d52bef19',
-        'rating': 4.9,
-        'price': 'IDR 120K',
-        'category': 'Museum',
+        'id': 'trip_007',
+        'destination': 'Selecta',
+        'location': 'Batu, Jawa Timur',
+        'imageUrl': 'assets/image/homepage_travel/selecta_picture.png',
+        'rating': 4.3,
+        'price': 'IDR 30K',
+        'category': 'Recreation',
       },
     ];
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('favorite_trips', jsonEncode(dummyData));
-    
+
     setState(() {
       favoriteTrips = dummyData;
       isLoading = false;
@@ -86,10 +128,12 @@ class _FavoriteTripsPageState extends State<FavoriteTripsPage> {
 
   Future<void> _removeFavorite(String id) async {
     try {
-      final updatedFavorites = favoriteTrips.where((trip) => trip['id'] != id).toList();
+      final updatedFavorites = favoriteTrips
+          .where((trip) => trip['id'] != id)
+          .toList();
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('favorite_trips', jsonEncode(updatedFavorites));
-      
+
       setState(() {
         favoriteTrips = updatedFavorites;
       });
@@ -139,29 +183,25 @@ class _FavoriteTripsPageState extends State<FavoriteTripsPage> {
         ),
       ),
       body: isLoading
-          ? Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFF539DF3),
-              ),
-            )
+          ? Center(child: CircularProgressIndicator(color: Color(0xFF539DF3)))
           : favoriteTrips.isEmpty
-              ? _buildEmptyState(isSmallScreen, scale)
-              : ListView.builder(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isSmallScreen ? 20 : 30,
-                    vertical: isSmallScreen ? 16 : 20,
-                  ),
-                  itemCount: favoriteTrips.length,
-                  itemBuilder: (context, index) {
-                    final trip = favoriteTrips[index];
-                    return _buildFavoriteCard(
-                      context: context,
-                      trip: trip,
-                      isSmallScreen: isSmallScreen,
-                      scale: scale,
-                    );
-                  },
-                ),
+          ? _buildEmptyState(isSmallScreen, scale)
+          : ListView.builder(
+              padding: EdgeInsets.symmetric(
+                horizontal: isSmallScreen ? 20 : 30,
+                vertical: isSmallScreen ? 16 : 20,
+              ),
+              itemCount: favoriteTrips.length,
+              itemBuilder: (context, index) {
+                final trip = favoriteTrips[index];
+                return _buildFavoriteCard(
+                  context: context,
+                  trip: trip,
+                  isSmallScreen: isSmallScreen,
+                  scale: scale,
+                );
+              },
+            ),
     );
   }
 
@@ -208,9 +248,7 @@ class _FavoriteTripsPageState extends State<FavoriteTripsPage> {
     required double scale,
   }) {
     return Container(
-      margin: EdgeInsets.only(
-        bottom: (16 * scale).clamp(12.0, 20.0),
-      ),
+      margin: EdgeInsets.only(bottom: (16 * scale).clamp(12.0, 20.0)),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
@@ -231,22 +269,14 @@ class _FavoriteTripsPageState extends State<FavoriteTripsPage> {
               topLeft: Radius.circular(isSmallScreen ? 12 : 16),
               bottomLeft: Radius.circular(isSmallScreen ? 12 : 16),
             ),
-            child: Container(
+            child: SmartImageWidget(
+              imageUrl: trip['imageUrl'],
               width: (120 * scale).clamp(100.0, 140.0),
               height: (140 * scale).clamp(120.0, 160.0),
-              child: Image.network(
-                trip['imageUrl'],
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[300],
-                    child: Icon(
-                      Icons.image_not_supported,
-                      size: 40,
-                      color: Colors.grey[500],
-                    ),
-                  );
-                },
+              fit: BoxFit.cover,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(isSmallScreen ? 12 : 16),
+                bottomLeft: Radius.circular(isSmallScreen ? 12 : 16),
               ),
             ),
           ),

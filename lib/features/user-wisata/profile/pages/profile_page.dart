@@ -1,9 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loka/shared/widgets/pop_up_components.dart';
+import 'package:loka/shared/widgets/toast_components.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
+
+  Future<void> _handleLogout(BuildContext context) async {
+    final shouldLogout = await AppPopup.showConfirmation(
+      context: context,
+      title: "Are you sure you want to log out?",
+      message: "We'll be here whenever you're ready to come back!",
+      confirmText: "Log Out",
+      cancelText: "Cancel",
+      confirmColor: const Color(0xffF44336),
+    );
+
+    if (shouldLogout == true && context.mounted) {
+      try {
+        if (context.mounted) {
+          ToastNotification.success(context, message: 'Logout berhasil');
+          // context.go('/auth-manager');
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ToastNotification.error(context, message: 'Logout gagal: $e');
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -230,10 +256,7 @@ class ProfilePage extends StatelessWidget {
                   _buildProfileMenuItem(
                     icon: LucideIcons.logOut,
                     title: "Log Out",
-                    onTap: () {
-                      // Handle profile tap
-                      print("Log Out tapped");
-                    },
+                    onTap: () => _handleLogout(context),
                     isSmallScreen: isSmallScreen,
                     scale: scale,
                     isLast: true,
