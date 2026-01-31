@@ -424,6 +424,41 @@ class _KategoriGreaterCityPageState extends State<KategoriGreaterCityPage> {
                 }
               },
             ),
+            
+            // Info banner for Malang-only service
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Color(0xFFEEF5FE),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Color(0xFF539DF3).withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    LucideIcons.info,
+                    color: Color(0xFF539DF3),
+                    size: 18,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Currently available only for Malang. Other cities are coming soon, stay tuned!',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF1E40AF),
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             SizedBox(height: isSmallScreen ? 20 : 25),
 
             // === Travel Dates ===

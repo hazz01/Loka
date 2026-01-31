@@ -433,27 +433,6 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
                       ],
                     ],
                   ),
-                  if (currentTrip.budgetForDay != null) ...[
-                    SizedBox(height: isSmallScreen ? 8 : 10),
-                    Row(
-                      children: [
-                        Icon(
-                          LucideIcons.wallet,
-                          size: summaryIconSize - 2,
-                          color: Colors.green.shade600,
-                        ),
-                        SizedBox(width: isSmallScreen ? 5 : 6),
-                        Text(
-                          "Daily Budget: Rp ${currentTrip.budgetForDay!.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
-                          style: TextStyle(
-                            fontSize: summaryFontSize,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.green.shade600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
                   SizedBox(height: isSmallScreen ? 18 : 24),
 
                   // Timeline Cards
