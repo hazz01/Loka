@@ -58,6 +58,7 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
   late String cityName;
   late String tripSummary;
   late int totalCost;
+  String? budgetNotes; // For displaying budget summary notes
 
   @override
   void initState() {
@@ -76,90 +77,72 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
   void _loadApiData() {
     final response = widget.tripResponse!;
 
-    // Convert API response to DayTrip model
-    tripDays = response.days.map((daySchedule) {
-      // Calculate date for this day
-      DateTime dayDate = DateTime.now().add(
-        Duration(days: daySchedule.dayNumber - 1),
-      );
+    try {
+      // Convert API response to DayTrip model using the new structure
+      tripDays = response.days.map((daySchedule) {
+        // Calculate date for this day
+        DateTime dayDate = DateTime.now().add(
+          Duration(days: daySchedule.dayNumber - 1),
+        );
 
-      // Convert activities to Activity model with dummy UI data
-      List<Activity> activities = daySchedule.activities.map((
-        activitySchedule,
-      ) {
-        return Activity(
-          activityType: activitySchedule.activityType,
-          destinationId: activitySchedule.destinationId,
-          destinationName: activitySchedule.destinationName,
-          startTime: activitySchedule.startTime,
-          endTime: activitySchedule.endTime,
-          notes: activitySchedule.notes,
-          // Dummy UI data
-          imagePath: 'assets/image/kayutangan.png',
-          price: 'Free',
-          address: activitySchedule.destinationName != null
-              ? '${activitySchedule.destinationName} Area'
-              : null,
+        // Convert activities to Activity model
+        List<Activity> activities = daySchedule.activities.map((activity) {
+          // Get the display name from activity name, or fallback to destinationName
+          String displayName = activity.name ?? 
+                              activity.destinationName ?? 
+                              'Activity';
+          
+          // Format price from estimatedCost
+          String displayPrice = 'Free';
+          if (activity.estimatedCost != null && activity.estimatedCost! > 0) {
+            displayPrice = 'Start From Rp ${activity.estimatedCost!.toInt().toString().replaceAllMapped(
+              RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+              (Match m) => '${m[1]}.',
+            )}';
+          }
+          
+          // Get location from locationNote
+          String displayAddress = activity.locationNote ?? 
+                                 activity.destinationName ?? 
+                                 'Location not specified';
+          
+          return Activity(
+            activityType: activity.activityType,
+            destinationId: activity.destinationId ?? activity.mealId ?? '',
+            destinationName: displayName,
+            startTime: activity.startTime,
+            endTime: activity.endTime,
+            notes: activity.notes,
+            imagePath: 'assets/image/kayutangan.png', // Default image
+            price: displayPrice,
+            address: displayAddress,
+          );
+        }).toList();
+
+        return DayTrip(
+          dayNumber: daySchedule.dayNumber,
+          activities: activities,
+          date: dayDate,
+          theme: 'Day ${daySchedule.dayNumber}',
+          budgetForDay: 0,
         );
       }).toList();
 
-      return DayTrip(
-        dayNumber: daySchedule.dayNumber,
-        activities: activities,
-        date: dayDate,
-      );
-    }).toList();
+      // Use the new response structure fields
+      cityName = response.city;
+      tripSummary = response.summary;
+      totalCost = response.totalEstimatedCost.toInt();
+      budgetNotes = '';
 
-    // Extract city name from originalRequest with robust fallbacks. The
-    // backend may return the tripType as a Map, a plain String, or a
-    // typed object. We also fall back to the first element of
-    // targetCities. If nothing is available, default to 'Malang' to match
-    // the greater-city flow (and avoid showing 'Unknown City').
-    final original = response.originalRequest;
-    String? derivedCity;
-
-    try {
-      final tripType = original['tripType'];
-      if (tripType != null) {
-        if (tripType is Map) {
-          derivedCity = (tripType['name'] as String?)?.toString();
-        } else if (tripType is String) {
-          derivedCity = tripType;
-        } else {
-          // Handle typed object (may come from json decoding into a class)
-          try {
-            derivedCity = (tripType as dynamic).name as String?;
-          } catch (_) {
-            // ignore and continue to other fallbacks
-          }
-        }
+      // Initialize with first day
+      if (tripDays.isNotEmpty) {
+        selectedDate = tripDays[0].date!;
+        selectedDay = 1;
       }
-    } catch (_) {
-      // ignore
-    }
-
-    // Fallback to targetCities array if tripType didn't yield a name
-    if ((derivedCity == null || derivedCity.isEmpty) &&
-        original['targetCities'] != null &&
-        original['targetCities'] is List &&
-        (original['targetCities'] as List).isNotEmpty) {
-      final first = (original['targetCities'] as List)[0];
-      derivedCity = first?.toString();
-    }
-
-    // Final fallback: prefer 'Malang' for greater-city flows to avoid
-    // showing 'Unknown City' to the user.
-    cityName = (derivedCity != null && derivedCity.isNotEmpty)
-        ? derivedCity
-        : 'Malang';
-
-    tripSummary = response.summary;
-    totalCost = response.totalEstimatedCost;
-
-    // Initialize with first day
-    if (tripDays.isNotEmpty) {
-      selectedDate = tripDays[0].date!;
-      selectedDay = 1;
+    } catch (e) {
+      print('Error loading API data: $e');
+      // Fallback to dummy data if parsing fails
+      _loadDummyData();
     }
   }
 
@@ -370,6 +353,41 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
                               ),
                             ],
                           ),
+                          if (budgetNotes != null && budgetNotes!.isNotEmpty) ...[
+                            SizedBox(height: isSmallScreen ? 8 : 10),
+                            Container(
+                              padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
+                              decoration: BoxDecoration(
+                                color: Colors.amber.shade50,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: Colors.amber.shade200,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    LucideIcons.info,
+                                    size: summaryIconSize - 2,
+                                    color: Colors.amber.shade700,
+                                  ),
+                                  SizedBox(width: isSmallScreen ? 5 : 6),
+                                  Expanded(
+                                    child: Text(
+                                      budgetNotes!,
+                                      style: TextStyle(
+                                        fontSize: summaryFontSize - 1,
+                                        color: Colors.amber.shade900,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -378,15 +396,64 @@ class _TimelineTripPageState extends State<TimelineTripPage> {
 
                   SizedBox(height: isSmallScreen ? 18 : 22),
 
-                  // Day Title
-                  Text(
-                    "Day ${currentTrip.day}",
-                    style: TextStyle(
-                      fontSize: dayTitleFontSize,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
+                  // Day Title with Theme
+                  Row(
+                    children: [
+                      Text(
+                        "Day ${currentTrip.day}",
+                        style: TextStyle(
+                          fontSize: dayTitleFontSize,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                      if (currentTrip.theme != null && currentTrip.theme!.isNotEmpty) ...[
+                        SizedBox(width: isSmallScreen ? 8 : 10),
+                        Flexible(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isSmallScreen ? 8 : 10,
+                              vertical: isSmallScreen ? 4 : 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEBF5FF),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              currentTrip.theme!,
+                              style: TextStyle(
+                                fontSize: isSmallScreen ? 11 : 12,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF539DF3),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
+                  if (currentTrip.budgetForDay != null) ...[
+                    SizedBox(height: isSmallScreen ? 8 : 10),
+                    Row(
+                      children: [
+                        Icon(
+                          LucideIcons.wallet,
+                          size: summaryIconSize - 2,
+                          color: Colors.green.shade600,
+                        ),
+                        SizedBox(width: isSmallScreen ? 5 : 6),
+                        Text(
+                          "Daily Budget: Rp ${currentTrip.budgetForDay!.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
+                          style: TextStyle(
+                            fontSize: summaryFontSize,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.green.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                   SizedBox(height: isSmallScreen ? 18 : 24),
 
                   // Timeline Cards
