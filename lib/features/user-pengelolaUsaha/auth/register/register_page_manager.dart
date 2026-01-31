@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loka/shared/widgets/text_field_header.dart';
 import 'package:loka/shared/widgets/toast_components.dart';
 
@@ -74,6 +75,7 @@ class _RegisterPageManagerState extends State<RegisterPageManager> {
   void _handleSubmit() {
     if (_formKey.currentState!.validate()) {
       ToastNotification.success(context, message: 'Registration successful!');
+      context.go('/auth-manager/register/success-register');
     } else {
       // Show first error
       final nameError = _validateName(_nameController.text);

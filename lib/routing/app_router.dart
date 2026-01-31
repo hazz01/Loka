@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loka/features/user-pengelolaUsaha/auth/auth_choosen_page.dart';
+import 'package:loka/features/user-pengelolaUsaha/auth/register/finish_screen_register_page.dart';
 import 'package:loka/features/user-pengelolaUsaha/auth/register/register_page_manager.dart';
 import 'package:loka/features/user-pengelolaUsaha/auth/splash-screen/splash_screen_manager.dart';
 import 'package:loka/features/user-wisata/home/pages/loading_screen.dart';
@@ -33,7 +34,6 @@ import '../features/user-pengelolaUsaha/daftar-wisata/pages/manager_destinations
 import '../features/user-pengelolaUsaha/analisis/pages/manager_analytics_page.dart';
 import '../features/user-pengelolaUsaha/tiket/pages/manager_tickets_page.dart';
 import '../features/user-pengelolaUsaha/account/pages/manager_account_page.dart';
-import '../features/user-pengelolaUsaha/auth/splash-screen/splash_screen_manager.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -265,6 +265,15 @@ class AppRouter {
             path: '/register',
             name: 'register-manager',
             builder: (context, state) => RegisterPageManager(),
+            routes: [
+              GoRoute(
+                path: '/success-register',
+                name: 'success-register-manager',
+                builder: (context, state) {
+                  return const FinishScreenRegisterPage();
+                },
+              ),
+            ],
           ),
         ],
       ),

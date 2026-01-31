@@ -40,12 +40,15 @@ class _SplashPageState extends State<SplashPage>
     // when animation completes, wait a tiny bit then navigate to choose role
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        Future.delayed(const Duration(milliseconds: 1000), () {
-          if (!mounted) return;
-          context.go('/choose-role');
-        });
+        _navigateToChooseRole();
       }
     });
+  }
+
+  void _navigateToChooseRole() async {
+    await Future.delayed(const Duration(milliseconds: 1000));
+    if (!mounted) return;
+    context.go('/choose-role');
   }
 
   @override
