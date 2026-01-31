@@ -1,6 +1,7 @@
 {
     "conventionalCommits.scopes": [
         "splash screen",
-        "router"
+        "router",
+        "auth"
     ]
 }
