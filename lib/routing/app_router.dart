@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loka/features/user-pengelolaUsaha/auth/auth_choosen_page.dart';
 import 'package:loka/features/user-pengelolaUsaha/auth/splash-screen/splash_screen_manager.dart';
 import 'package:loka/features/user-wisata/home/pages/loading_screen.dart';
 import 'package:loka/features/splash-screen-utama/splash_page.dart';
@@ -253,6 +254,14 @@ class AppRouter {
         path: '/splashscreen/pertama',
         name: 'splashscreen-pertama',
         builder: (context, state) => SplashScreenManager(),
+      ),
+      GoRoute(
+        path: '/auth-manager',
+        name: 'auth-manager',
+        builder: (context, state) => AuthChoosenPageManager(),
+        routes: [
+          
+        ]
       ),
     ],
   );

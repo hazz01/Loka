@@ -49,7 +49,7 @@ class _SplashScreenManagerState extends State<SplashScreenManager> {
       );
     } else {
       // Navigasi ke manager dashboard
-      context.go('/manager');
+      context.go('/auth-manager');
     }
   }
 

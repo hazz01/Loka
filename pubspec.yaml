@@ -111,6 +111,11 @@ flutter:
     - assets/image/splash_screen_pertama.jpg
     - assets/image/splash_screen_kedua.jpg
     - assets/image/splash_screen_ketiga.jpg
+    - assets/image/bali.jpg
+    - assets/image/GWK_Bali.jpg
+    - assets/image/lawang_sewu.jpg
+    - assets/image/bawah_laut.png
+    - assets/icons/Google.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
