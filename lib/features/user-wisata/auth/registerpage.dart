@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'firstregist.dart';
+import 'register/firstregist.dart';
 import 'secondregist.dart';
 import 'thirdregist.dart';
 

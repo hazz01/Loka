@@ -56,6 +56,7 @@ dependencies:
   shared_preferences: ^2.3.3
   flutter_launcher_icons: ^0.14.4
   card_loading: ^0.3.2
+  fl_chart: ^1.1.1
 
 dev_dependencies:
   flutter_test:

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loka/features/user-wisata/auth/finish.dart';
-import 'package:loka/features/user-wisata/auth/loginpage.dart';
-import 'package:loka/features/user-wisata/auth/openingscreen.dart';
+import 'package:loka/features/user-wisata/auth/login/finish.dart';
+import 'package:loka/features/user-wisata/auth/login/loginpage.dart';
+import 'package:loka/features/user-wisata/auth/splash%20screen/openingscreen.dart';
 import 'package:loka/features/user-wisata/auth/preregister_page.dart';
 import 'package:loka/features/user-wisata/auth/registerpage.dart';
-import 'package:loka/features/user-wisata/auth/rolechoose_page.dart';
+import 'package:loka/features/splash-screen-utama/choose_role_page.dart';
 import 'package:loka/features/user-wisata/auth/succeslogin.dart';
 import 'package:loka/features/user-wisata/home/pages/loading_screen.dart';
 import 'package:loka/features/user-wisata/home/pages/timeline_trip_Page.dart';
@@ -13,7 +13,7 @@ import 'package:loka/features/user-wisata/home/models/trip_response_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:loka/features/user-wisata/auth/splash.dart';
 
-// Feature imports
+// Traveler Feature imports
 import '../home/pages/home_page.dart';
 import '../home/pages/detail_component_page.dart';
 import '../home/pages/virtual_tour_page.dart';
@@ -30,6 +30,19 @@ import '../profile/pages/transaction_history_page.dart';
 import '../profile/pages/previous_trips_page.dart';
 import '../profile/pages/favorite_trips_page.dart';
 
+// Manager Feature imports
+import 'package:loka/features/user-pengelolaUsaha/auth/auth_choosen_page.dart';
+import 'package:loka/features/user-pengelolaUsaha/auth/login/finish_screen_login_page.dart';
+import 'package:loka/features/user-pengelolaUsaha/auth/login/login_page_manager.dart';
+import 'package:loka/features/user-pengelolaUsaha/auth/register/finish_screen_register_page.dart';
+import 'package:loka/features/user-pengelolaUsaha/auth/register/register_page_manager.dart';
+import 'package:loka/features/user-pengelolaUsaha/auth/splash-screen/splash_screen_manager.dart';
+import 'package:loka/features/user-pengelolaUsaha/dashboard/pages/manager_dashboard_page.dart';
+import 'package:loka/features/user-pengelolaUsaha/daftar-wisata/pages/manager_destinations_page.dart';
+import 'package:loka/features/user-pengelolaUsaha/analisis/pages/manager_analytics_page.dart';
+import 'package:loka/features/user-pengelolaUsaha/tiket/pages/manager_tickets_page.dart';
+import 'package:loka/features/user-pengelolaUsaha/account/pages/manager_account_page.dart';
+
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: '/splash',
@@ -45,6 +58,14 @@ class AppRouter {
         name: 'choose-role',
         builder: (context, state) => const ChooseRolePage(),
       ),
+
+      // Manager Onboarding/Splash Screen
+      GoRoute(
+        path: '/manager-onboarding',
+        name: 'manager-onboarding',
+        builder: (context, state) => const SplashScreenManager(),
+      ),
+
       GoRoute(
         path: '/opening',
         name: 'opening',
@@ -76,7 +97,7 @@ class AppRouter {
         name: 'finish-login',
         builder: (context, state) => const FinishScreenLoginPage(),
       ),
-      
+
       // Bottom Navigation Shell
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
@@ -210,6 +231,103 @@ class AppRouter {
           ),
         ],
       ),
+
+      // ========== MANAGER ROUTES ==========
+      // Bottom Navigation Shell for Manager
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return ManagerScaffoldWithNavBar(navigationShell: navigationShell);
+        },
+        branches: [
+          // Dashboard Branch
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/manager',
+                name: 'manager-dashboard',
+                builder: (context, state) => const ManagerDashboardPage(),
+              ),
+            ],
+          ),
+          // Destinations Branch
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/manager/destinations',
+                name: 'manager-destinations',
+                builder: (context, state) => const ManagerDestinationsPage(),
+              ),
+            ],
+          ),
+          // Analytics Branch
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/manager/analytics',
+                name: 'manager-analytics',
+                builder: (context, state) => const ManagerAnalyticsPage(),
+              ),
+            ],
+          ),
+          // Tickets Branch
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/manager/tickets',
+                name: 'manager-tickets',
+                builder: (context, state) => const ManagerTicketsPage(),
+              ),
+            ],
+          ),
+          // Account Branch
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/manager/account',
+                name: 'manager-account',
+                builder: (context, state) => const ManagerAccountPage(),
+              ),
+            ],
+          ),
+        ],
+      ),
+
+      // Manager Auth Routes
+      GoRoute(
+        path: '/auth-manager',
+        name: 'auth-manager',
+        builder: (context, state) => const AuthChoosenPageManager(),
+        routes: [
+          GoRoute(
+            path: 'register',
+            name: 'register-manager',
+            builder: (context, state) => const RegisterPageManager(),
+            routes: [
+              GoRoute(
+                path: 'success-register',
+                name: 'success-register-manager',
+                builder: (context, state) {
+                  return const FinishScreenRegisterPage();
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'login',
+            name: 'login-manager',
+            builder: (context, state) => const LoginPageManager(),
+            routes: [
+              GoRoute(
+                path: 'success-login',
+                name: 'success-login-manager',
+                builder: (context, state) {
+                  return const FinishScreenLoginPageManager();
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
     ],
   );
 }
@@ -305,6 +423,88 @@ class ScaffoldWithNavBar extends StatelessWidget {
       icon: iconWidget,
       activeIcon: iconWidget,
       label: label,
+    );
+  }
+}
+
+// ========== MANAGER BOTTOM NAVIGATION BAR ==========
+class ManagerScaffoldWithNavBar extends StatelessWidget {
+  const ManagerScaffoldWithNavBar({required this.navigationShell, super.key});
+
+  final StatefulNavigationShell navigationShell;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: navigationShell,
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(40),
+            topRight: Radius.circular(40),
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 35),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavBarItem(
+                  icon: LucideIcons.layoutDashboard,
+                  isActive: navigationShell.currentIndex == 0,
+                  onTap: () => navigationShell.goBranch(0),
+                ),
+                _buildNavBarItem(
+                  icon: LucideIcons.bookmark,
+                  isActive: navigationShell.currentIndex == 1,
+                  onTap: () => navigationShell.goBranch(1),
+                ),
+                _buildNavBarItem(
+                  icon: LucideIcons.chartArea,
+                  isActive: navigationShell.currentIndex == 2,
+                  onTap: () => navigationShell.goBranch(2),
+                ),
+                _buildNavBarItem(
+                  icon: LucideIcons.ticket,
+                  isActive: navigationShell.currentIndex == 3,
+                  onTap: () => navigationShell.goBranch(3),
+                ),
+                _buildNavBarItem(
+                  icon: LucideIcons.user,
+                  isActive: navigationShell.currentIndex == 4,
+                  onTap: () => navigationShell.goBranch(4),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavBarItem({
+    required IconData icon,
+    required bool isActive,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: isActive
+            ? const BoxDecoration(
+                color: Color(0xffc0dbfb),
+                shape: BoxShape.circle,
+              )
+            : null,
+        child: Icon(
+          icon,
+          size: 24,
+          color: isActive ? const Color(0xff539DF3) : const Color(0xff757575),
+        ),
+      ),
     );
   }
 }
