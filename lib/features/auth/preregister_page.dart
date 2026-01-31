@@ -147,7 +147,7 @@ class PreRegisterPage extends StatelessWidget {
                   const SizedBox(width: 4),
                   GestureDetector(
                     onTap: () {
-                      context.go('/register');
+                      context.go('/login');
                     },
                     child: const Text(
                       'Sign In',

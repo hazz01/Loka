@@ -20,6 +20,10 @@ class _FirstRegisterState extends State<FirstRegister> {
   final locationController = TextEditingController();
   final ageController = TextEditingController();
 
+  // 🔒 VALIDATION ERROR STATE
+  String? emailError;
+  String? passwordError;
+
   final Color primaryColor = const Color(0xFF539DF3);
   final Color borderColor = const Color(0xFFE5E7EB);
   final Color activeBg = const Color(0xFFEFF6FF);
@@ -31,6 +35,33 @@ class _FirstRegisterState extends State<FirstRegister> {
       locationController.text.isNotEmpty &&
       ageController.text.isNotEmpty &&
       isMan != null;
+
+  // ================= VALIDATORS =================
+
+  String? _validateEmail(String value) {
+    if (value.trim().isEmpty) {
+      return 'Email is required';
+    }
+    final emailRegex = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    );
+    if (!emailRegex.hasMatch(value.trim())) {
+      return 'Please enter a valid email address';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String value) {
+    if (value.isEmpty) {
+      return 'Password is required';
+    }
+    if (value.length < 8) {
+      return 'Password must be at least 8 characters';
+    }
+    return null;
+  }
+
+  // =================================================
 
   @override
   Widget build(BuildContext context) {
@@ -75,12 +106,17 @@ class _FirstRegisterState extends State<FirstRegister> {
               _input(nameController),
 
               _label("Enter your email"),
-              _input(emailController),
+              _input(
+                emailController,
+                keyboardType: TextInputType.emailAddress,
+                errorText: emailError,
+              ),
 
               _label("Enter your password"),
               _input(
                 passwordController,
                 obscure: obscure,
+                errorText: passwordError,
                 suffix: IconButton(
                   icon: Icon(
                     obscure ? Icons.visibility_off : Icons.visibility,
@@ -105,7 +141,6 @@ class _FirstRegisterState extends State<FirstRegister> {
 
               const SizedBox(height: 20),
 
-              // GENDER
               const Text(
                 "Enter your Gender",
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
@@ -121,10 +156,8 @@ class _FirstRegisterState extends State<FirstRegister> {
                 ],
               ),
 
-              // PUSH CONTENT UP (BIAR DOT & BUTTON KE BAWAH)
               const Spacer(),
 
-              // DOT
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [_dot(true), _dot(false), _dot(false)],
@@ -132,12 +165,11 @@ class _FirstRegisterState extends State<FirstRegister> {
 
               const SizedBox(height: 26),
 
-              // BUTTON
               Row(
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () =>context.go('/preregister'),
+                      onPressed: () => context.go('/preregister'),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         side: BorderSide(color: borderColor),
@@ -157,7 +189,20 @@ class _FirstRegisterState extends State<FirstRegister> {
                   const SizedBox(width: 14),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: isValid ? widget.onNext : null,
+                      onPressed: () {
+                        setState(() {
+                          emailError = _validateEmail(emailController.text);
+                          passwordError = _validatePassword(
+                            passwordController.text,
+                          );
+                        });
+
+                        if (emailError == null &&
+                            passwordError == null &&
+                            isValid) {
+                          widget.onNext();
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         backgroundColor: isValid ? primaryColor : borderColor,
@@ -186,7 +231,7 @@ class _FirstRegisterState extends State<FirstRegister> {
     );
   }
 
-  // COMPONENTS
+  // ================= COMPONENTS =================
 
   Widget _label(String text) {
     return Padding(
@@ -203,6 +248,7 @@ class _FirstRegisterState extends State<FirstRegister> {
     bool obscure = false,
     Widget? suffix,
     TextInputType keyboardType = TextInputType.text,
+    String? errorText,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -217,6 +263,7 @@ class _FirstRegisterState extends State<FirstRegister> {
             vertical: 16,
           ),
           suffixIcon: suffix,
+          errorText: errorText,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide(color: borderColor),
@@ -253,10 +300,10 @@ class _FirstRegisterState extends State<FirstRegister> {
           child: Center(
             child: Text(
               text,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: active ? primaryColor : Colors.black,
+                color: Colors.black,
               ),
             ),
           ),

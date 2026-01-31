@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loka/features/auth/finish.dart';
 import 'package:loka/features/auth/loginpage.dart';
 import 'package:loka/features/auth/openingscreen.dart';
 import 'package:loka/features/auth/preregister_page.dart';
 import 'package:loka/features/auth/registerpage.dart';
 import 'package:loka/features/auth/rolechoose_page.dart';
+import 'package:loka/features/auth/succeslogin.dart';
 import 'package:loka/features/home/pages/loading_screen.dart';
 import 'package:loka/features/home/pages/timeline_trip_Page.dart';
 import 'package:loka/features/home/models/trip_response_model.dart';
@@ -60,10 +62,21 @@ class AppRouter {
         builder: (context, state) => const RegisterPage(),
       ),
       GoRoute(
+        path: '/finish',
+        name: 'finish',
+        builder: (context, state) => const FinishPage(),
+      ),
+      GoRoute(
         path: '/login',
         name: 'login',
         builder: (context, state) => const LoginPage(),
       ),
+      GoRoute(
+        path: '/finish-login',
+        name: 'finish-login',
+        builder: (context, state) => const FinishScreenLoginPage(),
+      ),
+      
       // Bottom Navigation Shell
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {

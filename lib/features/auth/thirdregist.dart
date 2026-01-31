@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ThirdRegisterPage extends StatefulWidget {
   final VoidCallback onBack;
@@ -189,7 +190,7 @@ class _ThirdRegisterPageState extends State<ThirdRegisterPage> {
                   const SizedBox(width: 14),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: isFormValid ? widget.onFinish : null,
+                      onPressed: () => context.go('/finish'),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         backgroundColor: isFormValid
