@@ -17,7 +17,7 @@ class MockDataSource {
       description:
           'Jatim Park 1 is a popular family-friendly theme park located in Batu, East Java. It offers a perfect blend of education and entertainment with various attractions including a learning gallery, science center, and numerous fun rides.\n\nThe park features interactive exhibits that make learning enjoyable for children and adults alike. With beautiful gardens, exciting water attractions, and cultural performances, it\'s an ideal destination for families looking to spend quality time together.',
       imageUrl:
-          'https://nagantour.com/wp-content/uploads/2020/01/Jatim-Park-1.webp',
+          'assets/image/homepage_travel/homepage_travel/air_terjun_coban_rondo_picture.png',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.5,
@@ -64,7 +64,7 @@ class MockDataSource {
       description:
           'Museum Angkut is Asia\'s largest transportation museum, showcasing an impressive collection of vehicles from various eras and countries. The museum features vintage cars, motorcycles, aircraft, and traditional transportation modes.\n\nWith its unique thematic zones representing different countries and time periods, Museum Angkut offers an immersive journey through transportation history. Each zone is carefully designed to transport visitors to different parts of the world.',
       imageUrl:
-          'https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/p2/232/2024/04/20/museum-angkot-Gangster-Town-3406340622.jpg',
+          'assets/image/homepage_travel/homepage_travel/museum_angkut_picture.png',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.7,
@@ -112,7 +112,7 @@ class MockDataSource {
       description:
           'Taman wisata dengan kebun binatang dan museum satwa yang edukatif.',
       imageUrl:
-          'https://nagantour.com/wp-content/smush-webp/2023/06/View-Jatim-Park-2.jpg.webp',
+          'assets/image/homepage_travel/homepage_travel/jatimpark2_picture.png',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.6,
@@ -161,7 +161,7 @@ class MockDataSource {
       description:
           'Taman nasional dengan pemandangan gunung berapi yang spektakuler.',
       imageUrl:
-          'https://torch.id/cdn/shop/articles/Artikel_167_-_Preview.webp?v=1713337145&width=1100',
+          'assets/image/homepage_travel/homepage_travel/gunung_bromo_picture.png',
       location: 'Probolinggo',
       province: 'Jawa Timur',
       rating: 4.9,
@@ -202,7 +202,7 @@ class MockDataSource {
       description:
           'Pantai indah dengan pura di atas pulau kecil, mirip Tanah Lot.',
       imageUrl:
-          'https://i.pinimg.com/1200x/40/0a/db/400adba2b174b52c701a66e11c7671f6.jpg',
+          'assets/image/homepage_travel/homepage_travel/pantai_balekambang_picture.png',
       location: 'Bantur, Malang',
       province: 'Jawa Timur',
       rating: 4.4,
@@ -245,7 +245,7 @@ class MockDataSource {
       description:
           'Air terjun yang indah dengan suasana sejuk dan pemandangan yang memukau.',
       imageUrl:
-          'https://nagantour.com/wp-content/uploads/2024/02/air-terjun-coban-rondo.webp',
+          'assets/image/homepage_travel/homepage_travel/air_terjun_coban_rondo_picture.png',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.3,
@@ -284,7 +284,7 @@ class MockDataSource {
       description:
           'Kampoeng Heritage Kajoetangan is a historical neighborhood in Malang, renowned for its well-preserved colonial-era architecture. This area offers a glimpse into the past with its vintage houses, old-fashioned shops, and traditional markets, providing visitors with a unique showcase of Indonesia’s colonial history and local culture.\n\nIn addition to its historical charm, Kampoeng Heritage Kajoetangan is a vibrant cultural hub. It hosts various cultural festivals, art exhibitions, and traditional performances, showcasing local artistry. The neighbourhood’s quaint cafes and eateries add to its nostalgic ambiance, making it a beloved destination for history enthusiasts and culture lovers alike.',
       imageUrl:
-          'https://img.antarafoto.com/cache/1200x799/2025/02/23/kampung-heritage-kayutangan-malang-1gmzt-dom.webp',
+          'assets/image/homepage_travel/homepage_travel/kampung_heritagee_picture.png',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 5.0,
@@ -331,7 +331,7 @@ class MockDataSource {
       description:
           'Kampung Jodipan, also known as the Rainbow Village, is a vibrant and colorful neighbourhood that has become one of Malang’s most Instagram-worthy destinations. Once a slum area, it has been transformed into a stunning tourist attraction with over 232 houses painted in bright, cheerful colours.\n\nThe village showcases beautiful street art, colourful murals, and rainbow-painted stairs and bridges. Visitors can explore narrow alleys adorned with creative artwork, take photos with the iconic rainbow river view, and experience the local community’s warmth. It’s a perfect example of community-driven urban renewal that combines art, culture, and tourism.',
       imageUrl:
-          'https://asset.kompas.com/crops/6eF48vjTTANgCn8SgK1y-9Rgmn8=/0x21:740x391/780x390/data/photo/2020/09/01/5f4dff1968fb5.jpg',
+          'assets/image/homepage_travel/homepage_travel/kampung_jodipan_picture.png',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 4.7,
@@ -381,7 +381,7 @@ class MockDataSource {
       description:
           'Kampung Umbulan Tanaka is a unique cultural village in Malang that combines traditional Javanese architecture with modern tourism concepts. The village showcases the authentic rural lifestyle while offering various cultural activities and experiences for visitors.\n\nNamed after the natural spring (umbulan) that flows through the village, this destination offers a peaceful retreat from urban life. Visitors can enjoy traditional farming activities, learn about local crafts, taste authentic Javanese cuisine, and immerse themselves in the warm hospitality of the village community. The village also features beautiful natural scenery with rice fields, bamboo groves, and traditional wooden houses.',
       imageUrl:
-          'https://asset.kompas.com/crops/v2ifV8AAq5sDLFOe7YQscCdaZGw=/0x95:1361x1002/750x500/data/photo/2025/05/04/6816bc0f2630a.jpg',
+          'assets/image/homepage_travel/homepage_travel/kampung_umbulan_tanaka_picture.png',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 4.6,
@@ -430,7 +430,7 @@ class MockDataSource {
       name: 'Desa Wisata Bulukerto',
       description:
           'Desa Wisata Bulukerto is an agro-tourism village located at the foot of Mount Arjuna, offering visitors a unique blend of natural beauty, agricultural experiences, and rural tourism. The village is renowned for its organic farming, cool mountain air, and stunning views of the surrounding mountains.\n\nVisitors can experience authentic rural life while enjoying modern tourism facilities. The village offers various activities including vegetable picking, coffee plantation tours, traditional food making workshops, and trekking through scenic landscapes. With its commitment to sustainable tourism and community empowerment, Bulukerto has become a model for successful rural tourism development in East Java.',
-      imageUrl: 'https://jadesta.kemenparekraf.go.id/imgpost/94747.jpg',
+      imageUrl: 'assets/image/homepage_travel/homepage_travel/desa_bulukerto_picture.png',
       location: 'Bumiaji, Batu',
       province: 'Jawa Timur',
       rating: 4.8,
@@ -480,7 +480,7 @@ class MockDataSource {
       description:
           'Rumah makan bakso legendaris dengan cita rasa yang khas dan porsi melimpah.',
       imageUrl:
-          'https://asset.kompas.com/crops/0AiPpn10d3NmOW-234ZtBEapAQM=/61x0:902x561/1200x800/data/photo/2020/03/03/5e5e292d8b1dc.jpg',
+          'assets/image/homepage_travel/homepage_travel/bakso_president_picture.png',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 4.6,
@@ -505,7 +505,7 @@ class MockDataSource {
       description:
           'Kuliner rawon hitam legendaris yang buka 24 jam dengan rasa yang nikmat.',
       imageUrl:
-          'https://assets.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/p3/30/2024/10/26/WhatsApp-Image-2024-10-23-at-170755-1051339154.jpeg',
+          'assets/image/homepage_travel/homepage_travel/rawon_setan_picture.png',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 4.7,
@@ -530,7 +530,7 @@ class MockDataSource {
       description:
           'Restoran bersejarah dengan interior klasik dan menu western yang legendaris.',
       imageUrl:
-          'https://nahwatravel.co.id/wp-content/uploads/2022/04/Toko-Oen-Malang.jpg',
+          'assets/image/homepage_travel/homepage_travel/toko_oen_picture.png',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 4.4,
@@ -556,7 +556,7 @@ class MockDataSource {
       description:
           'Soto khas Madura dengan kuah yang gurih dan daging yang empuk.',
       imageUrl:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXSrmzpz8dRoCWIGf98b1CPxQ_0O0j5ytxZw&s',
+          'assets/image/homepage_travel/homepage_travel/depot_soto_madura_picture.png',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 4.5,
@@ -583,7 +583,7 @@ class MockDataSource {
       description:
           'Pusat oleh-oleh khas Malang dengan berbagai pilihan produk lokal.',
       imageUrl:
-          'https://indomgb.s3.amazonaws.com/wp-content/uploads/2019/12/22054058/Falahi-Mubarok-Pasar-Bunga-Splindid-Malang-2.jpg',
+          'assets/image/homepage_travel/homepage_travel/pasar_bunga_splendid_picture.png',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 4.3,
@@ -605,7 +605,7 @@ class MockDataSource {
       description:
           'Toko kue pia legendaris dengan rasa yang autentik dan harga terjangkau.',
       imageUrl:
-          'https://awsimages.detik.net.id/community/media/visual/2022/10/29/mencicipi-pia-cap-mangkok-pia-legendaris-dari-malang-sejak-1959-7_43.jpeg?w=1200',
+          'assets/image/homepage_travel/homepage_travel/toko_pia_cap_picture.png',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 4.6,
@@ -627,7 +627,7 @@ class MockDataSource {
       description:
           'Sentra keramik dengan berbagai produk kerajinan tangan yang unik.',
       imageUrl:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA0TMPwzg_3Qqv5brCXAzGIS00f7OnTqssdg&s',
+          'assets/image/homepage_travel/homepage_travel/kampung_wisata_keramik_picture.png',
       location: 'Malang',
       province: 'Jawa Timur',
       rating: 4.2,
@@ -652,7 +652,7 @@ class MockDataSource {
       description:
           'Pusat oleh-oleh apel dan produk turunannya yang khas dari Malang.',
       imageUrl:
-          'https://cdn.antaranews.com/cache/730x487/2019/02/09/Harga-Apel-Malang-Anjlok-090219-abs-3.jpg',
+          'assets/image/homepage_travel/homepage_travel/toko_apel_malang_picture.png',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.4,
@@ -676,7 +676,7 @@ class MockDataSource {
       description:
           'Tempat wisata petualangan dengan berbagai aktivitas outdoor yang seru.',
       imageUrl:
-          'https://nagantour.com/wp-content/smush-webp/2024/11/Omah-Kayu-Paralayang-2.jpg.webp',
+          'assets/image/homepage_travel/homepage_travel/omah_kayu_adventure_picture.png',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.5,
@@ -701,7 +701,7 @@ class MockDataSource {
       description:
           'Wisata air terjun dengan trekking yang menantang dan pemandangan alam yang indah.',
       imageUrl:
-          'https://travelspromo.com/wp-content/uploads/2019/05/air-terjun-coban-talun-Hamzah-Saefudin.jpg',
+          'assets/image/homepage_travel/homepage_travel/coban_talun_picture.png',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.6,
@@ -726,7 +726,7 @@ class MockDataSource {
       description:
           'Kebun apel dengan aktivitas petik apel langsung dan edukasi pertanian.',
       imageUrl:
-          'https://statik.tempo.co/data/2023/04/19/id_1198336/1198336_720.jpg',
+          'assets/image/homepage_travel/homepage_travel/wisata_petik_apel_batu_picture.png',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.4,
@@ -751,7 +751,7 @@ class MockDataSource {
       description:
           'Taman wisata dengan kolam renang air panas dan taman bunga yang indah.',
       imageUrl:
-          'https://nagantour.com/wp-content/smush-webp/2019/12/hamparan-bunga-Taman-Selecta-scaled.jpg.webp',
+          'assets/image/homepage_travel/homepage_travel/selecta_picture.png',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.3,
@@ -776,7 +776,7 @@ class MockDataSource {
       description:
           'Spot paralayang dengan pemandangan kota Batu dan Malang yang spektakuler.',
       imageUrl:
-          'https://nagantour.com/wp-content/uploads/2024/01/paralayang-batu.webp',
+          'assets/image/homepage_travel/homepage_travel/paralayang_picture.png',
       location: 'Batu',
       province: 'Jawa Timur',
       rating: 4.7,
