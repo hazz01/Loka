@@ -72,7 +72,7 @@ class _AuthChoosenPageManagerState extends State<AuthChoosenPageManager> {
                           ),
                           const SizedBox(height: 10),
                           Expanded(
-                            flex: 3,
+                            flex: 2,
                             child: _ImageCard('assets/image/bawah_laut.png'),
                           ),
                         ],
@@ -94,7 +94,7 @@ class _AuthChoosenPageManagerState extends State<AuthChoosenPageManager> {
                       height: 56,
                       child: ElevatedButton(
                         onPressed: () {
-                          context.go('/register');
+                          context.go('/auth-manager/register');
                         },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(
@@ -122,9 +122,7 @@ class _AuthChoosenPageManagerState extends State<AuthChoosenPageManager> {
                       width: double.infinity,
                       height: 52,
                       child: OutlinedButton(
-                        onPressed: () {
-                          // TODO: Google Sign In
-                        },
+                        onPressed: () {},
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(color: Color(0xFFE5E7EB)),
                           shape: RoundedRectangleBorder(
@@ -193,20 +191,14 @@ class _AuthChoosenPageManagerState extends State<AuthChoosenPageManager> {
 
 class _ImageCard extends StatelessWidget {
   final String image;
-  final double height;
 
-  const _ImageCard(this.image, {this.height = 160});
+  const _ImageCard(this.image);
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
-      child: Image.asset(
-        image,
-        height: height,
-        width: double.infinity,
-        fit: BoxFit.cover,
-      ),
+      child: Image.asset(image, width: double.infinity, fit: BoxFit.cover),
     );
   }
 }
