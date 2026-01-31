@@ -1,5 +1,5 @@
-import '../../../shared/data/models.dart';
-import '../../../shared/data/mock_data_source.dart';
+import '../../../../shared/data/models.dart';
+import '../../../../shared/data/mock_data_source.dart';
 
 class DestinationDetailService {
   // Service untuk mengambil detail destinasi

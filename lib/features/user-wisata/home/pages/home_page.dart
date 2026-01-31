@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:card_loading/card_loading.dart';
-import '../../../shared/data/models.dart';
-import '../../../shared/data/mock_data_source.dart';
+import '../../../../shared/data/models.dart';
+import '../../../../shared/data/mock_data_source.dart';
 import '../state/home_providers.dart';
 
 class HomePage extends ConsumerStatefulWidget {

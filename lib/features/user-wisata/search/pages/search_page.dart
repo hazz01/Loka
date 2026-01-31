@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:card_loading/card_loading.dart';
 
 // Use shared destination model and mock data so detail pages can resolve IDs
-import '../../../shared/data/models.dart';
-import '../../../shared/data/mock_data_source.dart';
+import '../../../../shared/data/models.dart';
+import '../../../../shared/data/mock_data_source.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});

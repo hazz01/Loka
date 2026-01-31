@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loka/features/auth/finish.dart';
-import 'package:loka/features/auth/loginpage.dart';
-import 'package:loka/features/auth/openingscreen.dart';
-import 'package:loka/features/auth/preregister_page.dart';
-import 'package:loka/features/auth/registerpage.dart';
-import 'package:loka/features/auth/rolechoose_page.dart';
-import 'package:loka/features/auth/succeslogin.dart';
-import 'package:loka/features/home/pages/loading_screen.dart';
-import 'package:loka/features/home/pages/timeline_trip_Page.dart';
-import 'package:loka/features/home/models/trip_response_model.dart';
+import 'package:loka/features/user-wisata/auth/finish.dart';
+import 'package:loka/features/user-wisata/auth/loginpage.dart';
+import 'package:loka/features/user-wisata/auth/openingscreen.dart';
+import 'package:loka/features/user-wisata/auth/preregister_page.dart';
+import 'package:loka/features/user-wisata/auth/registerpage.dart';
+import 'package:loka/features/user-wisata/auth/rolechoose_page.dart';
+import 'package:loka/features/user-wisata/auth/succeslogin.dart';
+import 'package:loka/features/user-wisata/home/pages/loading_screen.dart';
+import 'package:loka/features/user-wisata/home/pages/timeline_trip_Page.dart';
+import 'package:loka/features/user-wisata/home/models/trip_response_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:loka/features/auth/splash.dart';
+import 'package:loka/features/user-wisata/auth/splash.dart';
 
 // Feature imports
 import '../home/pages/home_page.dart';
