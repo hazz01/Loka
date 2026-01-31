@@ -400,94 +400,76 @@ class ManagerScaffoldWithNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 600;
-    final scale = isSmallScreen ? 0.85 : (screenWidth / 375).clamp(0.85, 1.1);
-
-    final navBarHeight = isSmallScreen ? 80.0 : 90.0;
-    final iconPadding = isSmallScreen ? 10.0 : 14.0;
-    final iconSize = (24 * scale).clamp(22.0, 30.0);
-    final fontSize = (12 * scale).clamp(11.0, 14.0);
-
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: Container(
-        height: navBarHeight,
-        decoration: const BoxDecoration(color: Color(0xFFF4F4F4)),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(40),
+            topRight: Radius.circular(40),
+          ),
+        ),
         child: SafeArea(
-          child: BottomNavigationBar(
-            backgroundColor: const Color(0xFFF4F4F4),
-            type: BottomNavigationBarType.fixed,
-            elevation: 0,
-            currentIndex: navigationShell.currentIndex,
-            onTap: (index) => navigationShell.goBranch(index),
-            selectedItemColor: const Color(0xFF539DF3),
-            unselectedItemColor: const Color(0xFF484C52),
-            iconSize: iconSize,
-            selectedLabelStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.w500,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 35),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavBarItem(
+                  icon: LucideIcons.layoutDashboard,
+                  isActive: navigationShell.currentIndex == 0,
+                  onTap: () => navigationShell.goBranch(0),
+                ),
+                _buildNavBarItem(
+                  icon: LucideIcons.bookmark,
+                  isActive: navigationShell.currentIndex == 1,
+                  onTap: () => navigationShell.goBranch(1),
+                ),
+                _buildNavBarItem(
+                  icon: LucideIcons.chartArea,
+                  isActive: navigationShell.currentIndex == 2,
+                  onTap: () => navigationShell.goBranch(2),
+                ),
+                _buildNavBarItem(
+                  icon: LucideIcons.ticket,
+                  isActive: navigationShell.currentIndex == 3,
+                  onTap: () => navigationShell.goBranch(3),
+                ),
+                _buildNavBarItem(
+                  icon: LucideIcons.user,
+                  isActive: navigationShell.currentIndex == 4,
+                  onTap: () => navigationShell.goBranch(4),
+                ),
+              ],
             ),
-            unselectedLabelStyle: TextStyle(fontSize: fontSize),
-            items: [
-              _buildNavBarItem(
-                icon: LucideIcons.layoutDashboard,
-                isActive: navigationShell.currentIndex == 0,
-                padding: iconPadding,
-                label: '',
-              ),
-              _buildNavBarItem(
-                icon: LucideIcons.mapPin,
-                isActive: navigationShell.currentIndex == 1,
-                padding: iconPadding,
-                label: '',
-              ),
-              _buildNavBarItem(
-                icon: LucideIcons.chartArea,
-                isActive: navigationShell.currentIndex == 2,
-                padding: iconPadding,
-                label: '',
-              ),
-              _buildNavBarItem(
-                icon: LucideIcons.ticket,
-                isActive: navigationShell.currentIndex == 3,
-                padding: iconPadding,
-                label: '',
-              ),
-              _buildNavBarItem(
-                icon: LucideIcons.user,
-                isActive: navigationShell.currentIndex == 4,
-                padding: iconPadding,
-                label: '',
-              ),
-            ],
           ),
         ),
       ),
     );
   }
 
-  BottomNavigationBarItem _buildNavBarItem({
+  Widget _buildNavBarItem({
     required IconData icon,
     required bool isActive,
-    required double padding,
-    required String label,
+    required VoidCallback onTap,
   }) {
-    final iconWidget = Container(
-      padding: EdgeInsets.all(padding),
-      decoration: isActive
-          ? const BoxDecoration(
-              color: Color(0xFFBED7F4),
-              shape: BoxShape.circle,
-            )
-          : null,
-      child: Icon(icon),
-    );
-
-    return BottomNavigationBarItem(
-      icon: iconWidget,
-      activeIcon: iconWidget,
-      label: label,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: isActive
+            ? const BoxDecoration(
+                color: Color(0xffc0dbfb),
+                shape: BoxShape.circle,
+              )
+            : null,
+        child: Icon(
+          icon,
+          size: 24,
+          color: isActive ? const Color(0xff539DF3) : const Color(0xff757575),
+        ),
+      ),
     );
   }
 }

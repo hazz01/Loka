@@ -68,7 +68,7 @@ class _FinishScreenLoginPageState extends State<FinishScreenLoginPage> {
                         horizontal: screenWidth > 600 ? 0 : 16,
                       ),
                       child: Text(
-                        "Access your dashboard and continue managing\nyour tourism business.",
+                        "Access your dashboard and continue managing your tourism business.",
                         style: TextStyle(
                           fontSize: subtitleFontSize,
                           fontWeight: FontWeight.w500,
