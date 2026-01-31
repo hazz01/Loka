@@ -63,7 +63,7 @@ class _TextFieldWithHeaderState extends State<TextFieldWithHeader> {
               color: Color(0xff757575),
             ),
             filled: true,
-            fillColor: Colors.transparent,
+            fillColor: Colors.white,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 21,
               vertical: 14,

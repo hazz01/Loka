@@ -117,6 +117,7 @@ flutter:
     - assets/image/lawang_sewu.jpg
     - assets/image/bawah_laut.png
     - assets/icons/Google.png
+    - assets/image/foto_profile.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

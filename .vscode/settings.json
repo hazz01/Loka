@@ -2,6 +2,7 @@
     "conventionalCommits.scopes": [
         "splash screen",
         "router",
-        "auth"
+        "auth",
+        "akun screen"
     ]
 }

@@ -12,16 +12,14 @@ class AppPopup {
     VoidCallback? onConfirm,
     Color? confirmColor,
     Color? cancelColor,
-    IconData? icon,
-    Color? iconColor,
     bool barrierDismissible = true,
   }) async {
     final screenWidth = MediaQuery.of(context).size.width;
-    final titleFontSize = screenWidth < 360 ? 16.0 : 18.0;
-    final contentFontSize = screenWidth < 360 ? 12.0 : 14.0;
-    final buttonFontSize = screenWidth < 360 ? 12.0 : 14.0;
-    final effectiveConfirmColor = confirmColor ?? const Color(0xff366EDD);
-    final effectiveCancelColor = cancelColor ?? const Color(0xff666666);
+    final titleFontSize = screenWidth < 360 ? 18.0 : 20.0;
+    final contentFontSize = screenWidth < 360 ? 13.0 : 15.0;
+    final buttonFontSize = screenWidth < 360 ? 10.0 : 12.0;
+    final effectiveConfirmColor = confirmColor ?? const Color(0xff539DF3);
+    final effectiveCancelColor = cancelColor ?? const Color(0xff212121);
 
     return showDialog<bool>(
       context: context,
@@ -33,72 +31,77 @@ class AppPopup {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          title: Row(
-            children: [
-              if (icon != null) ...[
-                Icon(
-                  icon,
-                  color: iconColor ?? effectiveConfirmColor,
-                  size: 24,
-                ),
-                const SizedBox(width: 12),
-              ],
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF132644),
-                    fontSize: titleFontSize,
-                  ),
-                ),
-              ),
-            ],
+          title: Text(
+            title,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: const Color(0xff212121),
+              fontSize: titleFontSize,
+            ),
           ),
           content: Text(
             message,
             style: TextStyle(
               fontSize: contentFontSize,
               color: const Color(0xFF323232),
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.normal,
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(
-                cancelText,
-                style: TextStyle(
-                  color: effectiveCancelColor,
-                  fontWeight: FontWeight.w600,
-                  fontSize: buttonFontSize,
+            Row(
+              spacing: 10,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 14),
+                      backgroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      side: BorderSide(color: Color(0xffE5E7EB), width: 1),
+                    ),
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: Text(
+                      cancelText,
+                      style: TextStyle(
+                        color: effectiveCancelColor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: buttonFontSize,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (onConfirm != null) {
-                  onConfirm();
-                }
-                Navigator.of(context).pop(true);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: effectiveConfirmColor,
-                elevation: 0,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (onConfirm != null) {
+                        onConfirm();
+                      }
+                      Navigator.of(context).pop(true);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: effectiveConfirmColor,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: Text(
+                      confirmText,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: buttonFontSize,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              child: Text(
-                confirmText,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: buttonFontSize,
-                ),
-              ),
+              ],
             ),
           ],
         );
