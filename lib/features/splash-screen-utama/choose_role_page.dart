@@ -215,7 +215,8 @@ class _ChooseRolePageState extends State<ChooseRolePage> {
                                 if (selectedRole == 'traveler') {
                                   context.go('/');
                                 } else {
-                                  context.go('/tourism-manager-dashboard');
+                                  // Navigasi ke manager router
+                                  context.go('/manager');
                                 }
                               }
                             : null,
