@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'routing/app_router.dart';
+import 'features/routing/app_router.dart';
 
 void main() {
   runApp(const ProviderScope(child: LokaApp()));

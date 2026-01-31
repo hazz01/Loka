@@ -106,8 +106,21 @@ flutter:
     - assets/image/360_icon.png
     - assets/image/kayutangan.png
     - assets/image/profile.png
+    - assets/image/loka.png
+    - assets/image/onboard1.jpg
+    - assets/image/onboard2.jpg
+    - assets/image/onboard3.jpg
+    - assets/image/foto1.jpg
+    - assets/image/foto2.jpg
+    - assets/image/foto3.jpg
+    - assets/image/foto4.jpg
+    - assets/icons/solo.jpg
+    - assets/icons/couple.jpg
+    - assets/icons/friend.jpg
+    - assets/icons/family.jpg
+    - assets/icons/google.png
     - assets/icons/AppIcon.png
-
+  
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
