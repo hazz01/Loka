@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loka/features/user-pengelolaUsaha/auth/splash-screen/splash_screen_manager.dart';
 import 'package:loka/features/user-wisata/home/pages/loading_screen.dart';
 import 'package:loka/features/splash-screen-utama/splash_page.dart';
 import 'package:loka/features/splash-screen-utama/choose_role_page.dart';
@@ -30,6 +31,7 @@ import '../features/user-pengelolaUsaha/daftar-wisata/pages/manager_destinations
 import '../features/user-pengelolaUsaha/analisis/pages/manager_analytics_page.dart';
 import '../features/user-pengelolaUsaha/tiket/pages/manager_tickets_page.dart';
 import '../features/user-pengelolaUsaha/account/pages/manager_account_page.dart';
+import '../features/user-pengelolaUsaha/auth/splash-screen/splash_screen_manager.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -44,6 +46,13 @@ class AppRouter {
         path: '/choose-role',
         name: 'choose-role',
         builder: (context, state) => const ChooseRolePage(),
+      ),
+
+      // Manager Onboarding/Splash Screen
+      GoRoute(
+        path: '/manager-onboarding',
+        name: 'manager-onboarding',
+        builder: (context, state) => const SplashScreenManager(),
       ),
 
       // ========== TRAVELER ROUTES ==========
@@ -239,6 +248,11 @@ class AppRouter {
             ],
           ),
         ],
+      ),
+      GoRoute(
+        path: '/splashscreen/pertama',
+        name: 'splashscreen-pertama',
+        builder: (context, state) => SplashScreenManager(),
       ),
     ],
   );
