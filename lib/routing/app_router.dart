@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loka/features/user-wisata/home/pages/loading_screen.dart';
-import 'package:loka/features/user-wisata/home/pages/splash_page.dart';
+import 'package:loka/features/splash-screen-utama/splash_page.dart';
 import 'package:loka/features/user-wisata/home/pages/timeline_trip_Page.dart';
 import 'package:loka/features/user-wisata/home/models/trip_response_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';

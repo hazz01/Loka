@@ -77,55 +77,14 @@ class _SplashPageState extends State<SplashPage>
               Hero(
                 tag: 'app-logo',
                 child: Container(
-                  decoration: BoxDecoration(
-                    color: Color(0xFFF9F9F9),
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color(0xFFB4BCC9).withOpacity(0.12),
-                        blurRadius: 16,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                  ),
                   padding: const EdgeInsets.all(18),
                   child: Image.asset(
-                    'assets/icons/AppIcon.png',
-                    width: 80,
-                    height: 80,
+                    'assets/image/logo_name.png',
+                    width: 222,
+                    height: 103,
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-
-              // App name
-              Text(
-                'Loka',
-                style: const TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF539DF3),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "Where journeys begin",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.black.withOpacity(0.6),
-                ),
-              ),
-
-              // Subtle progress indicator (fades in with the rest)
-              // SizedBox(
-              //   width: 28,
-              //   height: 28,
-              //   child: CircularProgressIndicator(
-              //     strokeWidth: 2.5,
-              //     valueColor: AlwaysStoppedAnimation(brandColor),
-              //   ),
-              // ),
             ],
           ),
         ),
