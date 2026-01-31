@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import '../services/local_destination_service.dart';
 
 class AddDestinationPage extends StatefulWidget {
   const AddDestinationPage({super.key});
@@ -807,34 +808,37 @@ class _AddDestinationPageState extends State<AddDestinationPage> {
         const SizedBox(height: 20),
 
         // Ticket Pricing
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Ticket Pricing',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF212121),
-              ),
-            ),
-            TextButton(
-              onPressed: _showAddTicketDialog,
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
-                minimumSize: const Size(0, 0),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              child: const Text(
-                'Add Ticket',
+        SizedBox(
+          width: double.infinity,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Ticket Pricing',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Color(0xFF539DF3),
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF212121),
                 ),
               ),
-            ),
-          ],
+              TextButton(
+                onPressed: _showAddTicketDialog,
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size(0, 0),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: const Text(
+                  'Add Ticket',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF539DF3),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 12),
 
@@ -866,34 +870,37 @@ class _AddDestinationPageState extends State<AddDestinationPage> {
         const SizedBox(height: 24),
 
         // Available Tours
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Available Tours',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF212121),
-              ),
-            ),
-            TextButton(
-              onPressed: _showAddTourDialog,
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
-                minimumSize: const Size(0, 0),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              child: const Text(
-                'Add Tours',
+        SizedBox(
+          width: double.infinity,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Available Tours',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Color(0xFF539DF3),
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF212121),
                 ),
               ),
-            ),
-          ],
+              TextButton(
+                onPressed: _showAddTourDialog,
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size(0, 0),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: const Text(
+                  'Add Tours',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF539DF3),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 12),
 
@@ -3228,14 +3235,64 @@ class _AddDestinationPageState extends State<AddDestinationPage> {
   }
 
   /// Submit form and navigate back
-  void _submitForm() {
-    // TODO: Implement actual form submission logic here
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Destination created successfully!')),
-    );
+  Future<void> _submitForm() async {
+    try {
+      // Buat object destination untuk disimpan
+      final destinationData = {
+        'name': destinationNameController.text,
+        'description': descriptionController.text,
+        'location': '$selectedCity, $selectedProvince',
+        'province': selectedProvince,
+        'city': selectedCity,
+        'address': fullAddressController.text,
+        'openingHours': '${_formatTime(selectedOpeningTime!)} - ${_formatTime(selectedClosingTime!)}',
+        'image': selectedImages.isNotEmpty ? selectedImages[0]['path'] : 'assets/image/bawah_laut.png',
+        'images': selectedImages,
+        'tickets': ticketsList,
+        'tours': toursList,
+        'activities': activitiesList,
+        'categories': categoriesList,
+        'has360Experience': experience360Option == 'request',
+        'status': 'Draft', // Set default status sebagai Draft
+        'views': 0,
+      };
 
-    // Navigate back to destinations list
-    Navigator.pop(context);
+      // Simpan ke local database
+      final success = await LocalDestinationService.addDestination(destinationData);
+
+      if (success) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Destination created successfully!'),
+              backgroundColor: Color(0xFF539DF3),
+            ),
+          );
+
+          // Navigate back dengan result true agar list refresh
+          Navigator.pop(context, true);
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to create destination. Please try again.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      print('Error submitting form: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }
 
