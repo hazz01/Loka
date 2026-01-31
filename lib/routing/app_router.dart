@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loka/features/user-pengelolaUsaha/auth/auth_choosen_page.dart';
+import 'package:loka/features/user-pengelolaUsaha/auth/login/finish_screen_login_page.dart';
+import 'package:loka/features/user-pengelolaUsaha/auth/login/login_page_manager.dart';
 import 'package:loka/features/user-pengelolaUsaha/auth/register/finish_screen_register_page.dart';
 import 'package:loka/features/user-pengelolaUsaha/auth/register/register_page_manager.dart';
 import 'package:loka/features/user-pengelolaUsaha/auth/splash-screen/splash_screen_manager.dart';
@@ -271,6 +273,20 @@ class AppRouter {
                 name: 'success-register-manager',
                 builder: (context, state) {
                   return const FinishScreenRegisterPage();
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/login',
+            name: 'login-manager',
+            builder: (context, state) => LoginPageManager(),
+            routes: [
+              GoRoute(
+                path: '/success-login',
+                name: 'success-login-manager',
+                builder: (context, state) {
+                  return const FinishScreenLoginPage();
                 },
               ),
             ],
