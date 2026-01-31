@@ -115,6 +115,13 @@ flutter:
     - assets/image/foto2.jpg
     - assets/image/foto3.jpg
     - assets/image/foto4.jpg
+    - assets/image/splash_screen_pertama.jpg
+    - assets/image/splash_screen_kedua.jpg
+    - assets/image/splash_screen_ketiga.jpg
+    - assets/image/bali.jpg
+    - assets/image/GWK_Bali.jpg
+    - assets/image/lawang_sewu.jpg
+    - assets/image/bawah_laut.png
     - assets/icons/solo.jpg
     - assets/icons/couple.jpg
     - assets/icons/friend.jpg
