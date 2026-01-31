@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class FinishPage extends StatefulWidget {
-  const FinishPage({super.key});
+class FinishLogoutPage extends StatefulWidget {
+  const FinishLogoutPage({super.key});
 
   @override
-  State<FinishPage> createState() => _FinishPageState();
+  State<FinishLogoutPage> createState() => _FinishLogoutPageState();
 }
 
-class _FinishPageState extends State<FinishPage> {
+class _FinishLogoutPageState extends State<FinishLogoutPage> {
   @override
   void initState() {
     super.initState();
     // Navigate to manager dashboard after 3 seconds
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        context.go('/');
+        context.go('/preregister');
       }
     });
   }
@@ -55,7 +55,7 @@ class _FinishPageState extends State<FinishPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      "You’re All Set",
+                      "You've been\nsigned out.",
                       style: TextStyle(
                         fontSize: titleFontSize,
                         fontWeight: FontWeight.w600,
@@ -68,7 +68,7 @@ class _FinishPageState extends State<FinishPage> {
                         horizontal: screenWidth > 600 ? 0 : 16,
                       ),
                       child: Text(
-                        "We're personalizing your,\n experience with loka .",
+                        "See you again soon!",
                         style: TextStyle(
                           fontSize: subtitleFontSize,
                           fontWeight: FontWeight.w500,

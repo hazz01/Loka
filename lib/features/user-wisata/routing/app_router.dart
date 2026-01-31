@@ -10,6 +10,7 @@ import 'package:loka/features/user-wisata/auth/succeslogin.dart';
 import 'package:loka/features/user-wisata/home/pages/loading_screen.dart';
 import 'package:loka/features/user-wisata/home/pages/timeline_trip_Page.dart';
 import 'package:loka/features/user-wisata/home/models/trip_response_model.dart';
+import 'package:loka/features/user-wisata/profile/pages/finish_logout_page.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:loka/features/user-wisata/auth/splash.dart';
 
@@ -96,6 +97,11 @@ class AppRouter {
         path: '/finish-login',
         name: 'finish-login',
         builder: (context, state) => const FinishScreenLoginPage(),
+      ),
+      GoRoute(
+        path: '/finish-logout',
+        name: 'finish-logout',
+        builder: (context, state) => const FinishLogoutPage(),
       ),
 
       // Bottom Navigation Shell

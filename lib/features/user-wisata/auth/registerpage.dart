@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'register/firstregist.dart';
 import 'register/secondregist.dart';
-import 'thirdregist.dart';
+import 'register/thirdregist.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
