@@ -148,7 +148,7 @@ class ManagerAccountPage extends StatelessWidget {
                 textColor: const Color(0xffEF4444),
                 iconColor: const Color(0xffEF4444),
                 onTap: () {
-                  context.go('/choose-role');
+                  context.go('/auth-manager');
                 },
               ),
             ),

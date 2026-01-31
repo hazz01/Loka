@@ -165,7 +165,7 @@ class _AuthChoosenPageManagerState extends State<AuthChoosenPageManager> {
                         const SizedBox(width: 2),
                         GestureDetector(
                           onTap: () {
-                            context.go('/login');
+                            context.go('/auth-manager/login');
                           },
                           child: const Text(
                             'Sign In',
