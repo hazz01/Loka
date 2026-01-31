@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loka/features/user-wisata/home/pages/loading_screen.dart';
 import 'package:loka/features/splash-screen-utama/splash_page.dart';
+import 'package:loka/features/splash-screen-utama/choose_role_page.dart';
+import 'package:loka/features/tourism-manager/pages/tourism_manager_dashboard_page.dart';
 import 'package:loka/features/user-wisata/home/pages/timeline_trip_Page.dart';
 import 'package:loka/features/user-wisata/home/models/trip_response_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -31,6 +33,16 @@ class AppRouter {
         path: '/splash',
         name: 'splash',
         builder: (context, state) => const SplashPage(),
+      ),
+      GoRoute(
+        path: '/choose-role',
+        name: 'choose-role',
+        builder: (context, state) => const ChooseRolePage(),
+      ),
+      GoRoute(
+        path: '/tourism-manager-dashboard',
+        name: 'tourism-manager-dashboard',
+        builder: (context, state) => const TourismManagerDashboardPage(),
       ),
 
       // Bottom Navigation Shell

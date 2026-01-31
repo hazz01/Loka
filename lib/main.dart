@@ -16,6 +16,7 @@ class LokaApp extends StatelessWidget {
       title: 'Loka - Virtual Tours',
       theme: ThemeData(
         textTheme: GoogleFonts.poppinsTextTheme(),
+        fontFamily: 'Poppins',
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),

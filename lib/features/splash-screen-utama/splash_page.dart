@@ -37,12 +37,12 @@ class _SplashPageState extends State<SplashPage>
 
     _controller.forward();
 
-    // when animation completes, wait a tiny bit then navigate to home
+    // when animation completes, wait a tiny bit then navigate to choose role
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         Future.delayed(const Duration(milliseconds: 1000), () {
           if (!mounted) return;
-          context.go('/');
+          context.go('/choose-role');
         });
       }
     });
