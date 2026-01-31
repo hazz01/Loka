@@ -261,7 +261,7 @@ class _KategoriProvinsiPageState extends State<KategoriProvinsiPage> {
       final response = await TripService.createTrip(request);
 
       // Debug print (remove in production)
-      debugPrint('Response received: ${response.tripPlanId}');
+      debugPrint('Response received: ${response.tripName}');
 
       // Navigate to timeline with response data
       if (mounted) {

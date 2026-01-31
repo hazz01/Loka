@@ -1,0 +1,160 @@
+{
+  "tripPlanId": "trip_12345",
+  "userId": "user123",
+  "summary": "Your personalized 3-day trip to Batu has been carefully crafted to match your preferences. Experience a perfect blend of family-friendly attractions and natural beauty within your budget.",
+  "totalEstimatedCost": 1500000,
+  "costBreakdown": {
+    "destinations": 900000,
+    "meals": 450000,
+    "travel": 150000
+  },
+  "days": [
+    {
+      "dayNumber": 1,
+      "activities": [
+        {
+          "activityType": "visit",
+          "destinationId": "dest001",
+          "mealId": null,
+          "name": "Museum Angkut",
+          "startTime": "09:00",
+          "endTime": "11:30",
+          "estimatedCost": 100000,
+          "locationNote": "Jl. Terusan Sultan Agung No.2, Ngaglik, Batu",
+          "notes": "Start your day at Museum Angkut, a fascinating transportation museum perfect for families. Explore diverse vehicle collections from different eras."
+        },
+        {
+          "activityType": "meal",
+          "destinationId": null,
+          "mealId": "meal001",
+          "name": "Lunch at Warung Soto Batu",
+          "startTime": "12:00",
+          "endTime": "13:00",
+          "estimatedCost": 50000,
+          "locationNote": "Jl. Panglima Sudirman No.99, Batu",
+          "notes": "Enjoy lunch at a local restaurant featuring authentic Malang cuisine. Budget-friendly options available."
+        },
+        {
+          "activityType": "visit",
+          "destinationId": "dest002",
+          "mealId": null,
+          "name": "Jatim Park 2 & Batu Secret Zoo",
+          "startTime": "14:30",
+          "endTime": "18:00",
+          "estimatedCost": 150000,
+          "locationNote": "Jl. Oro-Oro Ombo No.9, Batu",
+          "notes": "Visit Jatim Park 2 featuring Batu Secret Zoo. Great for families with various animal exhibits and educational experiences."
+        },
+        {
+          "activityType": "travel",
+          "destinationId": null,
+          "mealId": null,
+          "name": "Return to Hotel",
+          "startTime": "18:30",
+          "endTime": "19:00",
+          "estimatedCost": 50000,
+          "locationNote": "Hotel area",
+          "notes": "Return to hotel and rest for the next day's adventure."
+        }
+      ]
+    },
+    {
+      "dayNumber": 2,
+      "activities": [
+        {
+          "activityType": "visit",
+          "destinationId": "dest003",
+          "mealId": null,
+          "name": "Coban Rondo Waterfall",
+          "startTime": "08:00",
+          "endTime": "12:00",
+          "estimatedCost": 75000,
+          "locationNote": "Desa Pandesari, Pujon, Malang",
+          "notes": "Morning hike at Coban Rondo Waterfall. Enjoy the fresh mountain air and beautiful natural scenery perfect for nature lovers."
+        },
+        {
+          "activityType": "meal",
+          "destinationId": null,
+          "mealId": "meal002",
+          "name": "Lunch at Local Restaurant",
+          "startTime": "12:30",
+          "endTime": "13:30",
+          "estimatedCost": 60000,
+          "locationNote": "Near Coban Rondo area",
+          "notes": "Traditional Indonesian cuisine with mountain view."
+        },
+        {
+          "activityType": "visit",
+          "destinationId": "dest004",
+          "mealId": null,
+          "name": "Kampung Warna-Warni (Rainbow Village)",
+          "startTime": "14:00",
+          "endTime": "16:00",
+          "estimatedCost": 0,
+          "locationNote": "Jl. Jodipan, Blimbing, Malang",
+          "notes": "Explore the colorful Rainbow Village and capture Instagram-worthy photos."
+        },
+        {
+          "activityType": "meal",
+          "destinationId": null,
+          "mealId": "meal003",
+          "name": "Dinner at Alun-Alun Batu Night Market",
+          "startTime": "18:00",
+          "endTime": "20:00",
+          "estimatedCost": 40000,
+          "locationNote": "Alun-Alun Batu",
+          "notes": "End your day at Alun-Alun Batu, enjoy the vibrant night market atmosphere and try local street food."
+        }
+      ]
+    },
+    {
+      "dayNumber": 3,
+      "activities": [
+        {
+          "activityType": "visit",
+          "destinationId": "dest005",
+          "mealId": null,
+          "name": "Eco Green Park",
+          "startTime": "09:00",
+          "endTime": "12:00",
+          "estimatedCost": 120000,
+          "locationNote": "Jl. Oro-Oro Ombo No.9A, Batu",
+          "notes": "Visit Eco Green Park for an educational eco-tourism experience. Great for learning about conservation and environment."
+        },
+        {
+          "activityType": "meal",
+          "destinationId": null,
+          "mealId": "meal004",
+          "name": "Lunch at Taman Indie Mall",
+          "startTime": "12:30",
+          "endTime": "13:30",
+          "estimatedCost": 70000,
+          "locationNote": "Jl. Trunojoyo, Batu",
+          "notes": "Food court with various options."
+        },
+        {
+          "activityType": "visit",
+          "destinationId": "dest006",
+          "mealId": null,
+          "name": "Batu Traditional Market",
+          "startTime": "14:00",
+          "endTime": "16:00",
+          "estimatedCost": 0,
+          "locationNote": "Jl. Diponegoro, Batu",
+          "notes": "Shopping time at Batu traditional market. Pick up souvenirs and local products at affordable prices."
+        },
+        {
+          "activityType": "visit",
+          "destinationId": "dest007",
+          "mealId": null,
+          "name": "Paralayang Batu (Paragliding Viewpoint)",
+          "startTime": "16:30",
+          "endTime": "18:00",
+          "estimatedCost": 0,
+          "locationNote": "Gunung Banyak, Batu",
+          "notes": "Final stop at a scenic viewpoint for sunset photos before heading home. Perfect ending to your trip."
+        }
+      ]
+    }
+  ]
+}

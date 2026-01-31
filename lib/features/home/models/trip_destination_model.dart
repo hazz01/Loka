@@ -85,8 +85,16 @@ class DayTrip {
   final int dayNumber;
   final List<Activity> activities;
   final DateTime? date; // untuk UI, tidak ada di JSON
+  final String? theme; // Daily theme from new API
+  final int? budgetForDay; // Daily budget from new API
 
-  DayTrip({required this.dayNumber, required this.activities, this.date});
+  DayTrip({
+    required this.dayNumber,
+    required this.activities,
+    this.date,
+    this.theme,
+    this.budgetForDay,
+  });
 
   factory DayTrip.fromJson(Map<String, dynamic> json) {
     return DayTrip(
@@ -94,6 +102,8 @@ class DayTrip {
       activities: (json['activities'] as List)
           .map((activity) => Activity.fromJson(activity))
           .toList(),
+      theme: json['theme'],
+      budgetForDay: json['budgetForDay'],
     );
   }
 
@@ -101,6 +111,8 @@ class DayTrip {
     return {
       'dayNumber': dayNumber,
       'activities': activities.map((a) => a.toJson()).toList(),
+      if (theme != null) 'theme': theme,
+      if (budgetForDay != null) 'budgetForDay': budgetForDay,
     };
   }
 

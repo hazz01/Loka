@@ -90,7 +90,7 @@ class _PlaceHolderAiPageState extends State<PlaceHolderAiPage>
                   ),
                   SizedBox(height: spacer2),
                   Text(
-                    "Stay tuned for updates!\nFor now you can try this feature in Greater City section",
+                    "Currently, our AI Trip Planner only supports the Greater City category.\nProvince and City categories are coming soon. Stay tuned!",
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.black54, fontSize: bodySize),
                   ),
