@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loka/features/home/pages/loading_screen.dart';
-import 'package:loka/features/home/pages/splash_page.dart';
-import 'package:loka/features/home/pages/timeline_trip_Page.dart';
-import 'package:loka/features/home/models/trip_response_model.dart';
+import 'package:loka/features/user-wisata/home/pages/loading_screen.dart';
+import 'package:loka/features/user-wisata/home/pages/splash_page.dart';
+import 'package:loka/features/user-wisata/home/pages/timeline_trip_Page.dart';
+import 'package:loka/features/user-wisata/home/models/trip_response_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 // Feature imports
-import '../features/home/pages/home_page.dart';
-import '../features/home/pages/detail_component_page.dart';
-import '../features/home/pages/virtual_tour_page.dart';
-import '../features/home/pages/booking_tiket_page.dart';
-import '../features/home/pages/trip_ai_planner_page.dart';
-import '../features/home/pages/kategori_provinsi_page.dart';
-import '../features/home/pages/kategori_greater_city_page.dart';
-import '../features/home/pages/kategori_city_page.dart';
-import '../features/home/pages/explore_page.dart';
-import '../features/search/pages/search_page.dart';
-import '../features/saved/pages/saved_plan_page.dart';
-import '../features/profile/pages/profile_page.dart';
-import '../features/profile/pages/transaction_history_page.dart';
-import '../features/profile/pages/previous_trips_page.dart';
-import '../features/profile/pages/favorite_trips_page.dart';
+import '../features/user-wisata/home/pages/home_page.dart';
+import '../features/user-wisata/home/pages/detail_component_page.dart';
+import '../features/user-wisata/home/pages/virtual_tour_page.dart';
+import '../features/user-wisata/home/pages/booking_tiket_page.dart';
+import '../features/user-wisata/home/pages/trip_ai_planner_page.dart';
+import '../features/user-wisata/home/pages/kategori_provinsi_page.dart';
+import '../features/user-wisata/home/pages/kategori_greater_city_page.dart';
+import '../features/user-wisata/home/pages/kategori_city_page.dart';
+import '../features/user-wisata/home/pages/explore_page.dart';
+import '../features/user-wisata/search/pages/search_page.dart';
+import '../features/user-wisata/saved/pages/saved_plan_page.dart';
+import '../features/user-wisata/profile/pages/profile_page.dart';
+import '../features/user-wisata/profile/pages/transaction_history_page.dart';
+import '../features/user-wisata/profile/pages/previous_trips_page.dart';
+import '../features/user-wisata/profile/pages/favorite_trips_page.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
